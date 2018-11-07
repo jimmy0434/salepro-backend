@@ -1,0 +1,147 @@
+{
+  "name": "yiisoft/yii2-app-advanced",
+  "description": "Yii 2 Advanced Project Template",
+  "keywords": [
+    "yii2",
+    "framework",
+    "advanced",
+    "project template"
+  ],
+  "homepage": "http://www.yiiframework.com/",
+  "type": "project",
+  "license": "BSD-3-Clause",
+  "support": {
+    "issues": "https://github.com/yiisoft/yii2/issues?state=open",
+    "forum": "http://www.yiiframework.com/forum/",
+    "wiki": "http://www.yiiframework.com/wiki/",
+    "irc": "irc://irc.freenode.net/yii",
+    "source": "https://github.com/yiisoft/yii2"
+  },
+  "minimum-stability": "dev",
+  "prefer-stable": true,
+  "require": {
+    "php": ">=7.1",
+    "yiisoft/yii2": "~2.0.6",
+    "yiisoft/yii2-bootstrap": "~2.0.0",
+    "yiisoft/yii2-swiftmailer": "~2.0.0 || ~2.1.0",
+    "cndprojects/yii2-core": "*",
+    "cndprojects/yii2-attributes": "*",
+    "cndprojects/yii2-form": "*",
+    "cndprojects/yii2-admin": "*",
+    "cndprojects/yii2-constantbehavior": "*",
+    "cndprojects/yii2-filemanager": "*",
+    "cndprojects/yii2-grid": "*",
+    "cndprojects/yii2-notification": "*",
+    "cndprojects/yii2-statistic": "*",
+    "cndprojects/yii2-cms": "*",
+    "npm-asset/vue": "*",
+    "npm-asset/xml-js": "*",
+    "npm-asset/vue-constants": "*",
+    "npm-asset/localforage": "*"
+  },
+  "require-dev": {
+    "yiisoft/yii2-debug": "~2.0.0",
+    "yiisoft/yii2-gii": "~2.0.0",
+    "yiisoft/yii2-faker": "~2.0.0",
+    "codeception/base": "^2.2.3",
+    "codeception/verify": "~0.3.1"
+  },
+  "config": {
+    "process-timeout": 1800,
+    "fxp-asset": {
+      "enabled": true
+    }
+  },
+  "scripts": {
+    "post-install-cmd": [
+      "yii\\composer\\Installer::postInstall"
+    ],
+    "post-create-project-cmd": [
+      "yii\\composer\\Installer::postCreateProject",
+      "yii\\composer\\Installer::postInstall"
+    ],
+    "post-root-package-install": "php init --env=Development --overwrite=y && cd ./web/install && npm install bower && bower install bootstrap",
+    "post-update-cmd": [
+      "php yii migrate --migrationPath=@cnd/admin/migrations --interactive=0",
+      "php yii migrate --migrationPath=@cnd/notification/migrations --interactive=0",
+      "php yii migrate --migrationPath=@cnd/cms/migrations --interactive=0",
+      "php yii migrate --interactive=0"
+    ]
+  },
+  "repositories": [
+    {
+      "type": "composer",
+      "url": "https://asset-packagist.org"
+    },
+    {
+      "type": "vcs",
+      "url": "https://cndcompany:Pass*123@bitbucket.org/cndprojects/yii2-core.git"
+    },
+    {
+      "type": "vcs",
+      "url": "https://cndcompany:Pass*123@bitbucket.org/cndprojects/yii2-attributes.git"
+    },
+    {
+      "type": "vcs",
+      "url": "https://cndcompany:Pass*123@bitbucket.org/cndprojects/yii2-form.git"
+    },
+    {
+      "type": "vcs",
+      "url": "https://cndcompany:Pass*123@bitbucket.org/cndprojects/yii2-admin.git"
+    },
+    {
+      "type": "vcs",
+      "url": "https://cndcompany:Pass*123@bitbucket.org/cndprojects/yii2-constantbehavior.git"
+    },
+    {
+      "type": "vcs",
+      "url": "https://cndcompany:Pass*123@bitbucket.org/cndprojects/yii2-filemanager.git"
+    },
+    {
+      "type": "vcs",
+      "url": "https://cndcompany:Pass*123@bitbucket.org/cndprojects/yii2-grid.git"
+    },
+    {
+      "type": "vcs",
+      "url": "https://cndcompany:Pass*123@bitbucket.org/cndprojects/yii2-notification.git"
+    },
+    {
+      "type": "vcs",
+      "url": "https://cndcompany:Pass*123@bitbucket.org/cndprojects/yii2-statistic.git"
+    },
+    {
+      "type": "vcs",
+      "url": "https://cndcompany:Pass*123@bitbucket.org/cndprojects/yii2-cms.git"
+    },
+    {
+      "type": "package",
+      "package": {
+        "name": "bower/intl-tel-input",
+        "version": "master",
+        "dist": {
+          "url": "https://github.com/jackocnr/intl-tel-input/archive/master.zip",
+          "type": "zip"
+        }
+      }
+    },
+    {
+      "type": "package",
+      "package": {
+        "name": "bower/push.js",
+        "version": "master",
+        "dist": {
+          "url": "https://github.com/Nickersoft/push.js/archive/master.zip",
+          "type": "zip"
+        }
+      }
+    }
+  ],
+  "authors": [
+    {
+      "name": "Jawdat Sobh",
+      "email": "jawdat@codendot.com",
+      "homepage": "https://www.facebook.com/jawdat.sobh.7",
+      "role": "Developer"
+    }
+  ]
+}
