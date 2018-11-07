@@ -622,7 +622,7 @@
             "source": {
                 "type": "git",
                 "url": "https://cndcompany:Pass*123@bitbucket.org/cndprojects/yii2-core.git",
-                "reference": "ff4c10089195973d0d4f15a871b01870b12e47fc"
+                "reference": "666979ab9c0d30a3d636645144f37cbdfdf732b6"
             },
             "require": {
                 "bower-asset/js-xlsx": "*",
@@ -653,7 +653,7 @@
                 "jawdat",
                 "yii2"
             ],
-            "time": "2018-10-29T07:23:15+00:00"
+            "time": "2018-11-07T13:09:07+00:00"
         },
         {
             "name": "cndprojects/yii2-filemanager",

@@ -62,6 +62,14 @@ return [
                 ],
             ],
         ],
+        'core' => [
+            'apiAuthenticatorConfig' => [
+                'class' => \yii\filters\auth\CompositeAuth::className(),
+                'authMethods' => [
+                    \yii\filters\auth\HttpBearerAuth::className(),
+                ],
+            ],
+        ],
     ],
     'params' => $params,
 ];
