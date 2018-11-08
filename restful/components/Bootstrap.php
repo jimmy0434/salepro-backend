@@ -23,7 +23,7 @@ class Bootstrap implements BootstrapInterface
 
         $baseUrl = str_replace('/restful/web', '/cnd-restful', (new Request)->getBaseUrl());
 
-        UrlRule::register('get','auth','/salesman/auth');
+        UrlRule::register('get','/auth/login','/public/login');
 
         Yii::$app->setComponents(
             [

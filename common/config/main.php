@@ -149,5 +149,8 @@ return [
                 },
             ],
         ],
+        'keycloak' => [
+            'class' => '\common\components\Keycloak',
+        ],
     ],
 ];

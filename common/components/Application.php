@@ -36,6 +36,7 @@ use yii\web\UrlManager;
  * @property UrlManager  $urlManagerFrontend
  * @property UrlManager  $urlManagerBackend
  * @property UrlManager  $urlManagerApi
+ * @property Keycloak $keycloak
  *
  */
 class Application extends \yii\web\Application

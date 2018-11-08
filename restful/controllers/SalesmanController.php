@@ -9,11 +9,9 @@
 namespace restful\controllers;
 
 
-use cnd\core\api\Controller;
+use cnd\core\api\SController;
 
-class SalesmanController extends Controller
+class SalesmanController extends SController
 {
-    public function actionAuth(){
-        return ['get'=>$_GET,'post'=>$_POST];
-    }
+
 }
