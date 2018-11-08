@@ -8,15 +8,23 @@
 
 namespace restful\components;
 
+use common\components\Application;
 use Yii;
 use yii\base\BootstrapInterface;
+use cnd\core\components\UrlRule;
 use \yii\web\Request;
 
 class Bootstrap implements BootstrapInterface
 {
     public function bootstrap($app) {
+        /**
+         * @var $app Application
+         */
 
         $baseUrl = str_replace('/restful/web', '/cnd-restful', (new Request)->getBaseUrl());
+
+        UrlRule::register('get','auth','/salesman/auth');
+
         Yii::$app->setComponents(
             [
                 'request' => [
@@ -64,6 +72,8 @@ class Bootstrap implements BootstrapInterface
                 ],
             ]
         );
+
+        $app->user->on(\yii\web\User::EVENT_BEFORE_LOGIN,['common\models\User', 'beforeLogin']);
 
     }
 }

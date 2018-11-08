@@ -1,0 +1,134 @@
+<?php
+
+namespace common\models;
+
+use cnd\core\components\ActiveRecord;
+use cnd\core\interfaces\UserProfile;
+use Yii;
+use yii\helpers\Json;
+
+/**
+ * This is the model class for table "{{%salesman}}".
+ *
+ * @property int $id
+ * @property string $name
+ * @property string $image
+ * @property string $mac_address
+ * @property int $created_at
+ * @property int $updated_at
+ * @property string $userName
+ * @property string $userType
+ * @property string $userImage
+ * @property string $userDisplay
+ *
+ * @property User $user
+ */
+class Salesman extends ActiveRecord implements UserProfile
+{
+    public $imageFactory;
+
+    /**
+     * {@inheritdoc}
+     */
+    public static function tableName()
+    {
+        return '{{%salesman}}';
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function rules()
+    {
+        return array_merge(parent::rules(),[
+            [['name'],'required'],
+            [['name', 'mac_address'], 'string', 'max' => 255],
+            [['id'], 'exist', 'skipOnError' => true, 'targetClass' => User::className(), 'targetAttribute' => ['id' => 'id']],
+        ]);
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function attributeLabels()
+    {
+        return [
+            'id' => 'ID',
+            'name' => 'Name',
+            'image' => 'Image',
+            'mac_address' => 'Mac Address',
+            'created_at' => 'Created At',
+            'updated_at' => 'Updated At',
+        ];
+    }
+
+    /**
+     * @return \yii\db\ActiveQuery
+     */
+    public function getUser()
+    {
+        return $this->hasOne(User::className(), ['id' => 'id']);
+    }
+
+    /**
+     * {@inheritdoc}
+     * @return SalesmanQuery the active query used by this AR class.
+     */
+    public static function find()
+    {
+        return new SalesmanQuery(get_called_class());
+    }
+
+    public function beforeSave($insert) {
+        if(is_array($this->image)){
+            $this->image = Json::encode($this->image);
+        }
+        return parent::beforeSave($insert);
+    }
+
+    public function afterFind() {
+        parent::afterFind();
+        if(is_string($this->image) && Yii::$app->helper->isJson($this->image)){
+            $this->imageFactory = Yii::createObject([
+                'class' => 'cnd\filemanager\components\FileOutput',
+                'data' => $this->image,
+            ]);
+        }else{
+            $this->imageFactory = Yii::createObject([
+                'class' => 'cnd\filemanager\components\FileOutput',
+                'data' => Yii::$app->image->defaultUser,
+            ]);
+        }
+    }
+
+    public function getUserName(){
+        return $this->name;
+    }
+
+    public function getUserType(){
+        return $this->user->type_label;
+    }
+
+    public function getUserImage(){
+        return ($this->imageFactory !== null)?$this->imageFactory->url:'';
+    }
+
+    public function getUserDisplay(){
+        return $this->userName;
+    }
+
+    public function setUserImage($data){
+        $this->image = $data;
+        $this->imageFactory = Yii::createObject([
+            'class' => 'cnd\filemanager\components\FileOutput',
+            'data' => $this->image,
+        ]);
+    }
+
+    public function toArray(array $fields = [], array $expand = [], $recursive = true){
+        $data = parent::toArray($fields,$expand,$recursive);
+        $data['image'] = $this->imageFactory !== null?$this->imageFactory->url:null;
+        unset($data['mac_address']);
+        return $data;
+    }
+}

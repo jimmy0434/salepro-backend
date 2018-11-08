@@ -14,7 +14,7 @@ return [
     'name' => 'Indevco MasterPak Restful Api',
     'basePath' => dirname(__DIR__),
     'controllerNamespace' => 'restful\controllers',
-    'defaultRoute' => 'site/index',
+    //'defaultRoute' => 'site/index',
     'bootstrap' => [
         'log',
         'cnd\admin\modules\api\Bootstrap',
@@ -27,7 +27,7 @@ return [
         'system' => [
             'class' => 'cnd\core\modules\system\Module',
             'userType' => function(){
-                //return [\common\models\User::TYPE_DOCTOR];
+                return [\common\models\User::TYPE_SALESMAN];
             },
         ],
         'api' => [

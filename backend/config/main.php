@@ -20,7 +20,7 @@ return [
         'cnd\admin\Bootstrap',
         'cnd\cms\modules\admin\Bootstrap',
         'cnd\notification\Bootstrap',
-        //'backend\components\Bootstrap',
+        'backend\components\Bootstrap',
     ],
     'modules' => [
         'system' => [

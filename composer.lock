@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "a2f8180faee8a64bb0a2b5a98e3ac083",
+    "content-hash": "5473b08f57a58b100705487a742a1a63",
     "packages": [
         {
             "name": "borales/yii2-phone-input",
@@ -551,7 +551,7 @@
             "source": {
                 "type": "git",
                 "url": "https://cndcompany:Pass*123@bitbucket.org/cndprojects/yii2-cms.git",
-                "reference": "bf21892c99296187d668e8640af612fb2d0fbdee"
+                "reference": "a331861cd0fb3a0ec5480bda93c66142f2138265"
             },
             "require": {
                 "bower-asset/fancybox": "*",
@@ -579,7 +579,7 @@
                 "jawdat",
                 "yii2"
             ],
-            "time": "2018-10-29T07:21:49+00:00"
+            "time": "2018-11-08T11:36:23+00:00"
         },
         {
             "name": "cndprojects/yii2-constantbehavior",
@@ -622,7 +622,7 @@
             "source": {
                 "type": "git",
                 "url": "https://cndcompany:Pass*123@bitbucket.org/cndprojects/yii2-core.git",
-                "reference": "666979ab9c0d30a3d636645144f37cbdfdf732b6"
+                "reference": "98e50d2dfb824af6868e2e3f21aa1b82bcee1374"
             },
             "require": {
                 "bower-asset/js-xlsx": "*",
@@ -653,7 +653,7 @@
                 "jawdat",
                 "yii2"
             ],
-            "time": "2018-11-07T13:09:07+00:00"
+            "time": "2018-11-08T08:21:37+00:00"
         },
         {
             "name": "cndprojects/yii2-filemanager",
@@ -5363,7 +5363,7 @@
     "prefer-stable": true,
     "prefer-lowest": false,
     "platform": {
-        "php": ">=7.1"
+        "php": ">=5.6"
     },
     "platform-dev": []
 }
