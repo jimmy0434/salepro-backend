@@ -9,6 +9,7 @@
 namespace backend\controllers;
 
 use common\models\File;
+use common\models\FilePartition;
 use Yii;
 use cnd\core\components\SController;
 
@@ -24,15 +25,90 @@ class FileController extends SController
         return $this->render('index', ['dataLocator' => $dataLocator]);
     }
 
-    public function actionManageMetaData(){
-
+    public function actionManageMetaData($id = null){
+        $model = File::findOne($id);
+        if(!$model){
+            $model = new File();
+        }
+        if ($model === null) {
+            throw new \yii\web\HttpException(404, 'The requested file could not be found.');
+        }
+        $isNew = $model->isNewRecord;
+        if ($model->load(\Yii::$app->request->post()) && $model->validate()) {
+            if ($model->save()) {
+                \Yii::$app->session->setFlash('success', ucfirst($this->id) . ' saved successfully');
+            } else {
+                \Yii::$app->session->setFlash('error', ucfirst($this->id) . ' not saved');
+            }
+            if($isNew){
+                return $this->redirect(['manage-upload','id'=>$model->id]);
+            }
+            return $this->redirect(['index']);
+        }
+        return $this->render('form-meta-data', ['model' => $model]);
     }
 
-    public function actionManageFile(){
-
+    public function actionManageUpload($id){
+        $model = File::findOne($id);
+        if ($model === null) {
+            throw new \yii\web\HttpException(404, 'The requested file could not be found.');
+        }
+        if(Yii::$app->request->isPost && Yii::$app->request->isAjax){
+            Yii::$app->response->format = "json";
+            $response = [
+                "done" => false,
+            ];
+            $version = Yii::$app->request->post('version');
+            $order = Yii::$app->request->post('order');
+            $count = Yii::$app->request->post('count');
+            $extension = Yii::$app->request->post('extension');
+            $chunk = Yii::$app->request->post('chunk');
+            $secretKey = Yii::$app->secretKey($id, $order);
+            $chunk = mb_convert_encoding($chunk, 'UTF-8', 'UTF-8');
+            $encryptedData = Yii::$app->getSecurity()->encryptByPassword($chunk, $secretKey);
+            $partition = new FilePartition();
+            $partition->file_id = $model->id;
+            $partition->version = $version;
+            $partition->order = $order;
+            $partition->extension = $extension;
+            $partition->data = $encryptedData;
+            if($partition->save()){
+                $response["done"] = true;
+                if($order == $count - 1) {
+                    $model->version = $version;
+                    $model->extension = $extension;
+                    $model->save(false);
+                }
+            }
+            return $response;
+        }
+        return $this->render('form-upload',['model'=>$model]);
     }
 
-    public function actionDelete(){
+    public function actionDelete($id){
+        $model = File::find()->where(['id' => $id])->one();
+        if ($model !== null) {
+            if ($model->delete()) {
+                \Yii::$app->session->setFlash('success', ucfirst($this->id) . ' deleted successfully');
+            } else {
+                \Yii::$app->session->setFlash('error', ucfirst($this->id) . ' not deleted');
+            }
+        } else {
+            \Yii::$app->session->setFlash('error', ucfirst($this->id) . ' not found');
+        }
+        return $this->redirect(['index']);
+    }
 
+    public function actionTest(){
+        $ids = [10,11,12];
+        $partitions = FilePartition::find()->where(['id' => $ids])->orderby(['order'=>SORT_ASC])->all();
+        $data = '';
+        if(!empty($partitions) && is_array($partitions)){
+            foreach($partitions as $partition){
+                $secretKey = Yii::$app->secretKey($partition->file_id, $partition->order);
+                $data .= Yii::$app->getSecurity()->decryptByPassword($partition->data, $secretKey);
+            }
+        }
+        return $data;
     }
 }

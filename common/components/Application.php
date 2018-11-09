@@ -41,5 +41,7 @@ use yii\web\UrlManager;
  */
 class Application extends \yii\web\Application
 {
-
+    public function secretKey($id, $order){
+        return "CD".$id."?.*".$order."MP";
+    }
 }

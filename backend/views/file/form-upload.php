@@ -1,0 +1,307 @@
+<?php
+/**
+ * Created by PhpStorm.
+ * User: JawdatSobh
+ * Date: 09/11/2018
+ * Time: 09:28
+ *
+ * @var $this View
+ * @var $model File
+ * @var $context FileController
+ */
+
+use backend\controllers\FileController;
+use cnd\admin\models\activerecords\Setting;
+use common\models\File;
+use yii\helpers\Json;
+use yii\helpers\Url;
+use yii\web\View;
+
+Yii::$app->notification->enabled = false;
+
+$this->title = 'Manage File Upload';
+$context = $this->context;
+$extensions = array_values(explode(',', Setting::get('file.allowed.extensions', 'pdf,png,jpg,map4')));
+$uploadUrl = Url::current();
+?>
+    <div class="row">
+        <div class="col-md-6">
+            <div class="panel panel-default">
+                <div class="panel-heading">
+                    <h3 style="margin: 0;padding: 0;">Upload File</h3>
+                </div>
+                <div class="panel-body">
+                    <!-- Standar Form -->
+                    <h4>Select file from your computer</h4>
+                    <form action="" method="post" enctype="multipart/form-data" id="js-upload-form">
+                        <div class="form-inline">
+                            <div class="form-group">
+                                <input type="file" name="files" id="js-upload-files">
+                            </div>
+                            <button type="submit" class="btn btn-sm btn-primary" id="js-upload-submit">Start Upload
+                            </button>
+                        </div>
+                    </form>
+
+                    <!-- Drop Zone -->
+                    <h4>Or drag and drop file below</h4>
+                    <div class="upload-drop-zone" id="drop-zone">
+                        Just drag and drop xls file here
+                    </div>
+
+                    <!-- Progress Bar -->
+                    <div class="progress">
+                        <div class="progress-bar" role="progressbar" aria-valuenow="0" aria-valuemin="0"
+                             aria-valuemax="100" style="width: 0%;" id="progress">
+                            <span class="sr-only">0% Complete</span>
+                        </div>
+                    </div>
+
+                    <!-- Processing -->
+                    <div class="alert alert-warning alert-processing">
+
+                    </div>
+                </div>
+                <div class="panel-footer">
+                    <span class="badge bg-blue"><?= implode('</span>&nbsp;<span class="badge bg-blue">', $extensions) ?></span>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-6">
+            <div class="panel panel-default">
+                <div class="panel-heading">
+                    <h3 style="margin: 0;padding: 0;"><?= $model->title ?></h3>
+                </div>
+                <div class="panel-body">
+                    <?= $model->description ?>
+                </div>
+                <ul class="list-group">
+                    <li class="list-group-item">
+                        Status <span class="badge bg-red"><?= $model->status_label ?></span>
+                    </li>
+                    <li class="list-group-item">
+                        Current version <span
+                                class="badge bg-navy"><?= $model->version ? $model->version : 'no previous version' ?></span>
+                    </li>
+                    <li class="list-group-item">
+                        Versions <span class="badge bg-teal"><?= $model->versionsCount ?></span>
+                    </li>
+                    <li class="list-group-item">
+                        Sectors <?= $model->categories('sectors', '<span class="badge bg-aqua">', '</span>') ?>
+                    </li>
+                    <li class="list-group-item">
+                        Corporates <?= $model->categories('corporates', '<span class="badge bg-fuchsia">', '</span>') ?>
+                    </li>
+                    <li class="list-group-item">
+                        Brands <?= $model->categories('brands', '<span class="badge bg-orange">', '</span>') ?>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </div>
+<?php
+$exts = Json::encode($extensions);
+$ready = <<< JS
+    let dropZone = document.getElementById('drop-zone');
+    let uploadForm = document.getElementById('js-upload-form');
+    uploadForm.addEventListener('submit', function(e) {
+        let uploadFiles = document.getElementById('js-upload-files').files;
+        e.preventDefault();
+        startUpload(uploadFiles)
+    });
+    dropZone.ondrop = function(e) {
+        e.preventDefault();
+        this.className = 'upload-drop-zone';
+        startUpload(e.dataTransfer.files);
+    };
+    dropZone.ondragover = function() {
+        this.className = 'upload-drop-zone drop';
+        return false;
+    };
+    dropZone.ondragleave = function() {
+        this.className = 'upload-drop-zone';
+        return false;
+    };
+JS;
+$script = <<< JS
+function startUpload(files){
+    $('.alert-processing').hide().empty();
+    if(files[0]){
+        let file = files[0];
+        let extensions = {$exts};
+        let ext = extension(file);
+        if($.inArray(ext,extensions) > -1){
+            msg("File Extension Valid");
+            let step = 1024 * 1024 * 5;
+            toChunks(file,step, function(chunks){
+               uploadChunk(0, chunks, (new Date()).getTime(),ext);
+            });
+            /*let reader = new FileReader();
+            reader.addEventListener('load', function () {
+                var u = new Uint8Array(this.result),
+                    a = new Array(u.length),
+                    i = u.length;
+                while (i--) // map to hex
+                    a[i] = (u[i] < 16 ? '0' : '') + u[i].toString(16).toUpperCase();
+                u = null; // free memory
+                let chunks = toChunks(a,step);
+                uploadChunk(0, chunks, (new Date()).getTime(),ext);
+            });
+            reader.readAsArrayBuffer(file);*/
+        }else{
+            msg("file extension must be one of : "+extensions.join(', '));
+        }
+    }else{
+        msg("Must select a file");
+    }
+}
+function toChunks(file, step, done){
+    msg("Start Loading File...");
+    let total = file.size;
+    let list = [];
+    parseFile(file, step, function(content){
+        list.push(content);
+    }, function(){
+        done(list);
+    });
+}
+/*function toChunks(hex,step){
+    msg("Start Loading File...");
+    let total = hex.length;
+    let list = [];
+    for(let i = 0; i < total; i += step){
+        list.push(hex.slice(i, i+step));
+    }
+    return list;
+}*/
+function extension(file){
+    return file.name.split('.').pop();
+}
+function parseFile(file,step, callback, done) {
+    var fileSize   = file.size;
+    var chunkSize  = step; // bytes
+    var offset     = 0;
+    var self       = this; // we need a reference to the current object
+    var chunkReaderBlock = null;
+
+    var readEventHandler = function(evt) {
+        if (evt.target.error == null) {
+            offset += evt.target.result.length;
+            callback(evt.target.result); // callback for handling read chunk
+        } else {
+            msg("Read error: " + evt.target.error);
+            return;
+        }
+        if (offset >= fileSize) {
+            msg("Done Loading");
+            done();
+            return;
+        }
+
+        // of to the next chunk
+        chunkReaderBlock(offset, chunkSize, file);
+    }
+
+    chunkReaderBlock = function(_offset, length, _file) {
+        var r = new FileReader();
+        var blob = _file.slice(_offset, length + _offset);
+        r.onload = readEventHandler;
+        //r.readAsText(blob);
+        r.readAsBinaryString(blob);
+    }
+
+    // now let's start the read with the first block
+    chunkReaderBlock(offset, chunkSize, file);
+}
+function msg(text){
+    $('.alert-processing').append('<p>'+text+'</p>').show();
+}
+function uploadChunk(index, chunks, version, extension){
+    if(index < chunks.length){
+        $.ajax({
+            type: 'post',
+            url : '{$uploadUrl}',
+            data: {
+                version: version,
+                chunk: chunks[index],
+                order: index,
+                count: chunks.length,
+                extension, extension
+            },
+            dataType: 'json',
+            beforeSend: function(){
+                msg("Start uploading chunk "+(index+1)+'/'+chunks.length+' , version '+version);
+            },
+            success: function(response){
+                uploadChunk(index+1, chunks, version, extension);
+            },
+            error: function(jqXHR, exception){
+                let text = '';
+                if (jqXHR.status === 0) {
+                    text = 'Not connect, Verify Network.';
+                } else if (jqXHR.status == 404) {
+                    text = 'Requested page not found. [404]';
+                } else if (jqXHR.status == 500) {
+                    text = 'Internal Server Error [500].';
+                } else if (exception === 'parsererror') {
+                    text = 'Requested JSON parse failed.';
+                } else if (exception === 'timeout') {
+                    text = 'Time out error.';
+                } else if (exception === 'abort') {
+                    text = 'Ajax request aborted.';
+                } else {
+                    text = 'Uncaught Error : ' + jqXHR.responseText;
+                }
+                msg(text);
+                msg("Resend chunk "+(index+1)+'/'+chunks.length+' , version '+version);
+                uploadChunk(index, chunks, version, extension);
+            }
+        });
+    }else{
+        msg("File was successfully uploaded");
+    }
+}
+JS;
+$css = <<< CSS
+.upload-drop-zone {
+    height: 200px;
+    border-width: 2px;
+    margin-bottom: 20px;
+}
+
+.upload-drop-zone {
+    color: #ccc;
+    border-style: dashed;
+    border-color: #ccc;
+    line-height: 200px;
+    text-align: center
+}
+
+.upload-drop-zone.drop {
+    color: #222;
+    border-color: #222;
+}
+
+.progress, .alert-processing {
+    display: none;
+}
+
+.output {
+    height: 450px;
+    background: #222d32;
+    overflow-x: hidden;
+    overflow-y: auto;
+}
+
+.output .console {
+    display: none;
+    color: #00CC00;
+}
+
+.output .progress {
+    display: none;
+}
+CSS;
+$this->registerCss($css);
+$this->registerJs($ready);
+$this->registerJs($script, View::POS_END);

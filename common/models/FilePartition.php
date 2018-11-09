@@ -12,6 +12,7 @@ use Yii;
  * @property int $file_id
  * @property int $version
  * @property int $order
+ * @property string extension
  * @property string $data
  * @property int $created_at
  * @property int $updated_at
@@ -33,10 +34,10 @@ class FilePartition extends ActiveRecord
      */
     public function rules()
     {
-        return [
+        return array_merge(parent::rules(),[
             [['data'], 'string'],
             [['file_id'], 'exist', 'skipOnError' => true, 'targetClass' => File::className(), 'targetAttribute' => ['file_id' => 'id']],
-        ];
+        ]);
     }
 
     /**

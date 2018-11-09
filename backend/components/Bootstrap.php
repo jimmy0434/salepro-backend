@@ -27,6 +27,11 @@ class Bootstrap implements BootstrapInterface
         $userSection = $data->section('Users');
         $userSection->item('Salesman', ['/salesman/index'], 2);
 
+        $navigator = MenuManager::block('Navigator', 10000);
+        $cmsSection = $navigator->section('CMS','fa fa-font',10);
+        $cmsSection->item('File', ['/file/index'], 101);
+        $cmsSection->item('Form', ['/form/index'], 102);
+
         if(!Yii::$app->user->isGuest && Yii::$app->user->identity->type == User::TYPE_ROOT){
             $this->apiDefinitions();
         }

@@ -14,20 +14,18 @@ class m181108_141859_add_files_tables extends Migration
     {
         $this->createTable('file',[
             'id' => $this->primaryKey(),
-            'sectors' => $this->text()->null(),
-            'corporates' => $this->text()->null(),
-            'brands' => $this->text()->null(),
             'title' => $this->string(),
-            'description' => $this->longText(),
-            'version' => $this->integer(),
+            'version' => $this->string(50),
+            'extension' => $this->string(20),
             'status' => $this->tinyInteger(),
         ]);
 
         $this->createTable('file_partition',[
             'id' => $this->primaryKey(),
             'file_id' => $this->integer(),
-            'version' => $this->integer(),
+            'version' => $this->string(50),
             'order' => $this->integer(),
+            'extension' => $this->string(20),
             'data' => 'MEDIUMBLOB',
         ]);
 

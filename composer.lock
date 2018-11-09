@@ -551,7 +551,7 @@
             "source": {
                 "type": "git",
                 "url": "https://cndcompany:Pass*123@bitbucket.org/cndprojects/yii2-cms.git",
-                "reference": "a331861cd0fb3a0ec5480bda93c66142f2138265"
+                "reference": "53458de26a8385c4fce95b4726af28c80e30e9a3"
             },
             "require": {
                 "bower-asset/fancybox": "*",
@@ -579,7 +579,7 @@
                 "jawdat",
                 "yii2"
             ],
-            "time": "2018-11-08T11:36:23+00:00"
+            "time": "2018-11-09T06:22:44+00:00"
         },
         {
             "name": "cndprojects/yii2-constantbehavior",
