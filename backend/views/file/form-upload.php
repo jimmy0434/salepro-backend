@@ -21,7 +21,7 @@ Yii::$app->notification->enabled = false;
 
 $this->title = 'Manage File Upload';
 $context = $this->context;
-$extensions = array_values(explode(',', Setting::get('file.allowed.extensions', 'pdf,png,jpg,map4')));
+$extensions = array_values(explode(',', Setting::get('file.allowed.extensions', 'pdf,png,jpg,mp4')));
 $uploadUrl = Url::current();
 ?>
     <div class="row">
@@ -72,9 +72,6 @@ $uploadUrl = Url::current();
                 <div class="panel-heading">
                     <h3 style="margin: 0;padding: 0;"><?= $model->title ?></h3>
                 </div>
-                <div class="panel-body">
-                    <?= $model->description ?>
-                </div>
                 <ul class="list-group">
                     <li class="list-group-item">
                         Status <span class="badge bg-red"><?= $model->status_label ?></span>
@@ -85,15 +82,6 @@ $uploadUrl = Url::current();
                     </li>
                     <li class="list-group-item">
                         Versions <span class="badge bg-teal"><?= $model->versionsCount ?></span>
-                    </li>
-                    <li class="list-group-item">
-                        Sectors <?= $model->categories('sectors', '<span class="badge bg-aqua">', '</span>') ?>
-                    </li>
-                    <li class="list-group-item">
-                        Corporates <?= $model->categories('corporates', '<span class="badge bg-fuchsia">', '</span>') ?>
-                    </li>
-                    <li class="list-group-item">
-                        Brands <?= $model->categories('brands', '<span class="badge bg-orange">', '</span>') ?>
                     </li>
                 </ul>
             </div>
@@ -183,15 +171,19 @@ function parseFile(file,step, callback, done) {
     var offset     = 0;
     var self       = this; // we need a reference to the current object
     var chunkReaderBlock = null;
+    
+    console.log(chunkSize);
 
     var readEventHandler = function(evt) {
         if (evt.target.error == null) {
-            offset += evt.target.result.length;
+            //offset += evt.target.result.length;
+            offset += chunkSize;
             callback(evt.target.result); // callback for handling read chunk
         } else {
             msg("Read error: " + evt.target.error);
             return;
         }
+        console.log(offset+' >= '+fileSize);
         if (offset >= fileSize) {
             msg("Done Loading");
             done();
@@ -205,9 +197,11 @@ function parseFile(file,step, callback, done) {
     chunkReaderBlock = function(_offset, length, _file) {
         var r = new FileReader();
         var blob = _file.slice(_offset, length + _offset);
+        console.log(_offset,' , ', length + _offset,' # Blob length : ',blob);
         r.onload = readEventHandler;
         //r.readAsText(blob);
-        r.readAsBinaryString(blob);
+        //r.readAsBinaryString(blob);
+        r.readAsDataURL(blob);
     }
 
     // now let's start the read with the first block

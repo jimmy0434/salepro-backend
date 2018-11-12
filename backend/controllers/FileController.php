@@ -65,7 +65,8 @@ class FileController extends SController
             $chunk = Yii::$app->request->post('chunk');
             $secretKey = Yii::$app->secretKey($id, $order);
             $chunk = mb_convert_encoding($chunk, 'UTF-8', 'UTF-8');
-            $encryptedData = Yii::$app->getSecurity()->encryptByPassword($chunk, $secretKey);
+            $encryptedData = explode('base64,',$chunk);
+            $encryptedData = Yii::$app->getSecurity()->encryptByPassword(base64_decode($encryptedData[1]), $secretKey);
             $partition = new FilePartition();
             $partition->file_id = $model->id;
             $partition->version = $version;
@@ -99,16 +100,35 @@ class FileController extends SController
         return $this->redirect(['index']);
     }
 
-    public function actionTest(){
-        $ids = [10,11,12];
-        $partitions = FilePartition::find()->where(['id' => $ids])->orderby(['order'=>SORT_ASC])->all();
-        $data = '';
-        if(!empty($partitions) && is_array($partitions)){
-            foreach($partitions as $partition){
-                $secretKey = Yii::$app->secretKey($partition->file_id, $partition->order);
-                $data .= Yii::$app->getSecurity()->decryptByPassword($partition->data, $secretKey);
+    public function actionDownload($id){
+        $model = File::find()->where(['id' => $id])->one();
+        if ($model !== null) {
+            $partitions = FilePartition::find()->where(['file_id' => $model->id,'version'=>$model->version])->orderby(['order' => SORT_ASC])->all();
+            $data = '';
+            $extension = null;
+            if (!empty($partitions) && is_array($partitions)) {
+                foreach ($partitions as $partition) {
+                    $extension = $partition->extension;
+                    $secretKey = Yii::$app->secretKey($partition->file_id, $partition->order);
+                    $data .= Yii::$app->getSecurity()->decryptByPassword($partition->data, $secretKey);
+                }
+            }
+            if($data) {
+                header("Content-type:application/pdf");
+                // It will be called downloaded.pdf
+                header("Content-Disposition:attachment;filename=" . $this->createSlug($model->title). '-' . $model->version . "." . $extension);
+                echo $data;
+                exit(0);
             }
         }
-        return $data;
+        \Yii::$app->session->setFlash('error', ucfirst($this->id) . ' not found');
+        return $this->redirect(['index']);
+    }
+
+    public function createSlug($str, $delimiter = '-'){
+
+        $slug = strtolower(trim(preg_replace('/[\s-]+/', $delimiter, preg_replace('/[^A-Za-z0-9-]+/', $delimiter, preg_replace('/[&]/', 'and', preg_replace('/[\']/', '', iconv('UTF-8', 'ASCII//TRANSLIT', $str))))), $delimiter));
+        return $slug;
+
     }
 }

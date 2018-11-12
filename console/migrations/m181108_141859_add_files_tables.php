@@ -18,6 +18,7 @@ class m181108_141859_add_files_tables extends Migration
             'version' => $this->string(50),
             'extension' => $this->string(20),
             'status' => $this->tinyInteger(),
+            'content_id' => $this->integer(),
         ]);
 
         $this->createTable('file_partition',[
@@ -31,6 +32,7 @@ class m181108_141859_add_files_tables extends Migration
 
         $this->addRelations(function(){
             $this->createIndexForeignKey('file_partition.file_id', 'file.id');
+            $this->createIndexForeignKey('file.content_id','cms_content.id');
         });
     }
 

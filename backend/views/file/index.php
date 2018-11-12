@@ -86,6 +86,19 @@ $dv = new DataView([
             return null;
         },
         function ($row){
+            if ($row->version && Yii::$app->permission->can('/file/download')) {
+                return Html::a('<i class="fa fa-download" aria-hidden="true"></i>', Url::to(['download', 'id' => $row->id]), ['class' => 'btn bg-yellow','target'=>'_blank']);
+            }
+            return null;
+        },
+        function ($row) {
+            if (Yii::$app->permission->can('/cms/content/manage')) {
+                $c = Yii::$app->cms->getId('cms.category.defaultFileCategory');
+                return Html::a('<i class="fa fa-file-text" aria-hidden="true"></i>', Url::to(['/cms/content/manage','id' => $row->content_id,'c'=>$c,'s'=>'file-'.$row->id]), ['class' => 'btn bg-purple','target'=>'_blank']);
+            }
+            return null;
+        },
+        function ($row){
             if (Yii::$app->permission->can('/file/manage-meta-data')) {
                 return Html::a('<i class="fa fa-pencil" aria-hidden="true"></i>', Url::to(['manage-meta-data', 'id' => $row->id]), ['class' => 'btn btn-info']);
             }
