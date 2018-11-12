@@ -1,4 +1,6 @@
 <?php
+
+use common\models\File;
 use yii\helpers\Html;
 use yii\web\Request;
 
@@ -62,6 +64,21 @@ return [
             'introsTemplate' => '@common/templates/intros.php',
             'introTemplate' => '@common/templates/intro.php',
             'introCol' => 6,
+            'afterContentSave' => function($models,$isNewRecord){
+                $model = $models['original'];
+                $section = $model->section;
+                if ($section) {
+                    $section = explode('-', $section);
+                    if ($section[0] == 'file' && isset($section[1])) {
+                        $id = $section[1];
+                        $file = File::findOne($id);
+                        if ($file !== null) {
+                            $file->content_id = $model->id;
+                            $file->save(false);
+                        }
+                    }
+                }
+            },
         ],
         'setting' => [
             'class' => 'cnd\core\components\Setting',

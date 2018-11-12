@@ -8,7 +8,6 @@
 
 namespace restful\controllers;
 
-
 use cnd\core\api\SController;
 
 class SalesmanController extends SController

@@ -46,6 +46,19 @@ class Bootstrap implements BootstrapInterface
         ApiDocFactory::appendToParams('Edit Profile',[
             ['salesman[name]','string',false,'Name of the salesman'],
         ]);
+        ApiDocFactory::register([
+            'name' => 'Files Contents',
+            'method' => 'GET',
+            'url' => '/files/contents',
+            'description' => 'Get Contents List',
+            'extraParams' => ['page'=>1,'pageSize'=>25,'category'=>'OPTIONAL','keyword'=>'OPTIONAL'],
+            'params' => [
+                ['page','integer',false,'The page number. default is 1'],
+                ['pageSize','integer',false,'The page Size. default is 25'],
+                ['category','integer or string',false,'Category of contents, for static input use ex. cms.category.sectors'],
+                ['keyword','string',false,'Search contents'],
+            ],
+        ]);
     }
 
     public function dashboard(){
