@@ -24,6 +24,7 @@ class Bootstrap implements BootstrapInterface
         $baseUrl = str_replace('/restful/web', '/cnd-restful', (new Request)->getBaseUrl());
 
         UrlRule::register('get','/files/contents','/file/contents');
+        UrlRule::register('post','/files/download','/file/download');
 
         Yii::$app->setComponents(
             [

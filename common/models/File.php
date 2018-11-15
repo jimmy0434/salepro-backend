@@ -25,6 +25,7 @@ use yii\helpers\ArrayHelper;
  * @property array $status_values
  *
  * @property FilePartition[] $partitions
+ * @property int $partitionsCount
  * @property int $versionsCount
  * @property Content $content
  */
@@ -74,7 +75,12 @@ class File extends ActiveRecord
      */
     public function getPartitions()
     {
-        return $this->hasMany(FilePartition::className(), ['file_id' => 'id']);
+        return $this->hasMany(FilePartition::className(), ['file_id' => 'id'])->from(['filePartition'=>FilePartition::tableName()])->where(['filePartition.version'=>$this->version]);
+    }
+
+    public function getPartitionsCount()
+    {
+        return $this->getPartitions()->count();
     }
 
     /**
@@ -109,5 +115,12 @@ class File extends ActiveRecord
     public function afterFind()
     {
         parent::afterFind();
+    }
+
+    public function toArray(array $fields = [], array $expand = [], $recursive = true)
+    {
+        $data = parent::toArray($fields,$expand,$recursive);
+        $data['partitions'] = intval($this->partitionsCount);
+        return $data;
     }
 }

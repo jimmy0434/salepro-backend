@@ -51,12 +51,24 @@ class Bootstrap implements BootstrapInterface
             'method' => 'GET',
             'url' => '/files/contents',
             'description' => 'Get Contents List',
-            'extraParams' => ['page'=>1,'pageSize'=>25,'category'=>'OPTIONAL','keyword'=>'OPTIONAL'],
+            'extraParams' => ['page'=>1,'pageSize'=>25,'category'=>'OPTIONAL','keyword'=>'OPTIONAL','_accessToken'=>'ACCESS_TOKEN'],
             'params' => [
                 ['page','integer',false,'The page number. default is 1'],
                 ['pageSize','integer',false,'The page Size. default is 25'],
                 ['category','integer or string',false,'Category of contents, for static input use ex. cms.category.sectors'],
                 ['keyword','string',false,'Search contents'],
+            ],
+        ]);
+        ApiDocFactory::register([
+            'name' => 'Download File Partition',
+            'method' => 'POST',
+            'url' => '/files/download',
+            'description' => 'Download File Partition',
+            'extraParams' => ['_accessToken'=>'ACCESS_TOKEN'],
+            'params' => [
+                ['id','integer',true,'File ID'],
+                ['version','integer',true,'File Version'],
+                ['order','integer',true,'File Partition Order, start from 0'],
             ],
         ]);
     }
