@@ -1,6 +1,6 @@
 <?php
 use \yii\web\Request;
-$baseUrl = str_replace('/restful/web', '/cnd-restful', (new Request)->getBaseUrl());
+$baseUrl = str_replace('/restful/web', '/api', (new Request)->getBaseUrl());
 
 $params = array_merge(
     require __DIR__ . '/../../common/config/params.php',

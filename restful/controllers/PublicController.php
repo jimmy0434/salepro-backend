@@ -13,6 +13,10 @@ use cnd\core\api\Controller;
 
 class PublicController extends Controller
 {
+    public function actionTest(){
+        return ['done'=>true];
+    }
+
     public function actionLogin()
     {
         $keycloak = Yii::$app->keycloak;
