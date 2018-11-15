@@ -47,8 +47,12 @@ class User extends BaseUser
         /**
          * @var $user UserEvent
          */
-        if($user->identity->type == static::TYPE_SALESMAN){
+        if($user->identity->type == static::TYPE_SALESMAN && Yii::$app->requestedRoute == 'api/guest/login'){
             $macAddress = Yii::$app->request->post('macAddress');
+            if($macAddress && $user->identity->salesman && !$user->identity->salesman->mac_address){
+                $user->identity->salesman->mac_address = $macAddress;
+                $user->identity->salesman->save(false);
+            }
             if(!$user->identity->salesman || !$macAddress || !$user->identity->salesman->mac_address || $macAddress != $user->identity->salesman->mac_address){
                 $user->isValid = false;
                 $user->sender->identity = null;
