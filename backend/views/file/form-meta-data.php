@@ -11,7 +11,6 @@
  */
 
 use backend\controllers\FileController;
-use cnd\cms\models\activerecords\Category;
 use cnd\form\ActiveForm;
 use common\models\File;
 use yii\web\View;
@@ -21,11 +20,6 @@ $isNew = $model->isNewRecord;
 
 $this->title = ($isNew?'Add New File':'Update File').' Meta Data';
 $context = $this->context;
-
-$categories = Category::treeList();
-$sectorRootId = Yii::$app->cms->getId("cms.category.sector.root");
-$corporateRootId = Yii::$app->cms->getId("cms.category.corporate.root");
-$brandRootId = Yii::$app->cms->getId("cms.category.brand.root");
 
 $form = ActiveForm::begin(['id' => Yii::$app->controller->id.'-form']);
 ?>
@@ -47,8 +41,4 @@ $form = ActiveForm::begin(['id' => Yii::$app->controller->id.'-form']);
 
 <?php
 ActiveForm::end();
-$css = <<< CSS
-#file-sectors label,#file-corporates label,#file-brands label{display:block !important;}
-CSS;
-$this->registerCss($css);
 

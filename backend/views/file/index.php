@@ -81,32 +81,32 @@ $dv = new DataView([
     'rowLinks' => [
         function ($row){
             if (Yii::$app->permission->can('/file/manage-upload')) {
-                return Html::a('<i class="fa fa-upload" aria-hidden="true"></i>', Url::to(['manage-upload', 'id' => $row->id]), ['class' => 'btn bg-orange']);
+                return Html::a('Upload', Url::to(['manage-upload', 'id' => $row->id]), ['class' => 'btn bg-orange']);
             }
             return null;
         },
         function ($row){
             if ($row->version && Yii::$app->permission->can('/file/download')) {
-                return Html::a('<i class="fa fa-download" aria-hidden="true"></i>', Url::to(['download', 'id' => $row->id]), ['class' => 'btn bg-yellow','target'=>'_blank']);
+                return Html::a('Download', Url::to(['download', 'id' => $row->id]), ['class' => 'btn bg-yellow','target'=>'_blank']);
             }
             return null;
         },
         function ($row) {
             if (Yii::$app->permission->can('/cms/content/manage')) {
                 $c = Yii::$app->cms->getId('cms.category.defaultFileCategory');
-                return Html::a('<i class="fa fa-file-text" aria-hidden="true"></i>', Url::to(['/cms/content/manage','id' => $row->content_id,'c'=>$c,'s'=>'file-'.$row->id]), ['class' => 'btn bg-purple','target'=>'_blank']);
+                return Html::a('Content', Url::to(['/cms/content/manage','id' => $row->content_id,'c'=>$c,'s'=>'file-'.$row->id]), ['class' => 'btn bg-purple','target'=>'_blank']);
             }
             return null;
         },
         function ($row){
             if (Yii::$app->permission->can('/file/manage-meta-data')) {
-                return Html::a('<i class="fa fa-pencil" aria-hidden="true"></i>', Url::to(['manage-meta-data', 'id' => $row->id]), ['class' => 'btn btn-info']);
+                return Html::a('Edit', Url::to(['manage-meta-data', 'id' => $row->id]), ['class' => 'btn btn-info']);
             }
             return null;
         },
         function ($row){
             if (Yii::$app->permission->can('/file/delete')) {
-                return Html::a('<i class="fa fa-trash" aria-hidden="true"></i>', Url::to(['delete', 'id' => $row->id]), ['class' => 'btn btn-danger', 'data-confirm' => 'Are You Sure?']);
+                return Html::a('Delete', Url::to(['delete', 'id' => $row->id]), ['class' => 'btn btn-danger', 'data-confirm' => 'Are You Sure?']);
             }
             return null;
         },

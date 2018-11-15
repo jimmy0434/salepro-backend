@@ -49,7 +49,7 @@ class Bootstrap implements BootstrapInterface
         ApiDocFactory::register([
             'name' => 'Files Contents',
             'method' => 'GET',
-            'url' => '/files/contents',
+            'url' => '/contents',
             'description' => 'Get Contents List',
             'extraParams' => ['page'=>1,'pageSize'=>25,'category'=>'OPTIONAL','keyword'=>'OPTIONAL','_accessToken'=>'ACCESS_TOKEN'],
             'params' => [
