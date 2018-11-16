@@ -1,4 +1,7 @@
+/*jshint esversion: 6 */
 function formBuilder(appId, options) {
+
+    'use strict';
 
     const defaultOptions = {
         form: null
@@ -7,33 +10,28 @@ function formBuilder(appId, options) {
     options = $.extend({}, defaultOptions, options || {});
 
     const TYPES = Object.freeze({
-        HIDDEN: Symbol('hidden'),
         TEXT: Symbol('text'),
         TEXT_AREA: Symbol('textarea'),
         DROP_DOWN_LIST: Symbol('dropdownlist'),
         CHECKBOX: Symbol('checkbox'),
         RADIO: Symbol('radio'),
-        RADIO_LIST: Symbol('radiolist'),
         SUB_FORM: Symbol('subform')
     });
 
-    const SEPARATOR = "separator";
+    const SEPARATOR = 'separator';
 
     let FormItemComponent = {
         // template ID
         template: '#form-item',
-        props: ["structure"],
+        props: ['structure'],
         data() {
-            console.log(this.structure);
             return {
                 list: {
                     name: this.structure.name,
+                    isRoot: this.structure.isRoot,
                     fields: []
                 }
             };
-        },
-        created(){
-            console.log(this.name);
         },
         computed: {
             types() {
@@ -41,6 +39,12 @@ function formBuilder(appId, options) {
             },
             separator() {
                 return SEPARATOR;
+            },
+            self() {
+                return this;
+            },
+            fields(){
+                return this.list.fields;
             }
         },
         filters: {
@@ -52,6 +56,13 @@ function formBuilder(appId, options) {
             addField(name) {
                 if (name === SEPARATOR) {
                     this.list.fields.push(name);
+                } else if (name === TYPES.SUB_FORM) {
+                    this.list.fields.push({
+                        type: TYPES.SUB_FORM,
+                        isRoot: false,
+                        name: null,
+                        fields: []
+                    });
                 } else {
                     let data = {
                         name: null,
@@ -64,28 +75,66 @@ function formBuilder(appId, options) {
                         data.required = false;
                         data.validation = null;
                     }
-                    if (name === TYPES.DROP_DOWN_LIST) {
-                        data.options = {};
-                        data.required = false;
-                    }
-                    if (name === TYPES.RADIO_LIST) {
-                        data.options = {};
+                    if (name === TYPES.DROP_DOWN_LIST || name === TYPES.RADIO) {
+                        data.options = [
+                            {
+                                value: null,
+                                label: null
+                            }
+                        ];
                         data.required = false;
                     }
                     this.list.fields.push(data);
+                    this.openProperties(data, this.list.fields.length - 1);
                 }
+            },
+            openProperties(item, index) {
+                app.item = item;
+                app.itemIndex = index;
+                app.itemContext = this;
             }
         }
     };
 
-    new Vue({
+    Vue.component('form-item', FormItemComponent);
+    Vue.component('sub-form-item', FormItemComponent);
+
+    let app = new Vue({
         el: appId,
-        components: {
-            'form-item': FormItemComponent
+        data() {
+            return {
+                item: null,
+                itemIndex: null,
+                itemContext: null
+            };
+        },
+        watch: {
+            item(value, oldValue) {
+                if (value) {
+                    this.itemContext.list.fields[this.itemIndex] = value;
+                }
+            }
         },
         computed: {
-            options(){
+            options() {
                 return options;
+            },
+            types() {
+                return TYPES;
+            },
+            separator() {
+                return SEPARATOR;
+            }
+        },
+        methods: {
+            addOption() {
+                this.item.options.push({
+                    value: null,
+                    label: null
+                });
+            },
+            deleteOption(index) {
+                this.item.options.splice(index, 1);
             }
         }
     });
