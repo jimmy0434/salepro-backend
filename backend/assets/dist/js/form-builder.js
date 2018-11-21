@@ -29,8 +29,10 @@ function formBuilder(appId, options) {
                 list: {
                     name: this.structure.name,
                     isRoot: this.structure.isRoot,
-                    fields: []
-                }
+                    fields: this.structure.fields
+                },
+                properties: [],
+                tmpProperties: []
             };
         },
         computed: {
@@ -43,13 +45,18 @@ function formBuilder(appId, options) {
             self() {
                 return this;
             },
-            fields(){
+            fields() {
                 return this.list.fields;
             }
         },
         filters: {
             typeName(value) {
                 return value.toLowerCase().replace(/_/g, ' ');
+            }
+        },
+        watch: {
+            list(value, oldValue) {
+                this.$emit("fieldsUpdated", value);
             }
         },
         methods: {
@@ -65,6 +72,7 @@ function formBuilder(appId, options) {
                     });
                 } else {
                     let data = {
+                        id: (new Date()).getTime(),
                         name: null,
                         label: null,
                         note: null,
@@ -89,10 +97,41 @@ function formBuilder(appId, options) {
                 }
             },
             openProperties(item, index) {
-                app.item = item;
-                app.itemIndex = index;
-                app.itemContext = this;
-            }
+                if(this.properties[index] === undefined){
+                    this.properties[index] = true;
+                }
+                this.properties[index] = !this.properties[index];
+                this.$forceUpdate();
+            },
+            propertiesOpened(index){
+                return this.properties[index];
+            },
+            draggableStart(evt){
+                console.log("draggableStart : ",evt);
+                this.properties.forEach((value, index) => {
+                    this.tmpProperties[index] = value;
+                    this.properties[index] = false;
+                });
+                this.properties = [...this.properties];
+            },
+            draggableEnd(evt){
+                console.log("draggableEnd : ",evt);
+                //this.$forceUpdate();
+                this.properties = [...this.tmpProperties];
+                let old = this.properties[evt.oldIndex];
+                this.properties[evt.oldIndex] = this.properties[evt.newIndex];
+                this.properties[evt.newIndex] = old;
+                this.tmpProperties = [];
+            },
+            addOption(index) {
+                this.list.fields[index].options.push({
+                    value: null,
+                    label: null
+                });
+            },
+            deleteOption(index, optionIndex) {
+                this.list.fields[index].options.splice(optionIndex, 1);
+            },
         }
     };
 
@@ -103,18 +142,10 @@ function formBuilder(appId, options) {
         el: appId,
         data() {
             return {
-                item: null,
-                itemIndex: null,
-                itemContext: null
+                list: {}
             };
         },
-        watch: {
-            item(value, oldValue) {
-                if (value) {
-                    this.itemContext.list.fields[this.itemIndex] = value;
-                }
-            }
-        },
+        watch: {},
         computed: {
             options() {
                 return options;
@@ -127,14 +158,8 @@ function formBuilder(appId, options) {
             }
         },
         methods: {
-            addOption() {
-                this.item.options.push({
-                    value: null,
-                    label: null
-                });
-            },
-            deleteOption(index) {
-                this.item.options.splice(index, 1);
+            onFieldsUpdated(event, list) {
+                console.log(event, list);
             }
         }
     });

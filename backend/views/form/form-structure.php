@@ -18,69 +18,7 @@ use yii\web\JqueryAsset;
 $this->title = "Manage Form Structure";
 ?>
     <div id="form-builder">
-        <div class="row">
-            <div class="col-md-8">
-                <form-Item :structure="options.form.structure"></form-Item>
-            </div>
-            <div class="col-md-4">
-                <div class="panel panel-default" v-if="item">
-                    <div class="panel-heading">
-                        <h3 style="margin:0;padding:0;">Properties</h3>
-                    </div>
-                    <div class="panel-body">
-                        <div class="form-group">
-                            <label for="name">Name</label>
-                            <input type="text" class="form-control" id="name" placeholder="Name" v-model="item.name">
-                        </div>
-                        <div class="form-group">
-                            <label for="label">Label</label>
-                            <input type="text" class="form-control" id="label" placeholder="Label" v-model="item.label">
-                        </div>
-                        <div class="form-group" v-if="item.type === types.TEXT || item.type === types.TEXT_AREA">
-                            <label for="placeholder">Placeholder</label>
-                            <input type="text" class="form-control" id="placeholder" placeholder="Placeholder"
-                                   v-model="item.placeholder">
-                        </div>
-                        <div class="form-group">
-                            <label for="note">Note</label>
-                            <input type="text" class="form-control" id="note" placeholder="Note" v-model="item.note">
-                        </div>
-                        <div class="form-group" v-if="item.type === types.TEXT || item.type === types.TEXT_AREA">
-                            <label for="validation">Validation</label>
-                            <input type="text" class="form-control" id="validation" placeholder="Validation"
-                                   v-model="item.validation">
-                        </div>
-                        <div class="form-group" v-if="item.type === types.DROP_DOWN_LIST || item.type === types.RADIO">
-                            <label>Options</label>
-                            <div class="row" v-for="(option, index) in item.options" v-bind:key="'options-'+index"
-                                 style="margin-bottom:5px;">
-                                <div class="col-sm-5">
-                                    <input type="text" class="form-control" placeholder="Value" v-model="option.value">
-                                </div>
-                                <div class="col-sm-5">
-                                    <input type="text" class="form-control" placeholder="Label" v-model="option.label">
-                                </div>
-                                <div class="col-sm-2">
-                                    <button class="btn btn-success btn-block" @click="addOption()" v-if="index === 0">
-                                        <span class="glyphicon glyphicon-plus"></span>
-                                    </button>
-                                    <button class="btn btn-danger btn-block" @click="deleteOption(index)"
-                                            v-if="index > 0">
-                                        <span class="glyphicon glyphicon-minus"></span>
-                                    </button>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="checkbox"
-                             v-if="item.type !== types.CHECKBOX && item.type !== types.RADIO && item.type !== types.DROP_DOWN_LIST">
-                            <label>
-                                <input type="checkbox" v-model="item.required"> Required
-                            </label>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
+        <form-Item :structure="options.form.structure" v-on:fieldsUpdated="onFieldsUpdated"></form-Item>
     </div>
     <script type="text/x-template" id="form-item">
         <div class="form-item">
@@ -115,70 +53,160 @@ $this->title = "Manage Form Structure";
                     <div class="clearfix"></div>
                 </div>
                 <div class="panel-body">
-                    <draggable v-model="list.fields" :options="{draggable:'.btn-drag'}">
+                    <draggable v-model="list.fields" :options="{draggable:'.item'}" @start="draggableStart"
+                               @end="draggableEnd">
                         <transition-group>
-                            <div v-for="(field, index) in fields" v-bind:key="'field-'+index" class="form-horizontal btn-drag" :data-name="field.name">
-                                <div class="col-sm-1">
-                                    <button class="btn btn-default btn-block">
-                                        <span class="glyphicon glyphicon-move"></span>
-                                    </button>
-                                </div>
-                                <div class="col-sm-10">
-                                    <div v-if="field === separator"
-                                         style="height:2px;background:rgba(10,10,10,0.5);margin-bottom: 25px;margin-top: 20px;"></div>
-                                    <div class="form-group"
-                                         v-if="field.type === types.TEXT || field.type === types.TEXT_AREA || field.type === types.DROP_DOWN_LIST"
-                                         :data-name="field.name">
-                                        <label class="col-sm-2 control-label">
-                                            {{field.label}}
-                                            <span class="text-danger" v-if="field.required">*</span>
-                                        </label>
-                                        <div class="col-sm-10">
-                                            <input type="text" class="form-control" :placeholder="field.placeholder"
-                                                   v-if="field.type === types.TEXT" :required="field.required">
-                                            <textarea type="text" class="form-control" :placeholder="field.placeholder"
-                                                      v-if="field.type === types.TEXT_AREA"
-                                                      :required="field.required"></textarea>
-                                            <select class="form-control" v-if="field.type === types.DROP_DOWN_LIST">
-                                                <option v-for="(option, index) in field.options" :value="option.value">
-                                                    {{option.label}}
-                                                </option>
-                                            </select>
+                            <div v-for="(field, index) in fields" :key="'field-'+index" class="item">
+                                <div class="form-horizontal" :data-name="field.name">
+                                    <div class="col-sm-11">
+                                        <div v-if="field === separator"
+                                             style="height:2px;background:rgba(10,10,10,0.5);margin-bottom: 25px;margin-top: 20px;"></div>
+                                        <div class="form-group"
+                                             v-if="field.type === types.TEXT || field.type === types.TEXT_AREA || field.type === types.DROP_DOWN_LIST"
+                                             :data-name="field.name">
+                                            <label class="col-sm-2 control-label">
+                                                {{field.label}}
+                                                <span class="text-danger" v-if="field.required">*</span>
+                                            </label>
+                                            <div class="col-sm-10">
+                                                <input type="text" class="form-control" :placeholder="field.placeholder"
+                                                       v-if="field.type === types.TEXT" :required="field.required">
+                                                <textarea type="text" class="form-control"
+                                                          :placeholder="field.placeholder"
+                                                          v-if="field.type === types.TEXT_AREA"
+                                                          :required="field.required"></textarea>
+                                                <select class="form-control" v-if="field.type === types.DROP_DOWN_LIST">
+                                                    <option v-for="(option, index) in field.options"
+                                                            :value="option.value">
+                                                        {{option.label}}
+                                                    </option>
+                                                </select>
+                                                <p class="help-block" v-if="field.note">{{field.note}}</p>
+                                            </div>
+                                        </div>
+                                        <div class="checkbox" v-if="field.type === types.CHECKBOX"
+                                             :data-name="field.name"
+                                             style="margin:15px 0;">
+                                            <label>
+                                                <input type="checkbox"> {{field.label}}
+                                            </label>
                                             <p class="help-block" v-if="field.note">{{field.note}}</p>
                                         </div>
-                                    </div>
-                                    <div class="checkbox" v-if="field.type === types.CHECKBOX" :data-name="field.name"
-                                         style="margin:15px 0;">
-                                        <label>
-                                            <input type="checkbox"> {{field.label}}
-                                        </label>
-                                        <p class="help-block" v-if="field.note">{{field.note}}</p>
-                                    </div>
-                                    <div class="form-group radio-list" v-if="field.type === types.RADIO"
-                                         :data-name="field.name" style="margin:15px 0;">
-                                        <label class="control-label">
-                                            {{field.label}}
-                                        </label>
-                                        <p class="help-block" v-if="field.note">{{field.note}}</p>
-                                        <div class="radio" v-for="(option, index) in field.options"
-                                             style="padding:0 7px;">
-                                            <label>
-                                                <input type="radio" name="optionsRadios" id="optionsRadios1"
-                                                       v-model="option.value"
-                                                       checked>
-                                                {{option.label}}
+                                        <div class="form-group radio-list" v-if="field.type === types.RADIO"
+                                             :data-name="field.name" style="margin:15px 0;">
+                                            <label class="control-label">
+                                                {{field.label}}
                                             </label>
+                                            <p class="help-block" v-if="field.note">{{field.note}}</p>
+                                            <div class="radio" v-for="(option, index) in field.options"
+                                                 style="padding:0 7px;">
+                                                <label>
+                                                    <input type="radio" name="optionsRadios" id="optionsRadios1"
+                                                           v-model="option.value"
+                                                           checked>
+                                                    {{option.label}}
+                                                </label>
+                                            </div>
+                                        </div>
+                                        <component is="sub-form-item" :structure="field"
+                                                   v-if="field.type === types.SUB_FORM"
+                                                   :data-name="field.name"></component>
+                                    </div>
+                                    <div class="col-sm-1" v-if="field !== separator && field.type !== types.SUB_FORM">
+                                        <button class="btn btn-default btn-block" @click="openProperties(field,index)">
+                                            <span class="glyphicon glyphicon-pencil"
+                                                  :class="{glyphicon: true, 'glyphicon-chevron-down': !propertiesOpened(index), 'glyphicon glyphicon-chevron-up':propertiesOpened(index)}"></span>
+                                        </button>
+                                    </div>
+                                    <div class="clearfix"></div>
+                                    <div class="panel panel-default" v-if="propertiesOpened(index) && field"
+                                         style="background:#e5e5e5;border-radius:0;">
+                                        <div class="panel-body" style="background:#e5e5e5;border-radius:0;">
+                                            <div class="container-fluid">
+                                                <div class="row">
+                                                    <div class="col-md-4">
+                                                        <div class="form-group" style="margin-left:0;margin-right:0;">
+                                                            <label for="name">Name</label>
+                                                            <input type="text" class="form-control" id="name"
+                                                                   placeholder="Name" v-model="field.name">
+                                                        </div>
+                                                    </div>
+                                                    <div class="col-md-4">
+                                                        <div class="form-group" style="margin-left:0;margin-right:0;">
+                                                            <label for="label">Label</label>
+                                                            <input type="text" class="form-control" id="label"
+                                                                   placeholder="Label" v-model="field.label">
+                                                        </div>
+                                                    </div>
+                                                    <div class="col-md-4"
+                                                         v-if="field.type === types.TEXT || field.type === types.TEXT_AREA">
+                                                        <div class="form-group" style="margin-left:0;margin-right:0;">
+                                                            <label for="placeholder">Placeholder</label>
+                                                            <input type="text" class="form-control" id="placeholder"
+                                                                   placeholder="Placeholder"
+                                                                   v-model="field.placeholder">
+                                                        </div>
+                                                    </div>
+                                                    <div class="col-md-4">
+                                                        <div class="form-group" style="margin-left:0;margin-right:0;">
+                                                            <label for="note">Note</label>
+                                                            <input type="text" class="form-control" id="note"
+                                                                   placeholder="Note" v-model="field.note">
+                                                        </div>
+                                                    </div>
+                                                    <div class="col-md-4"
+                                                         v-if="field.type === types.TEXT || field.type === types.TEXT_AREA">
+                                                        <div class="form-group" style="margin-left:0;margin-right:0;">
+                                                            <label for="validation">Validation</label>
+                                                            <input type="text" class="form-control" id="validation"
+                                                                   placeholder="Validation"
+                                                                   v-model="field.validation">
+                                                        </div>
+                                                    </div>
+                                                    <div class="col-md-4" v-if="field.type !== types.CHECKBOX && field.type !== types.RADIO && field.type !== types.DROP_DOWN_LIST">
+                                                        <div class="form-group" style="margin-left:0;margin-right:0;">
+                                                            <label for="validation">&nbsp;</label>
+                                                            <div class="checkbox">
+                                                                <label>
+                                                                    <input type="checkbox" v-model="field.required">
+                                                                    Required
+                                                                </label>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="form-group"
+                                                     v-if="field.type === types.DROP_DOWN_LIST || field.type === types.RADIO">
+                                                    <label>Options</label>
+                                                    <div class="row" v-for="(option, o) in field.options"
+                                                         v-bind:key="'options-'+o"
+                                                         style="margin-bottom:5px;">
+                                                        <div class="col-sm-5">
+                                                            <input type="text" class="form-control" placeholder="Value"
+                                                                   v-model="option.value">
+                                                        </div>
+                                                        <div class="col-sm-5">
+                                                            <input type="text" class="form-control" placeholder="Label"
+                                                                   v-model="option.label">
+                                                        </div>
+                                                        <div class="col-sm-2">
+                                                            <button class="btn btn-success btn-block"
+                                                                    @click="addOption(index)" v-if="o === 0">
+                                                                <span class="glyphicon glyphicon-plus"></span>
+                                                            </button>
+                                                            <button class="btn btn-danger btn-block"
+                                                                    @click="deleteOption(index, o)"
+                                                                    v-if="o > 0">
+                                                                <span class="glyphicon glyphicon-minus"></span>
+                                                            </button>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
                                         </div>
                                     </div>
-                                    <component is="sub-form-item" :structure="field"
-                                               v-if="field.type === types.SUB_FORM" :data-name="field.name"></component>
                                 </div>
-                                <div class="col-sm-1">
-                                    <button class="btn btn-default btn-block" @click="openProperties(field,index)">
-                                        <span class="glyphicon glyphicon-pencil"></span>
-                                    </button>
-                                </div>
-                                <div class="clearfix"></div>
+                                <hr>
                             </div>
                         </transition-group>
                     </draggable>
@@ -206,4 +234,3 @@ $this->registerJsFile(Yii::$app->helper->getAssetUrl('@backend/assets/dist/js/fo
     'depends' => JqueryAsset::className(),
 ]);
 $this->registerJs($ready);
-
