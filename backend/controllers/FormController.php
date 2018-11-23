@@ -11,6 +11,7 @@ namespace backend\controllers;
 use common\models\Form;
 use Yii;
 use cnd\core\components\SController;
+use yii\helpers\Json;
 
 class FormController extends SController
 {
@@ -56,6 +57,13 @@ class FormController extends SController
             Yii::$app->response->format = "json";
             $form = Yii::$app->request->post("form");
             $model->structure = $form;
+            if(!$model->version){
+                $model->version = 0;
+            }
+            if($model->getOldAttribute('structure') != Json::encode($model->structure)){
+                $model->version++;
+                $model->synchronizeTables();
+            }
             $model->save();
             $response = [
                 "done" => true,
@@ -78,5 +86,14 @@ class FormController extends SController
             \Yii::$app->session->setFlash('error', ucfirst($this->id) . ' not found');
         }
         return $this->redirect(['index']);
+    }
+
+    public function actionTables($id){
+        $model = Form::findOne($id);
+        if ($model === null) {
+            throw new \yii\web\HttpException(404, 'The requested form could not be found.');
+        }
+        $model->synchronizeTables();
+        return null;
     }
 }

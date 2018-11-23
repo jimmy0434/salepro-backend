@@ -59,24 +59,9 @@ function formBuilder(appId, options) {
                 return value.toLowerCase().replace(/_/g, ' ');
             }
         },
-        watch: {
-            list: {
-                handler(value, oldValue){
-                    //this.fixData();
-                },
-                deep: true
-            }
-        },
+        watch: {},
         methods: {
             fixData(){
-                /*let list = this.list;
-                for(let attr in list){
-                    if(attr === 'isRoot'){
-                        list[attr] = list[attr] || list[attr] === 'true';
-                        console.log(attr, list[attr]);
-                    }
-                }
-                this.list = {...list};*/
                 if(this.list.isRoot === 'true'){
                     this.list.isRoot = true;
                 }

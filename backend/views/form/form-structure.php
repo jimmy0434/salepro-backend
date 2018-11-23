@@ -16,6 +16,7 @@ use yii\web\View;
 use yii\web\JqueryAsset;
 
 $this->title = "Manage Form Structure";
+Yii::$app->notification->enabled = false;
 ?>
     <div id="form-builder">
         <form-Item :structure="options.form.structure" ref="rootItem"></form-Item>

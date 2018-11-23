@@ -17,6 +17,7 @@ use cnd\core\components\Setting;
 use cnd\core\data\TimeZone;
 use cnd\notification\components\Notification;
 use cnd\notification\components\PushNotification;
+use yii\db\Connection;
 use yii\web\UrlManager;
 
 
@@ -37,6 +38,7 @@ use yii\web\UrlManager;
  * @property UrlManager  $urlManagerBackend
  * @property UrlManager  $urlManagerApi
  * @property Keycloak $keycloak
+ * @property Connection $bi
  *
  */
 class Application extends \yii\web\Application
