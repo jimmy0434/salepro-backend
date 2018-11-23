@@ -10,27 +10,23 @@ function formBuilder(appId, options) {
     options = $.extend({}, defaultOptions, options || {});
 
     const TYPES = Object.freeze({
-        TEXT: Symbol('text'),
-        TEXT_AREA: Symbol('textarea'),
-        DROP_DOWN_LIST: Symbol('dropdownlist'),
-        CHECKBOX: Symbol('checkbox'),
-        RADIO: Symbol('radio'),
-        SUB_FORM: Symbol('subform')
+        TEXT: 'text',
+        TEXT_AREA: 'textarea',
+        DROP_DOWN_LIST: 'dropdownlist',
+        CHECKBOX: 'checkbox',
+        RADIO: 'radio',
+        SUB_FORM: 'subform'
     });
 
     const SEPARATOR = 'separator';
+    const TITLE = 'title';
 
     let FormItemComponent = {
-        // template ID
         template: '#form-item',
         props: ['structure'],
         data() {
             return {
-                list: {
-                    name: this.structure.name,
-                    isRoot: this.structure.isRoot,
-                    fields: this.structure.fields
-                },
+                list: this.structure,
                 properties: [],
                 tmpProperties: []
             };
@@ -42,11 +38,17 @@ function formBuilder(appId, options) {
             separator() {
                 return SEPARATOR;
             },
+            title() {
+                return TITLE;
+            },
             self() {
                 return this;
             },
             fields() {
                 return this.list.fields;
+            },
+            name() {
+                return this.list.name;
             }
         },
         filters: {
@@ -55,14 +57,24 @@ function formBuilder(appId, options) {
             }
         },
         watch: {
-            list(value, oldValue) {
-                this.$emit("fieldsUpdated", value);
+            list: {
+                handler(value, oldValue){
+
+                },
+                deep: true
             }
         },
         methods: {
             addField(name) {
                 if (name === SEPARATOR) {
-                    this.list.fields.push(name);
+                    this.list.fields.push({
+                        type: SEPARATOR
+                    });
+                } else if (name === TITLE) {
+                    this.list.fields.push({
+                        type: TITLE,
+                        value: null
+                    });
                 } else if (name === TYPES.SUB_FORM) {
                     this.list.fields.push({
                         type: TYPES.SUB_FORM,
@@ -107,7 +119,6 @@ function formBuilder(appId, options) {
                 return this.properties[index];
             },
             draggableStart(evt){
-                console.log("draggableStart : ",evt);
                 this.properties.forEach((value, index) => {
                     this.tmpProperties[index] = value;
                     this.properties[index] = false;
@@ -115,8 +126,6 @@ function formBuilder(appId, options) {
                 this.properties = [...this.properties];
             },
             draggableEnd(evt){
-                console.log("draggableEnd : ",evt);
-                //this.$forceUpdate();
                 this.properties = [...this.tmpProperties];
                 let old = this.properties[evt.oldIndex];
                 this.properties[evt.oldIndex] = this.properties[evt.newIndex];
@@ -131,7 +140,7 @@ function formBuilder(appId, options) {
             },
             deleteOption(index, optionIndex) {
                 this.list.fields[index].options.splice(optionIndex, 1);
-            },
+            }
         }
     };
 
@@ -141,9 +150,7 @@ function formBuilder(appId, options) {
     let app = new Vue({
         el: appId,
         data() {
-            return {
-                list: {}
-            };
+            return {};
         },
         watch: {},
         computed: {
@@ -155,11 +162,53 @@ function formBuilder(appId, options) {
             },
             separator() {
                 return SEPARATOR;
+            },
+            title() {
+                return TITLE;
+            },
+            items(){
+                return this.$refs.rootItem.list;
             }
         },
         methods: {
-            onFieldsUpdated(event, list) {
-                console.log(event, list);
+            save(){
+                if(this.items.fields.length > 0) {
+                    let loader;
+                    $.ajax({
+                        type: 'post',
+                        dataType: 'json',
+                        url: options.saveUrl,
+                        data: {
+                            form: this.items
+                        },
+                        success: function (response) {
+                            loader.close();
+                        },
+                        beforeSend: function () {
+                            loader = popup.loader("Saving...");
+                        },
+                        error: function (jqXHR, exception) {
+                            loader.close();
+                            let msg = '';
+                            if (jqXHR.status === 0) {
+                                msg = 'Not connect, Verify Network.';
+                            } else if (jqXHR.status == 404) {
+                                msg = 'Requested page not found. [404]';
+                            } else if (jqXHR.status == 500) {
+                                msg = 'Internal Server Error [500].';
+                            } else if (exception === 'parsererror') {
+                                msg = 'Requested JSON parse failed.';
+                            } else if (exception === 'timeout') {
+                                msg = 'Time out error.';
+                            } else if (exception === 'abort') {
+                                msg = 'Ajax request aborted.';
+                            } else {
+                                msg = 'Uncaught Error : ' + jqXHR.responseText;
+                            }
+                            popup.warning(msg);
+                        }
+                    });
+                }
             }
         }
     });

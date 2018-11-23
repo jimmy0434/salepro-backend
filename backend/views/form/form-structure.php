@@ -18,7 +18,10 @@ use yii\web\JqueryAsset;
 $this->title = "Manage Form Structure";
 ?>
     <div id="form-builder">
-        <form-Item :structure="options.form.structure" v-on:fieldsUpdated="onFieldsUpdated"></form-Item>
+        <form-Item :structure="options.form.structure" ref="rootItem"></form-Item>
+        <div class="text-center">
+            <button type="button" class="btn btn-success btn-block btn-lg" @click="save">Save</button>
+        </div>
     </div>
     <script type="text/x-template" id="form-item">
         <div class="form-item">
@@ -26,7 +29,7 @@ $this->title = "Manage Form Structure";
                 <div class="panel-heading">
                     <h3 style="margin:0;padding:0;" class="pull-left" v-if="list.isRoot">{{list.name}}</h3>
                     <div class="form-group pull-left" v-if="!list.isRoot" style="margin-left:15px;margin-bottom:0;">
-                        <input type="text" class="form-control" id="name" placeholder="Name" v-model="list.name">
+                        <input type="text" class="form-control" placeholder="Name" v-model="list.name">
                     </div>
                     <div class="btn-group pull-right">
                         <button type="button" class="btn btn-danger">Fields</button>
@@ -37,6 +40,12 @@ $this->title = "Manage Form Structure";
                             <span class="sr-only">Toggle Dropdown</span>
                         </button>
                         <ul class="dropdown-menu">
+                            <li>
+                                <a href="#" @click="addField(title)">
+                                    Add new <strong>{{title | typeName}}</strong>
+                                </a>
+                            </li>
+                            <li role="separator" class="divider"></li>
                             <li v-for="(name, label, index) in types" v-bind:key="'type-'+label">
                                 <a href="#" @click="addField(name)">
                                     Add new <strong>{{label | typeName}}</strong> field
@@ -45,7 +54,7 @@ $this->title = "Manage Form Structure";
                             <li role="separator" class="divider"></li>
                             <li>
                                 <a href="#" @click="addField(separator)">
-                                    Add new <strong>{{separator | typeName}}</strong> field
+                                    Add new <strong>{{separator | typeName}}</strong>
                                 </a>
                             </li>
                         </ul>
@@ -56,11 +65,15 @@ $this->title = "Manage Form Structure";
                     <draggable v-model="list.fields" :options="{draggable:'.item'}" @start="draggableStart"
                                @end="draggableEnd">
                         <transition-group>
-                            <div v-for="(field, index) in fields" :key="'field-'+index" class="item">
+                            <div v-for="(field, index) in list.fields" :key="'field-'+index" class="item">
                                 <div class="form-horizontal" :data-name="field.name">
                                     <div class="col-sm-11">
-                                        <div v-if="field === separator"
+                                        <div v-if="field.type === separator"
                                              style="height:2px;background:rgba(10,10,10,0.5);margin-bottom: 25px;margin-top: 20px;"></div>
+                                        <div class="form-group" v-if="field.type === title">
+                                            <input type="text" class="form-control" placeholder="Title"
+                                                   v-model="field.value">
+                                        </div>
                                         <div class="form-group"
                                              v-if="field.type === types.TEXT || field.type === types.TEXT_AREA || field.type === types.DROP_DOWN_LIST"
                                              :data-name="field.name">
@@ -69,13 +82,15 @@ $this->title = "Manage Form Structure";
                                                 <span class="text-danger" v-if="field.required">*</span>
                                             </label>
                                             <div class="col-sm-10">
-                                                <input type="text" class="form-control" :placeholder="field.placeholder"
+                                                <input type="text" class="form-control"
+                                                       :placeholder="field.placeholder"
                                                        v-if="field.type === types.TEXT" :required="field.required">
                                                 <textarea type="text" class="form-control"
                                                           :placeholder="field.placeholder"
                                                           v-if="field.type === types.TEXT_AREA"
                                                           :required="field.required"></textarea>
-                                                <select class="form-control" v-if="field.type === types.DROP_DOWN_LIST">
+                                                <select class="form-control"
+                                                        v-if="field.type === types.DROP_DOWN_LIST">
                                                     <option v-for="(option, index) in field.options"
                                                             :value="option.value">
                                                         {{option.label}}
@@ -109,11 +124,12 @@ $this->title = "Manage Form Structure";
                                             </div>
                                         </div>
                                         <component is="sub-form-item" :structure="field"
-                                                   v-if="field.type === types.SUB_FORM"
-                                                   :data-name="field.name"></component>
+                                                   v-if="field.type === types.SUB_FORM"></component>
                                     </div>
-                                    <div class="col-sm-1" v-if="field !== separator && field.type !== types.SUB_FORM">
-                                        <button class="btn btn-default btn-block" @click="openProperties(field,index)">
+                                    <div class="col-sm-1"
+                                         v-if="field.type !== separator && field.type !== title && field.type !== types.SUB_FORM">
+                                        <button class="btn btn-default btn-block"
+                                                @click="openProperties(field,index)">
                                             <span class="glyphicon glyphicon-pencil"
                                                   :class="{glyphicon: true, 'glyphicon-chevron-down': !propertiesOpened(index), 'glyphicon glyphicon-chevron-up':propertiesOpened(index)}"></span>
                                         </button>
@@ -125,14 +141,16 @@ $this->title = "Manage Form Structure";
                                             <div class="container-fluid">
                                                 <div class="row">
                                                     <div class="col-md-4">
-                                                        <div class="form-group" style="margin-left:0;margin-right:0;">
+                                                        <div class="form-group"
+                                                             style="margin-left:0;margin-right:0;">
                                                             <label for="name">Name</label>
                                                             <input type="text" class="form-control" id="name"
                                                                    placeholder="Name" v-model="field.name">
                                                         </div>
                                                     </div>
                                                     <div class="col-md-4">
-                                                        <div class="form-group" style="margin-left:0;margin-right:0;">
+                                                        <div class="form-group"
+                                                             style="margin-left:0;margin-right:0;">
                                                             <label for="label">Label</label>
                                                             <input type="text" class="form-control" id="label"
                                                                    placeholder="Label" v-model="field.label">
@@ -140,7 +158,8 @@ $this->title = "Manage Form Structure";
                                                     </div>
                                                     <div class="col-md-4"
                                                          v-if="field.type === types.TEXT || field.type === types.TEXT_AREA">
-                                                        <div class="form-group" style="margin-left:0;margin-right:0;">
+                                                        <div class="form-group"
+                                                             style="margin-left:0;margin-right:0;">
                                                             <label for="placeholder">Placeholder</label>
                                                             <input type="text" class="form-control" id="placeholder"
                                                                    placeholder="Placeholder"
@@ -148,7 +167,8 @@ $this->title = "Manage Form Structure";
                                                         </div>
                                                     </div>
                                                     <div class="col-md-4">
-                                                        <div class="form-group" style="margin-left:0;margin-right:0;">
+                                                        <div class="form-group"
+                                                             style="margin-left:0;margin-right:0;">
                                                             <label for="note">Note</label>
                                                             <input type="text" class="form-control" id="note"
                                                                    placeholder="Note" v-model="field.note">
@@ -156,15 +176,18 @@ $this->title = "Manage Form Structure";
                                                     </div>
                                                     <div class="col-md-4"
                                                          v-if="field.type === types.TEXT || field.type === types.TEXT_AREA">
-                                                        <div class="form-group" style="margin-left:0;margin-right:0;">
+                                                        <div class="form-group"
+                                                             style="margin-left:0;margin-right:0;">
                                                             <label for="validation">Validation</label>
                                                             <input type="text" class="form-control" id="validation"
                                                                    placeholder="Validation"
                                                                    v-model="field.validation">
                                                         </div>
                                                     </div>
-                                                    <div class="col-md-4" v-if="field.type !== types.CHECKBOX && field.type !== types.RADIO && field.type !== types.DROP_DOWN_LIST">
-                                                        <div class="form-group" style="margin-left:0;margin-right:0;">
+                                                    <div class="col-md-4"
+                                                         v-if="field.type !== types.CHECKBOX && field.type !== types.RADIO && field.type !== types.DROP_DOWN_LIST">
+                                                        <div class="form-group"
+                                                             style="margin-left:0;margin-right:0;">
                                                             <label for="validation">&nbsp;</label>
                                                             <div class="checkbox">
                                                                 <label>
@@ -182,11 +205,13 @@ $this->title = "Manage Form Structure";
                                                          v-bind:key="'options-'+o"
                                                          style="margin-bottom:5px;">
                                                         <div class="col-sm-5">
-                                                            <input type="text" class="form-control" placeholder="Value"
+                                                            <input type="text" class="form-control"
+                                                                   placeholder="Value"
                                                                    v-model="option.value">
                                                         </div>
                                                         <div class="col-sm-5">
-                                                            <input type="text" class="form-control" placeholder="Label"
+                                                            <input type="text" class="form-control"
+                                                                   placeholder="Label"
                                                                    v-model="option.label">
                                                         </div>
                                                         <div class="col-sm-2">
@@ -216,9 +241,11 @@ $this->title = "Manage Form Structure";
     </script>
 <?php
 $form = \yii\helpers\Json::encode($model->attributes);
+$saveUrl = \yii\helpers\Json::encode(\yii\helpers\Url::to(['/form/manage-structure', 'id' => $model->id]));
 $ready = <<< JS
 formBuilder('#form-builder', {
-    form: $form
+    form: {$form},
+    saveUrl: {$saveUrl}
 });
 JS;
 $this->registerJsFile(Yii::$app->helper->getAssetUrl('@npm/vue/dist/vue' . (YII_ENV_DEV ? '' : '.min') . '.js'), [
@@ -234,3 +261,10 @@ $this->registerJsFile(Yii::$app->helper->getAssetUrl('@backend/assets/dist/js/fo
     'depends' => JqueryAsset::className(),
 ]);
 $this->registerJs($ready);
+$css = <<< CSS
+#form-builder{}
+#form-builder .item{position:relative;}
+#form-builder .item .item-draggable{position:absolute;width:32px;height:32px;line-height:32px;background:#ccc;left:-32px;top:0;text-align:center;}
+CSS;
+$this->registerCss($css);
+

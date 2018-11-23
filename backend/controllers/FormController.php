@@ -54,8 +54,11 @@ class FormController extends SController
         }
         if(Yii::$app->request->isPost && Yii::$app->request->isAjax){
             Yii::$app->response->format = "json";
+            $form = Yii::$app->request->post("form");
+            $model->structure = $form;
+            $model->save();
             $response = [
-                "done" => false,
+                "done" => true,
             ];
 
             return $response;
