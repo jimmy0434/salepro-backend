@@ -141,41 +141,37 @@ Yii::$app->notification->enabled = false;
                                         <div class="panel-body" style="background:#e5e5e5;border-radius:0;">
                                             <div class="container-fluid">
                                                 <div class="row">
-                                                    <div class="col-md-4">
-                                                        <div class="form-group"
-                                                             style="margin-left:0;margin-right:0;">
+                                                    <div class="col-md-3">
+                                                        <div class="form-group" style="margin-left:0;margin-right:0;">
                                                             <label for="name">Name</label>
                                                             <input type="text" class="form-control" id="name"
                                                                    placeholder="Name" v-model="field.name">
                                                         </div>
                                                     </div>
-                                                    <div class="col-md-4">
-                                                        <div class="form-group"
-                                                             style="margin-left:0;margin-right:0;">
+                                                    <div class="col-md-3">
+                                                        <div class="form-group" style="margin-left:0;margin-right:0;">
                                                             <label for="label">Label</label>
                                                             <input type="text" class="form-control" id="label"
                                                                    placeholder="Label" v-model="field.label">
                                                         </div>
                                                     </div>
-                                                    <div class="col-md-4"
+                                                    <div class="col-md-3"
                                                          v-if="field.type === types.TEXT || field.type === types.TEXT_AREA">
-                                                        <div class="form-group"
-                                                             style="margin-left:0;margin-right:0;">
+                                                        <div class="form-group" style="margin-left:0;margin-right:0;">
                                                             <label for="placeholder">Placeholder</label>
                                                             <input type="text" class="form-control" id="placeholder"
                                                                    placeholder="Placeholder"
                                                                    v-model="field.placeholder">
                                                         </div>
                                                     </div>
-                                                    <div class="col-md-4">
-                                                        <div class="form-group"
-                                                             style="margin-left:0;margin-right:0;">
+                                                    <div class="col-md-3">
+                                                        <div class="form-group" style="margin-left:0;margin-right:0;">
                                                             <label for="note">Note</label>
                                                             <input type="text" class="form-control" id="note"
                                                                    placeholder="Note" v-model="field.note">
                                                         </div>
                                                     </div>
-                                                    <div class="col-md-4"
+                                                    <div class="col-md-3"
                                                          v-if="field.type === types.TEXT || field.type === types.TEXT_AREA">
                                                         <div class="form-group"
                                                              style="margin-left:0;margin-right:0;">
@@ -185,10 +181,20 @@ Yii::$app->notification->enabled = false;
                                                                    v-model="field.validation">
                                                         </div>
                                                     </div>
-                                                    <div class="col-md-4"
+                                                    <div class="col-md-3">
+                                                        <div class="form-group" style="margin-left:0;margin-right:0;">
+                                                            <label for="dataType">Data Type</label>
+                                                            <select v-model="field.dataType" class="form-control" id="dataType">
+                                                                <option v-for="(dataType, tpi) in dataTypes"
+                                                                        v-bind:key="'dataType-'+tpi" :value="dataType">
+                                                                    {{tpi | typeName}}
+                                                                </option>
+                                                            </select>
+                                                        </div>
+                                                    </div>
+                                                    <div class="col-md-3"
                                                          v-if="field.type !== types.CHECKBOX && field.type !== types.RADIO && field.type !== types.DROP_DOWN_LIST">
-                                                        <div class="form-group"
-                                                             style="margin-left:0;margin-right:0;">
+                                                        <div class="form-group" style="margin-left:0;margin-right:0;">
                                                             <label for="validation">&nbsp;</label>
                                                             <div class="checkbox">
                                                                 <label>

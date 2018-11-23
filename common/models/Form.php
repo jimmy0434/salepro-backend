@@ -103,6 +103,7 @@ class Form extends ActiveRecord
         parent::afterFind();
         if (!Yii::$app->helper->isJson($this->structure)) {
             $this->structure = [
+                'id' => time(),
                 'name' => $this->name,
                 'fields' => [],
                 'isRoot' => true,
@@ -155,7 +156,7 @@ class Form extends ActiveRecord
                 if (array_key_exists('name', $field) && $field['name'] && $field['type'] != "subform") {
                     $columnName = $this->createSlug(strtolower($field['name']));
                     if (!in_array($columnName, $columns[$tableName])) {
-                        $bi->createCommand()->addColumn($tableName, $columnName, Schema::TYPE_TEXT)->execute();
+                        $bi->createCommand()->addColumn($tableName, $columnName, $field['dataType'])->execute();
                     }
                 } else if ($field['type'] == "subform") {
                     $subForms[] = $field;

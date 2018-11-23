@@ -21,6 +21,31 @@ function formBuilder(appId, options) {
     const SEPARATOR = 'separator';
     const TITLE = 'title';
 
+    const DATA_TYPES = Object.freeze({
+        //PK : 'pk',
+        //UPK : 'upk',
+        //BIGPK : 'bigpk',
+        //UBIGPK : 'ubigpk',
+        //CHAR : 'char',
+        STRING : 'string',
+        TEXT : 'text',
+        TINYINT : 'tinyint',
+        SMALLINT : 'smallint',
+        INTEGER : 'integer',
+        BIGINT : 'bigint',
+        FLOAT : 'float',
+        DOUBLE : 'double',
+        DECIMAL : 'decimal',
+        //DATETIME : 'datetime',
+        //TIMESTAMP : 'timestamp',
+        //TIME : 'time',
+        //DATE : 'date',
+        //BINARY : 'binary',
+        BOOLEAN : 'boolean',
+        //MONEY : 'money',
+        //JSON : 'json',
+    });
+
     let FormItemComponent = {
         template: '#form-item',
         props: ['structure'],
@@ -31,12 +56,15 @@ function formBuilder(appId, options) {
                 tmpProperties: []
             };
         },
-        created(){
+        created() {
             this.fixData();
         },
         computed: {
             types() {
                 return TYPES;
+            },
+            dataTypes() {
+                return DATA_TYPES;
             },
             separator() {
                 return SEPARATOR;
@@ -61,19 +89,19 @@ function formBuilder(appId, options) {
         },
         watch: {},
         methods: {
-            fixData(){
-                if(this.list.isRoot === 'true'){
+            fixData() {
+                if (this.list.isRoot === 'true') {
                     this.list.isRoot = true;
                 }
-                if(this.list.isRoot === 'false'){
+                if (this.list.isRoot === 'false') {
                     this.list.isRoot = false;
                 }
                 this.list.fields.forEach((item, index) => {
-                    if(item.required !== undefined){
-                        if(item.required === 'true'){
+                    if (item.required !== undefined) {
+                        if (item.required === 'true') {
                             item.required = true;
                         }
-                        if(item.required === 'false'){
+                        if (item.required === 'false') {
                             item.required = false;
                         }
                         this.list.fields[index] = item;
@@ -83,15 +111,18 @@ function formBuilder(appId, options) {
             addField(name) {
                 if (name === SEPARATOR) {
                     this.list.fields.push({
+                        id: (new Date()).getTime(),
                         type: SEPARATOR
                     });
                 } else if (name === TITLE) {
                     this.list.fields.push({
+                        id: (new Date()).getTime(),
                         type: TITLE,
                         value: null
                     });
                 } else if (name === TYPES.SUB_FORM) {
                     this.list.fields.push({
+                        id: (new Date()).getTime(),
                         type: TYPES.SUB_FORM,
                         isRoot: false,
                         name: null,
@@ -103,7 +134,8 @@ function formBuilder(appId, options) {
                         name: null,
                         label: null,
                         note: null,
-                        type: name
+                        type: name,
+                        dataType: DATA_TYPES.TYPE_STRING
                     };
                     if (name === TYPES.TEXT || name === TYPES.TEXT_AREA) {
                         data.placeholder = null;
@@ -124,23 +156,23 @@ function formBuilder(appId, options) {
                 }
             },
             openProperties(item, index) {
-                if(this.properties[index] === undefined){
+                if (this.properties[index] === undefined) {
                     this.properties[index] = true;
                 }
                 this.properties[index] = !this.properties[index];
                 this.$forceUpdate();
             },
-            propertiesOpened(index){
+            propertiesOpened(index) {
                 return this.properties[index];
             },
-            draggableStart(evt){
+            draggableStart(evt) {
                 this.properties.forEach((value, index) => {
                     this.tmpProperties[index] = value;
                     this.properties[index] = false;
                 });
                 this.properties = [...this.properties];
             },
-            draggableEnd(evt){
+            draggableEnd(evt) {
                 this.properties = [...this.tmpProperties];
                 let old = this.properties[evt.oldIndex];
                 this.properties[evt.oldIndex] = this.properties[evt.newIndex];
@@ -175,19 +207,22 @@ function formBuilder(appId, options) {
             types() {
                 return TYPES;
             },
+            dataTypes() {
+                return DATA_TYPES;
+            },
             separator() {
                 return SEPARATOR;
             },
             title() {
                 return TITLE;
             },
-            items(){
+            items() {
                 return this.$refs.rootItem.list;
             }
         },
         methods: {
-            save(){
-                if(this.items.fields.length > 0) {
+            save() {
+                if (this.items.fields.length > 0) {
                     let loader;
                     $.ajax({
                         type: 'post',
@@ -200,7 +235,7 @@ function formBuilder(appId, options) {
                             loader.close();
                         },
                         beforeSend: function () {
-                            loader = popup.loader("Saving...");
+                            loader = popup.loader('Saving...');
                         },
                         error: function (jqXHR, exception) {
                             loader.close();
