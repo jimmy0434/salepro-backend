@@ -31,6 +31,9 @@ function formBuilder(appId, options) {
                 tmpProperties: []
             };
         },
+        created(){
+            this.fixData();
+        },
         computed: {
             types() {
                 return TYPES;
@@ -59,12 +62,39 @@ function formBuilder(appId, options) {
         watch: {
             list: {
                 handler(value, oldValue){
-
+                    //this.fixData();
                 },
                 deep: true
             }
         },
         methods: {
+            fixData(){
+                /*let list = this.list;
+                for(let attr in list){
+                    if(attr === 'isRoot'){
+                        list[attr] = list[attr] || list[attr] === 'true';
+                        console.log(attr, list[attr]);
+                    }
+                }
+                this.list = {...list};*/
+                if(this.list.isRoot === 'true'){
+                    this.list.isRoot = true;
+                }
+                if(this.list.isRoot === 'false'){
+                    this.list.isRoot = false;
+                }
+                this.list.fields.forEach((item, index) => {
+                    if(item.required !== undefined){
+                        if(item.required === 'true'){
+                            item.required = true;
+                        }
+                        if(item.required === 'false'){
+                            item.required = false;
+                        }
+                        this.list.fields[index] = item;
+                    }
+                });
+            },
             addField(name) {
                 if (name === SEPARATOR) {
                     this.list.fields.push({
