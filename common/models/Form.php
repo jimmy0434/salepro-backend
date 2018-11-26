@@ -116,15 +116,24 @@ class Form extends ActiveRecord
 
     public function synchronizeTables()
     {
-        $structure = $this->structure;
-        $this->manageTable($structure);
-        $this->structure = $structure;
-        $this->save(false);
+        $transaction = Yii::$app->bi->beginTransaction();
+        try {
+            $structure = $this->structure;
+            $this->manageTable($structure);
+            $this->structure = $structure;
+            $this->save(false);
+            $transaction->commit();
+        } catch (\Exception $e) {
+            $transaction->rollBack();
+        } catch (\Throwable $t) {
+            $transaction->rollBack();
+        }
         return $this->structure;
     }
 
     protected function manageTable(&$structure, $parentName = null)
     {
+
         $bi = Yii::$app->bi;
         $tableName = $this->createSlug(strtolower($structure['name']));
         $oldTableName = $this->createSlug(strtolower($structure['oldName']));
@@ -138,25 +147,34 @@ class Form extends ActiveRecord
             if ($parentName && is_string($parentName)) {
                 $relationColumnName = $parentName . '_id';
                 $columns[$relationColumnName] = $bi->getSchema()->createColumnSchemaBuilder(Schema::TYPE_INTEGER);
-                $relation = function() use($bi, $tableName, $relationColumnName, $parentName){
-                    $bi->createCommand()->createIndex(md5('idx'.$tableName . '-' . $relationColumnName), $tableName, $relationColumnName)->execute();
-                    $bi->createCommand()->addForeignKey(md5('fk'.$tableName . '-' . $relationColumnName), $tableName, $relationColumnName, $parentName, 'id', 'CASCADE', 'CASCADE')->execute();
+                $relation = function () use ($bi, $tableName, $relationColumnName, $parentName) {
+                    $bi->createCommand()->createIndex(md5('idx' . $tableName . '-' . $relationColumnName), $tableName, $relationColumnName)->execute();
+                    $bi->createCommand()->addForeignKey(md5('fk' . $tableName . '-' . $relationColumnName), $tableName, $relationColumnName, $parentName, 'id', 'CASCADE', 'CASCADE')->execute();
                 };
             }
             $columns['created_at'] = $bi->getSchema()->createColumnSchemaBuilder(Schema::TYPE_TIMESTAMP);
             $columns['updated_at'] = $bi->getSchema()->createColumnSchemaBuilder(Schema::TYPE_TIMESTAMP);
             $bi->createCommand()->createTable($tableName, $columns, $options)->execute();
-            if($relation && is_callable($relation)){
+            if ($relation && is_callable($relation)) {
                 $relation();
             }
             $structure['oldName'] = $structure['name'];
-        }else if($tableName && $tableName != $oldTableName){
+        } else if ($tableName && $tableName != $oldTableName) {
             // rename the table name
             $bi->createCommand()->renameTable($oldTableName, $tableName)->execute();
             $structure['oldName'] = $structure['name'];
         }
         // create columns if not exists
-        $columns = ArrayHelper::map($bi->schema->tableSchemas, 'name', function ($row) {
+        $dataTypes = [];
+        $columns = ArrayHelper::map($bi->schema->tableSchemas, 'name', function ($row) use (&$dataTypes) {
+            if (!isset($dataTypes[$row->name])) {
+                $dataTypes[$row->name] = [];
+            }
+            if (!empty($row->columns) && is_array($row->columns)) {
+                foreach ($row->columns as $name => $options) {
+                    $dataTypes[$row->name][$name] = $options->type;
+                }
+            }
             return array_keys((array)$row->columns);
         });
         $fields = &$structure['fields'];
@@ -169,10 +187,13 @@ class Form extends ActiveRecord
                     $oldColumnName = $this->createSlug(strtolower($field['oldName']));
                     if ($columnName && !in_array($columnName, $columns[$tableName]) && !in_array($oldColumnName, $columns[$tableName])) {
                         $bi->createCommand()->addColumn($tableName, $columnName, $field['dataType'])->execute();
-                    }else if($columnName && $columnName != $oldColumnName){
+                    } else if ($columnName && $columnName != $oldColumnName) {
                         // rename the column name
-                        $bi->createCommand()->renameColumn($tableName,$oldColumnName, $columnName)->execute();
+                        $bi->createCommand()->renameColumn($tableName, $oldColumnName, $columnName)->execute();
                         $field['oldName'] = $field['name'];
+                    } else if (isset($dataTypes[$tableName][$columnName]) && $field['dataType'] != $dataTypes[$tableName][$columnName]) {
+                        // change column type
+                        $bi->createCommand()->alterColumn($tableName, $columnName, $field['dataType'])->execute();
                     }
                 } else if ($field['type'] == "subform") {
                     $subForms[] = &$field;
