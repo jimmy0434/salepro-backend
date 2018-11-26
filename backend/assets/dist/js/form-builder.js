@@ -59,6 +59,9 @@ function formBuilder(appId, options) {
         created() {
             this.fixData();
         },
+        updated() {
+            this.fixData();
+        },
         computed: {
             types() {
                 return TYPES;
@@ -87,7 +90,13 @@ function formBuilder(appId, options) {
                 return value.toLowerCase().replace(/_/g, ' ');
             }
         },
-        watch: {},
+        watch: {
+            structure(list, oldList){
+                if(list !== oldList){
+                    this.list = list;
+                }
+            }
+        },
         methods: {
             fixData() {
                 if (this.list.isRoot === 'true') {
@@ -95,6 +104,9 @@ function formBuilder(appId, options) {
                 }
                 if (this.list.isRoot === 'false') {
                     this.list.isRoot = false;
+                }
+                if(!this.list.fields){
+                    this.list.fields = [];
                 }
                 this.list.fields.forEach((item, index) => {
                     if (item.required !== undefined) {
@@ -126,16 +138,18 @@ function formBuilder(appId, options) {
                         type: TYPES.SUB_FORM,
                         isRoot: false,
                         name: null,
+                        oldName: null,
                         fields: []
                     });
                 } else {
                     let data = {
                         id: (new Date()).getTime(),
                         name: null,
+                        oldName: null,
                         label: null,
                         note: null,
                         type: name,
-                        dataType: DATA_TYPES.TYPE_STRING
+                        dataType: DATA_TYPES.STRING
                     };
                     if (name === TYPES.TEXT || name === TYPES.TEXT_AREA) {
                         data.placeholder = null;
@@ -197,7 +211,9 @@ function formBuilder(appId, options) {
     let app = new Vue({
         el: appId,
         data() {
-            return {};
+            return {
+                structure: options.form.structure
+            };
         },
         watch: {},
         computed: {
@@ -231,8 +247,13 @@ function formBuilder(appId, options) {
                         data: {
                             form: this.items
                         },
-                        success: function (response) {
+                        success: (response) => {
                             loader.close();
+                            if(response.structure){
+                                console.log(response.structure);
+                                let updatedStructure = JSON.parse(response.structure);
+                                this.structure = updatedStructure;
+                            }
                         },
                         beforeSend: function () {
                             loader = popup.loader('Saving...');

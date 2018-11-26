@@ -67,6 +67,7 @@ class FormController extends SController
             $model->save();
             $response = [
                 "done" => true,
+                'structure' => $model->structure,
             ];
 
             return $response;

@@ -105,6 +105,7 @@ class Form extends ActiveRecord
             $this->structure = [
                 'id' => time(),
                 'name' => $this->name,
+                'oldName' => $this->name,
                 'fields' => [],
                 'isRoot' => true,
             ];
@@ -115,16 +116,21 @@ class Form extends ActiveRecord
 
     public function synchronizeTables()
     {
-        $this->manageTable($this->structure);
+        $structure = $this->structure;
+        $this->manageTable($structure);
+        $this->structure = $structure;
+        $this->save(false);
+        return $this->structure;
     }
 
-    protected function manageTable($structure, $parentName = null)
+    protected function manageTable(&$structure, $parentName = null)
     {
         $bi = Yii::$app->bi;
         $tableName = $this->createSlug(strtolower($structure['name']));
+        $oldTableName = $this->createSlug(strtolower($structure['oldName']));
         $tables = $bi->schema->tableNames;
         // create table if not exist
-        if (!in_array($tableName, $tables)) {
+        if ($tableName && !in_array($tableName, $tables) && !in_array($oldTableName, $tables)) {
             $options = 'CHARACTER SET utf8 COLLATE utf8_unicode_ci ENGINE=InnoDB';
             $columns = [];
             $columns['id'] = $bi->getSchema()->createColumnSchemaBuilder(Schema::TYPE_PK);
@@ -143,28 +149,38 @@ class Form extends ActiveRecord
             if($relation && is_callable($relation)){
                 $relation();
             }
+            $structure['oldName'] = $structure['name'];
+        }else if($tableName && $tableName != $oldTableName){
+            // rename the table name
+            $bi->createCommand()->renameTable($oldTableName, $tableName)->execute();
+            $structure['oldName'] = $structure['name'];
         }
         // create columns if not exists
         $columns = ArrayHelper::map($bi->schema->tableSchemas, 'name', function ($row) {
             return array_keys((array)$row->columns);
         });
-        $fields = $structure['fields'];
+        $fields = &$structure['fields'];
         if (!empty($fields) && is_array($fields)) {
             $subForms = [];
             // add all fields
-            foreach ($fields as $field) {
+            foreach ($fields as &$field) {
                 if (array_key_exists('name', $field) && $field['name'] && $field['type'] != "subform") {
                     $columnName = $this->createSlug(strtolower($field['name']));
-                    if (!in_array($columnName, $columns[$tableName])) {
+                    $oldColumnName = $this->createSlug(strtolower($field['oldName']));
+                    if ($columnName && !in_array($columnName, $columns[$tableName]) && !in_array($oldColumnName, $columns[$tableName])) {
                         $bi->createCommand()->addColumn($tableName, $columnName, $field['dataType'])->execute();
+                    }else if($columnName && $columnName != $oldColumnName){
+                        // rename the column name
+                        $bi->createCommand()->renameColumn($tableName,$oldColumnName, $columnName)->execute();
+                        $field['oldName'] = $field['name'];
                     }
                 } else if ($field['type'] == "subform") {
-                    $subForms[] = $field;
+                    $subForms[] = &$field;
                 }
             }
             // apply all sub forms in this node
             if (!empty($subForms) && is_array($subForms)) {
-                foreach ($subForms as $field) {
+                foreach ($subForms as &$field) {
                     $this->manageTable($field, $tableName);
                 }
             }

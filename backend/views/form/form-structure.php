@@ -19,7 +19,7 @@ $this->title = "Manage Form Structure";
 Yii::$app->notification->enabled = false;
 ?>
     <div id="form-builder">
-        <form-Item :structure="options.form.structure" ref="rootItem"></form-Item>
+        <form-Item :structure="structure" ref="rootItem"></form-Item>
         <div class="text-center">
             <button type="button" class="btn btn-success btn-block btn-lg" @click="save">Save</button>
         </div>
