@@ -171,7 +171,7 @@ function formBuilder(appId, options) {
             },
             openProperties(item, index) {
                 if (this.properties[index] === undefined) {
-                    this.properties[index] = true;
+                    this.properties[index] = false;
                 }
                 this.properties[index] = !this.properties[index];
                 this.$forceUpdate();
