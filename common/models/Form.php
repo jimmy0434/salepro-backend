@@ -135,7 +135,7 @@ class Form extends ActiveRecord
     {
 
         $bi = Yii::$app->bi;
-        $tableName = $this->createSlug(strtolower($structure['name']));
+        $tableName = $this->createSlug(strtolower(($parentName && is_string($parentName)?$parentName."_":"").$structure['name']));
         $oldTableName = $this->createSlug(strtolower($structure['oldName']));
         $tables = $bi->schema->tableNames;
         // create table if not exist
@@ -145,15 +145,15 @@ class Form extends ActiveRecord
             $columns['id'] = $bi->getSchema()->createColumnSchemaBuilder(Schema::TYPE_PK);
             $relation = null;
             if ($parentName && is_string($parentName)) {
-                $relationColumnName = $parentName . '_id';
+                $relationColumnName = 'parent_relation_id';
                 $columns[$relationColumnName] = $bi->getSchema()->createColumnSchemaBuilder(Schema::TYPE_INTEGER);
                 $relation = function () use ($bi, $tableName, $relationColumnName, $parentName) {
                     $bi->createCommand()->createIndex(md5('idx' . $tableName . '-' . $relationColumnName), $tableName, $relationColumnName)->execute();
                     $bi->createCommand()->addForeignKey(md5('fk' . $tableName . '-' . $relationColumnName), $tableName, $relationColumnName, $parentName, 'id', 'CASCADE', 'CASCADE')->execute();
                 };
             }
-            $columns['created_at'] = $bi->getSchema()->createColumnSchemaBuilder(Schema::TYPE_TIMESTAMP);
-            $columns['updated_at'] = $bi->getSchema()->createColumnSchemaBuilder(Schema::TYPE_TIMESTAMP);
+            $columns['created_at'] = $bi->getSchema()->createColumnSchemaBuilder(Schema::TYPE_INTEGER);
+            $columns['updated_at'] = $bi->getSchema()->createColumnSchemaBuilder(Schema::TYPE_INTEGER);
             $bi->createCommand()->createTable($tableName, $columns, $options)->execute();
             if ($relation && is_callable($relation)) {
                 $relation();
@@ -214,5 +214,28 @@ class Form extends ActiveRecord
         $slug = strtolower(trim(preg_replace('/[\s-]+/', $delimiter, preg_replace('/[^A-Za-z0-9-]+/', $delimiter, preg_replace('/[&]/', 'and', preg_replace('/[\']/', '', iconv('UTF-8', 'ASCII//TRANSLIT', $str))))), $delimiter));
         return $slug;
 
+    }
+
+    public function tablesFields($structure = null){
+        if(!$structure){
+            $structure = $this->structure;
+        }
+        $list = [];
+        $list[$structure['name']] = [];
+        if(isset($structure['fields']) && !empty($structure['fields']) && is_array($structure['fields'])){
+            foreach($structure['fields'] as $field){
+                if(isset($field['type']) && !in_array($field['type'],['separator','title'])){
+                    if($field['type'] == 'subform'){
+                        $list = array_merge($list,$this->tablesFields($field));
+                    }else{
+                        $list[$structure['name']][$field['name']] = [
+                            'required' => filter_var($field['required'], FILTER_VALIDATE_BOOLEAN),
+                            'validation' => $field['validation'],
+                        ];
+                    }
+                }
+            }
+        }
+        return $list;
     }
 }

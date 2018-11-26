@@ -11,6 +11,7 @@ namespace backend\controllers;
 use common\models\Form;
 use Yii;
 use cnd\core\components\SController;
+use yii\helpers\ArrayHelper;
 use yii\helpers\Json;
 
 class FormController extends SController
@@ -95,6 +96,55 @@ class FormController extends SController
             throw new \yii\web\HttpException(404, 'The requested form could not be found.');
         }
         $model->synchronizeTables();
+        return null;
+    }
+
+    public function actionTest(){
+        /*$model = Form::findOne(1);
+        //echo Yii::$app->helper->print_r($model->tablesFields());
+        $fieldRules = $model->tablesFields();
+        $Form1 = \common\models\DynamicForm::generateModel('form1',$fieldRules['form1']);
+        $model = new $Form1();
+        $model->name = "Jawdat Sobh";
+        //$model->save();
+        echo Yii::$app->helper->print_r($model->toArray());
+
+        $model2 = new \common\models\dynamic\Form1();
+        $model2->name = "Second Form";
+        echo Yii::$app->helper->print_r($model2->toArray());*/
+
+        /*$bi = Yii::$app->bi;
+        $tables = $bi->schema->tableSchemas;
+        echo Yii::$app->helper->print_r($bi->schema->tableNames);
+        $tables = ArrayHelper::map($tables,'name',function($tableSchema){
+            /**
+             * @var $tableSchema \yii\db\TableSchema
+             */
+            /*$rel = [];
+            $fks = $tableSchema->foreignKeys;
+            if(!empty($fks) && is_array($fks)){
+                foreach($fks as $relation){
+                    $keys = array_keys($relation);
+                    if(isset($keys[1])) {
+                        $name = $relation[0];
+                        $k = $keys[1];
+                        $rel[$name] = $k;
+                    }
+                }
+            }
+            return $rel;
+        });
+        echo Yii::$app->helper->print_r($tables);*/
+        /*$Form1 = DynamicForm::generateModel('form1');
+        $model = new $Form1();
+        $model->name = "Jawdat Sobh";
+        $model->save();
+        echo Yii::$app->helper->print_r($model->toArray());*/
+        /*echo Yii::$app->helper->print_r(new $Form1());
+        $MiddleTable = DynamicForm::generateModel('middle_table');
+        echo Yii::$app->helper->print_r(new $MiddleTable());
+        $NodeC = DynamicForm::generateModel('node_c');
+        echo Yii::$app->helper->print_r(new $NodeC());*/
         return null;
     }
 }

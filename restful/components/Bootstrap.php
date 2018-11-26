@@ -25,6 +25,8 @@ class Bootstrap implements BootstrapInterface
 
         UrlRule::register('get','/contents','/article/list');
         UrlRule::register('post','/files/download','/file/download');
+        UrlRule::register('get','/forms/<id:\d+>','/form/one');
+        UrlRule::register('post','/forms/<id:\d+>','/form/save');
 
         Yii::$app->setComponents(
             [

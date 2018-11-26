@@ -176,9 +176,13 @@ Yii::$app->notification->enabled = false;
                                                         <div class="form-group"
                                                              style="margin-left:0;margin-right:0;">
                                                             <label for="validation">Validation</label>
-                                                            <input type="text" class="form-control" id="validation"
+                                                            <div class="input-group">
+                                                                <span class="input-group-addon">\</span>
+                                                                <input type="text" class="form-control" id="validation"
                                                                    placeholder="Validation"
                                                                    v-model="field.validation">
+                                                                <span class="input-group-addon">\i</span>
+                                                            </div>
                                                         </div>
                                                     </div>
                                                     <div class="col-md-3">

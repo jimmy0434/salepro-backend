@@ -71,6 +71,13 @@ class Bootstrap implements BootstrapInterface
                 ['order','integer',true,'File Partition Order, start from 0'],
             ],
         ]);
+        ApiDocFactory::register([
+            'name' => 'Get Form',
+            'method' => 'GET',
+            'url' => '/forms/[id]',
+            'description' => 'Get Form',
+            'extraParams' => ['_accessToken'=>'ACCESS_TOKEN'],
+        ]);
     }
 
     public function dashboard(){
