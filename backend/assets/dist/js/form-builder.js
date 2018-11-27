@@ -212,10 +212,23 @@ function formBuilder(appId, options) {
         el: appId,
         data() {
             return {
-                structure: options.form.structure
+                structure: options.form.structure,
+                scrollPosition: 0
             };
         },
-        watch: {},
+        watch: {
+            structure: {
+                deep: true,
+                handler(list, oldList){
+                    this.scrollPosition = window.pageYOffset || (document.documentElement || document.body.parentNode || document.body).scrollTop;
+                    this.$nextTick(() => {
+                        window.setTimeout(() => {
+                            window.scrollTo(0, this.scrollPosition);
+                        },0);
+                    });
+                }
+            }
+        },
         computed: {
             options() {
                 return options;
