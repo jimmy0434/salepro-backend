@@ -11,7 +11,6 @@ namespace backend\controllers;
 use common\models\Form;
 use Yii;
 use cnd\core\components\SController;
-use yii\helpers\ArrayHelper;
 use yii\helpers\Json;
 
 class FormController extends SController
@@ -101,42 +100,6 @@ class FormController extends SController
             throw new \yii\web\HttpException(404, 'The requested form could not be found.');
         }
         $model->synchronizeTables();
-        return null;
-    }
-
-    public function actionTest()
-    {
-
-        $relations = [
-            'c' => [
-                'a' => 'a_id',
-            ],
-            'a' => [
-
-            ],
-            'd' => [
-                'b' => 'b_id',
-                'c' => 'c_id',
-            ],
-            'b' => [
-                'a' => 'a_id',
-            ],
-        ];
-
-        $data = [
-            'b' => true,
-            'd' => true,
-            'a' => true,
-            'c' => true,
-        ];
-
-        echo Yii::$app->helper->print_r($data);
-        echo Yii::$app->helper->print_r($relations);
-
-        $model = Form::findOne(1);
-        $list = $model->sortFormData($data, $relations);
-        echo Yii::$app->helper->print_r($list);
-
         return null;
     }
 }

@@ -47,7 +47,7 @@ class Bootstrap implements BootstrapInterface
             ['salesman[name]','string',false,'Name of the salesman'],
         ]);
         ApiDocFactory::register([
-            'name' => 'Files Contents',
+            'name' => 'Secure Cms Contents',
             'method' => 'GET',
             'url' => '/contents',
             'description' => 'Get Contents List',
@@ -61,15 +61,10 @@ class Bootstrap implements BootstrapInterface
         ]);
         ApiDocFactory::register([
             'name' => 'Download File Partition',
-            'method' => 'POST',
-            'url' => '/files/download',
+            'method' => 'GET',
+            'url' => '/files/[id]/download/[version]/[order]',
             'description' => 'Download File Partition',
             'extraParams' => ['_accessToken'=>'ACCESS_TOKEN'],
-            'params' => [
-                ['id','integer',true,'File ID'],
-                ['version','integer',true,'File Version'],
-                ['order','integer',true,'File Partition Order, start from 0'],
-            ],
         ]);
         ApiDocFactory::register([
             'name' => 'Get Form',
@@ -77,6 +72,46 @@ class Bootstrap implements BootstrapInterface
             'url' => '/forms/[id]',
             'description' => 'Get Form',
             'extraParams' => ['_accessToken'=>'ACCESS_TOKEN'],
+        ]);
+        ob_start();
+        ?>
+        <pre>
+        "data[form1][0][first_name]": "Ahmad",
+        "data[form1][0][last_name]": "Azo",
+        "data[form1][0][nationality]": "Syria",
+        "data[form1_speciality][0][name]": "Ecomizer",
+        "data[form1_speciality][0][since]": "2001",
+        "data[form1_speciality][0][parentIndex]": "0",
+        "data[form1_speciality][1][name]": "Infro Plast",
+        "data[form1_speciality][1][since]": "2011",
+        "data[form1_speciality][1][parentIndex]": "0",
+        "data[form1_clinic][0][name]": "Alfredo",
+        "data[form1_clinic][1][name]": "ash2ash",
+        "data[form1_clinic][1][parentIndex]": "0",
+        "data[form1_clinic_address][0][country]": "Lebanon",
+        "data[form1_clinic_address][0][city]": "Tripoli",
+        "data[form1_clinic_address][0][description]": "Kora",
+        "data[form1_clinic_address][0][parentIndex]": "0",
+        "data[form1_clinic_address][1][country]": "Lebanon",
+        "data[form1_clinic_address][1][city]": "Beirut",
+        "data[form1_clinic_address][1][description]": "Sen-l-Fil",
+        "data[form1_clinic_address][1][parentIndex]": "0",
+        "data[form1_clinic_address][2][country]": "Lebanon",
+        "data[form1_clinic_address][2][city]": "Tripoli",
+        "data[form1_clinic_address][2][description]": "Maarad Street",
+        "data[form1_clinic_address][2][parentIndex]": "1"
+        </pre>
+        <?php
+        $dataExample = ob_get_clean();
+        ApiDocFactory::register([
+            'name' => 'Save Form',
+            'method' => 'POST',
+            'url' => '/forms/[id]',
+            'description' => 'Save Form',
+            'extraParams' => ['_accessToken'=>'ACCESS_TOKEN'],
+            'params' => [
+                ['data','string',true,'The Form Data Such As : '.$dataExample],
+            ],
         ]);
     }
 

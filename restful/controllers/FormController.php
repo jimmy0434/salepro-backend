@@ -9,6 +9,7 @@
 namespace restful\controllers;
 
 use common\models\DynamicForm;
+use http\Exception\InvalidArgumentException;
 use Yii;
 use cnd\core\api\SController;
 use common\models\Form;
@@ -79,47 +80,69 @@ class FormController extends SController
 
                 // fix data tables order
                 $data = $model->sortFormData($data, $relations);
-                return $data;
 
                 $fieldRules = $model->tablesFields();
-
-                foreach ($data as $tableName => $rows) {
-                    if (in_array($tableName, $tables) && !empty($rows) && is_array($rows)) {
-                        // initialize the model by table name value
-                        $models[$tableName] = [
-                            'class' => DynamicForm::generateModel($tableName, isset($fieldRules[$tableName])?$fieldRules[$tableName]:[]),
-                            'model' => null,
-                        ];
-                        // find the model by id
-                        if (array_key_exists('id', $rows) && $rows['id']) {
-                            $models[$tableName]['model'] = ($models[$tableName]['class'])::findOne($rows['id']);
-                        }
-                        // create new model if not found
-                        if ($models[$tableName]['model']) {
-                            $models[$tableName]['model'] = new ($models[$tableName]['class'])();
-                        }
-                        // update model attributes values
-                        foreach ($rows as $name => $value) {
-                            $models[$tableName]['model']->setAttribute($name, $value);
-                        }
-                        // save the model
-                        if($models[$tableName]['model']->save()) {
-                            $result[] = $tableName.' has been '.($models[$tableName]['model']->isNewRecord?'inserted':'updated').' successfully.';
-                        }else{
-                            $this->error('invalid '.$tableName.' data', $models[$tableName]['model']->getErrors());
-                        }
-                    }
-                }
-                // add relation parent id
-                foreach ($data as $tableName => $rows) {
-                    if($models[$tableName]['model']->isNewRecord) {
-                        if (isset($relations[$tableName]) && !empty($relations[$tableName]) && is_array($relations[$tableName])) {
-                            foreach ($relations[$tableName] as $parentTable => $relAttr) {
-                                $models[$tableName]['model']->$relAttr = $models[$parentTable]['model']->id;
+                $transaction = $bi->beginTransaction();
+                try {
+                    foreach ($data as $tableName => $rows) {
+                        if (in_array($tableName, $tables) && !empty($rows) && is_array($rows)) {
+                            foreach ($rows as $i => $row) {
+                                // initialize the model by table name value
+                                if (!isset($models[$tableName])) {
+                                    $models[$tableName] = [];
+                                }
+                                $models[$tableName][$i] = [
+                                    'class' => DynamicForm::generateModel($tableName, isset($fieldRules[$tableName]) ? $fieldRules[$tableName] : []),
+                                    'model' => null,
+                                ];
+                                // find the model by id
+                                if (array_key_exists('id', $row) && $row['id']) {
+                                    $models[$tableName][$i]['model'] = ($models[$tableName]['class'])::findOne($row['id']);
+                                }
+                                // create new model if not found
+                                if (!$models[$tableName][$i]['model']) {
+                                    $models[$tableName][$i]['model'] = new $models[$tableName][$i]['class']();
+                                }
+                                // update model attributes values
+                                foreach ($row as $name => $value) {
+                                    if ($models[$tableName][$i]['model']->hasAttribute($name)) {
+                                        $models[$tableName][$i]['model']->setAttribute($name, $value);
+                                    }
+                                }
+                                if(!isset($row['parentIndex']) && isset($relations[$tableName]) && count($relations[$tableName]) > 0){
+                                    $result = [];
+                                    $msg = 'Require parentIndex attribute for table '.$tableName;
+                                    $this->error($msg);
+                                    throw new InvalidArgumentException($msg,404);
+                                }
+                                // add relation parent id
+                                if(array_key_exists('parentIndex',$row) && $row['parentIndex'] >= 0){
+                                    if(isset($relations[$tableName]) && !empty($relations[$tableName]) && is_array($relations[$tableName])){
+                                        reset($relations[$tableName]);
+                                        $parentTable = key($relations[$tableName]);
+                                        $relAttr = $relations[$tableName][$parentTable];
+                                        $parentIndex = $row['parentIndex'];
+                                        $models[$tableName][$i]['model']->$relAttr = $models[$parentTable][$parentIndex]['model']->id;
+                                    }
+                                }
+                                // save the model
+                                $isNewRecord = $models[$tableName][$i]['model']->isNewRecord;
+                                if ($models[$tableName][$i]['model']->save()) {
+                                    $result[] = $tableName . ' has been ' . ($isNewRecord ? 'created' : 'updated') . ' successfully.';
+                                } else {
+                                    $result = [];
+                                    $msg = 'Invalid ' . $tableName . ' data';
+                                    $this->error($msg, $models[$tableName][$i]['model']->getErrors());
+                                    throw new InvalidArgumentException($msg,404);
+                                }
                             }
-                            $models[$tableName]['model']->save(false);
                         }
                     }
+                    $transaction->commit();
+                }catch(\Exception $e){
+                    $transaction->rollBack();
+                }catch(\Throwable $t){
+                    $transaction->rollBack();
                 }
             }
             return ['result' => $result];

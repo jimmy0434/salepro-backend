@@ -117,18 +117,18 @@ class Form extends ActiveRecord
 
     public function synchronizeTables()
     {
-        $transaction = Yii::$app->bi->beginTransaction();
-        try {
+        //$transaction = Yii::$app->bi->beginTransaction();
+        //try {
             $structure = $this->structure;
             $this->manageTable($structure);
             $this->structure = $structure;
             $this->save(false);
-            $transaction->commit();
-        } catch (\Exception $e) {
-            $transaction->rollBack();
-        } catch (\Throwable $t) {
-            $transaction->rollBack();
-        }
+            //$transaction->commit();
+        //} catch (\Exception $e) {
+            //$transaction->rollBack();
+        //} catch (\Throwable $t) {
+            //$transaction->rollBack();
+        //}
         return $this->structure;
     }
 
@@ -160,7 +160,7 @@ class Form extends ActiveRecord
                 $relation();
             }
             $structure['oldName'] = $structure['name'];
-        } else if ($tableName && $tableName != $oldTableName) {
+        } else if ($tableName && $tableName != $oldTableName && !in_array($tableName, $tables)) {
             // rename the table name
             $bi->createCommand()->renameTable($oldTableName, $tableName)->execute();
             $structure['oldName'] = $structure['name'];
@@ -182,16 +182,18 @@ class Form extends ActiveRecord
         if (!empty($fields) && is_array($fields)) {
             $subForms = [];
             // add all fields
-            foreach ($fields as &$field) {
+            foreach ($fields as $index => &$field) {
                 if (array_key_exists('name', $field) && $field['name'] && $field['type'] != "subform") {
                     $columnName = $this->createSlug(strtolower($field['name']));
                     $oldColumnName = $this->createSlug(strtolower($field['oldName']));
+                    $field['name'] = $columnName;
                     if ($columnName && !in_array($columnName, $columns[$tableName]) && !in_array($oldColumnName, $columns[$tableName])) {
                         $bi->createCommand()->addColumn($tableName, $columnName, $field['dataType'])->execute();
+                        $structure['fields'][$index]['oldName'] = $field['name'];
                     } else if ($columnName && $columnName != $oldColumnName) {
                         // rename the column name
                         $bi->createCommand()->renameColumn($tableName, $oldColumnName, $columnName)->execute();
-                        $field['oldName'] = $field['name'];
+                        $structure['fields'][$index]['oldName'] = $field['name'];
                     } else if (isset($dataTypes[$tableName][$columnName]) && $field['dataType'] != $dataTypes[$tableName][$columnName]) {
                         // change column type
                         $bi->createCommand()->alterColumn($tableName, $columnName, $field['dataType'])->execute();
@@ -258,5 +260,36 @@ class Form extends ActiveRecord
             }
         }
         return $list;
+    }
+
+    public function toArray(array $fields = [], array $expand = [], $recursive = true)
+    {
+        $list = parent::toArray($fields, $expand, $recursive);
+        $structure = $list['structure'];
+        $this->fixStructureNames($structure);
+        $list['structure'] = $structure;
+        return $list;
+    }
+
+    public function fixStructureNames(&$structure, $parentName = null){
+        if(isset($structure['name'])) {
+            $structure['name'] = $this->createSlug(strtolower(($parentName && is_string($parentName)?$parentName."_":"").$structure['name']));
+            $structure['oldName'] = $structure['name'];
+            if(isset($structure['fields'])) {
+                $fields = $structure['fields'];
+                if (!empty($fields) && is_array($fields)) {
+                    foreach ($fields as $index => $field) {
+                        if (in_array($field['type'], ['separator', 'title'])) {
+                            continue;
+                        } else if ($field['type'] == 'subform') {
+                            $this->fixStructureNames($structure['fields'][$index], $structure['name']);
+                        } else {
+                            $structure['fields'][$index]['name'] = $this->createSlug(strtolower($field['name']));
+                            $structure['fields'][$index]['oldName'] = $structure['fields'][$index]['name'];
+                        }
+                    }
+                }
+            }
+        }
     }
 }

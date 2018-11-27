@@ -9,6 +9,7 @@
 namespace restful\controllers;
 
 use common\models\File;
+use common\models\Form;
 use Yii;
 use cnd\core\api\SController;
 
@@ -41,6 +42,10 @@ class ArticleController extends SController
                     if($section[0] == 'file') {
                         if (isset($section[1]) && $section[1]) {
                             $data['file'] = File::findOne($section[1]);
+                        }
+                    }else if($section[0] == 'form') {
+                        if (isset($section[1]) && $section[1]) {
+                            $data['form'] = Form::findOne($section[1]);
                         }
                     }
                 }
