@@ -4,6 +4,7 @@ namespace common\models;
 
 use cnd\cms\models\activerecords\Content;
 use cnd\core\components\ActiveRecord;
+use MJS\TopSort\Implementations\StringSort;
 use Yii;
 use yii\db\Schema;
 use yii\helpers\ArrayHelper;
@@ -233,6 +234,26 @@ class Form extends ActiveRecord
                             'validation' => $field['validation'],
                         ];
                     }
+                }
+            }
+        }
+        return $list;
+    }
+
+    public function sortFormData($data, $relations){
+        $sorter = new StringSort();
+        if(!empty($relations) && is_array($relations)){
+            foreach($relations as $tableName => $deps){
+                $sorter->add($tableName, array_keys($deps));
+            }
+        }
+        $result = $sorter->sort();
+        $list = [];
+
+        if(!empty($result) && is_array($result)){
+            foreach($result as $tableName){
+                if(isset($data[$tableName])) {
+                    $list[$tableName] = $data[$tableName];
                 }
             }
         }

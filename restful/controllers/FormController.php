@@ -77,6 +77,10 @@ class FormController extends SController
                     return $rel;
                 });
 
+                // fix data tables order
+                $data = $model->sortFormData($data, $relations);
+                return $data;
+
                 $fieldRules = $model->tablesFields();
 
                 foreach ($data as $tableName => $rows) {
