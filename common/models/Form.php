@@ -4,8 +4,10 @@ namespace common\models;
 
 use cnd\cms\models\activerecords\Content;
 use cnd\core\components\ActiveRecord;
+use cnd\grid\DataLocator;
 use MJS\TopSort\Implementations\StringSort;
 use Yii;
+use yii\db\ActiveQuery;
 use yii\db\Schema;
 use yii\helpers\ArrayHelper;
 use yii\helpers\Json;
@@ -117,18 +119,18 @@ class Form extends ActiveRecord
 
     public function synchronizeTables()
     {
-        //$transaction = Yii::$app->bi->beginTransaction();
-        //try {
+        $transaction = Yii::$app->bi->beginTransaction();
+        try {
             $structure = $this->structure;
             $this->manageTable($structure);
             $this->structure = $structure;
             $this->save(false);
-            //$transaction->commit();
-        //} catch (\Exception $e) {
-            //$transaction->rollBack();
-        //} catch (\Throwable $t) {
-            //$transaction->rollBack();
-        //}
+            $transaction->commit();
+        } catch (\Exception $e) {
+            $transaction->rollBack();
+        } catch (\Throwable $t) {
+            $transaction->rollBack();
+        }
         return $this->structure;
     }
 
@@ -136,7 +138,7 @@ class Form extends ActiveRecord
     {
 
         $bi = Yii::$app->bi;
-        $tableName = $this->createSlug(strtolower(($parentName && is_string($parentName)?$parentName."_":"").$structure['name']));
+        $tableName = $this->createSlug(strtolower(($parentName && is_string($parentName) ? $parentName . "_" : "") . $structure['name']));
         $oldTableName = $this->createSlug(strtolower($structure['oldName']));
         $tables = $bi->schema->tableNames;
         // create table if not exist
@@ -219,18 +221,19 @@ class Form extends ActiveRecord
 
     }
 
-    public function tablesFields($structure = null){
-        if(!$structure){
+    public function tablesFields($structure = null)
+    {
+        if (!$structure) {
             $structure = $this->structure;
         }
         $list = [];
         $list[$structure['name']] = [];
-        if(isset($structure['fields']) && !empty($structure['fields']) && is_array($structure['fields'])){
-            foreach($structure['fields'] as $field){
-                if(isset($field['type']) && !in_array($field['type'],['separator','title'])){
-                    if($field['type'] == 'subform'){
-                        $list = array_merge($list,$this->tablesFields($field));
-                    }else{
+        if (isset($structure['fields']) && !empty($structure['fields']) && is_array($structure['fields'])) {
+            foreach ($structure['fields'] as $field) {
+                if (isset($field['type']) && !in_array($field['type'], ['separator', 'title'])) {
+                    if ($field['type'] == 'subform') {
+                        $list = array_merge($list, $this->tablesFields($field));
+                    } else {
                         $list[$structure['name']][$field['name']] = [
                             'required' => filter_var($field['required'], FILTER_VALIDATE_BOOLEAN),
                             'validation' => $field['validation'],
@@ -242,19 +245,20 @@ class Form extends ActiveRecord
         return $list;
     }
 
-    public function sortFormData($data, $relations){
+    public function sortFormData($data, $relations)
+    {
         $sorter = new StringSort();
-        if(!empty($relations) && is_array($relations)){
-            foreach($relations as $tableName => $deps){
+        if (!empty($relations) && is_array($relations)) {
+            foreach ($relations as $tableName => $deps) {
                 $sorter->add($tableName, array_keys($deps));
             }
         }
         $result = $sorter->sort();
         $list = [];
 
-        if(!empty($result) && is_array($result)){
-            foreach($result as $tableName){
-                if(isset($data[$tableName])) {
+        if (!empty($result) && is_array($result)) {
+            foreach ($result as $tableName) {
+                if (isset($data[$tableName])) {
                     $list[$tableName] = $data[$tableName];
                 }
             }
@@ -271,11 +275,12 @@ class Form extends ActiveRecord
         return $list;
     }
 
-    public function fixStructureNames(&$structure, $parentName = null){
-        if(isset($structure['name'])) {
-            $structure['name'] = $this->createSlug(strtolower(($parentName && is_string($parentName)?$parentName."_":"").$structure['name']));
+    public function fixStructureNames(&$structure, $parentName = null)
+    {
+        if (isset($structure['name'])) {
+            $structure['name'] = $this->createSlug(strtolower(($parentName && is_string($parentName) ? $parentName . "_" : "") . $structure['name']));
             $structure['oldName'] = $structure['name'];
-            if(isset($structure['fields'])) {
+            if (isset($structure['fields'])) {
                 $fields = $structure['fields'];
                 if (!empty($fields) && is_array($fields)) {
                     foreach ($fields as $index => $field) {
@@ -291,5 +296,60 @@ class Form extends ActiveRecord
                 }
             }
         }
+    }
+
+    public function crudData($tableName, $page = 1, $pageSize = 25, $parentId = null, $search = null, $order = null)
+    {
+        $crudModel = DynamicForm::generateModel($tableName);
+        $dataLocator = DataLocator::create($crudModel::className(), [
+            'orderBy' => $order ? $order : 'updated_at DESC, created_at DESC, id DESC',
+            'page' => $page,
+            'pageSize' => $pageSize
+        ], function ($dl, $query) use ($parentId, $search, $tableName) {
+            /**
+             * @var $dl DataLocator
+             * @var $query ActiveQuery
+             * @var $m ActiveRecord
+             */
+            if ($parentId > 0) {
+                $m = new $dl->query->modelClass();
+                if ($m && $m->hasProperty('parent_relation_id')) {
+                    $query->andWhere(['parent_relation_id' => $parentId]);
+                }
+            }
+            if ($search) {
+                $bi = Yii::$app->bi;
+                $attrs = array_filter(arrayHelper::map($bi->schema->getTableSchema($tableName)->columns, function ($row) {
+                    return $row->name;
+                }, function ($row) {
+                    if (in_array($row->name, ['parent_relation_id', 'created_at', 'updated_at'])) {
+                        return null;
+                    }
+                    return $row->type;
+                }));
+                if (!empty($attrs) && is_array($attrs)) {
+                    $q = [];
+                    foreach ($attrs as $name => $type) {
+                        if (in_array($type, ["string", "text"])) {
+                            $q[] = '`' . $name . '` like "%' . $search . '%"';
+                        } else if (in_array($type, ["smallint", "integer", "bigint", "float", "decimal", "money"])) {
+                            $q[] = '`' . $name . '` in (' . $search . ')';
+                        } else if (in_array($type, ["datetime", "date", "time"])) {
+                            $q[] = '`' . $name . '` = "' . $search . '"';
+                        }
+                    }
+                    if (count($q) > 0) {
+                        $query->andWhere(implode(' OR ', $q));
+                    }
+                }
+            }
+        });
+        $response = [
+            'data' => $dataLocator->getData(),
+            'count' => count($dataLocator->getData()),
+            'totalCount' => intval($dataLocator->getDataCount()),
+            'currentPage' => intval($dataLocator->getPage()),
+        ];
+        return $response;
     }
 }

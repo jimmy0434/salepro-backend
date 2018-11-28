@@ -113,6 +113,13 @@ class Bootstrap implements BootstrapInterface
                 ['data','string',true,'The Form Data Such As : '.$dataExample],
             ],
         ]);
+        ApiDocFactory::register([
+            'name' => 'Get Form Crud Data',
+            'method' => 'GET',
+            'url' => '/forms/[id]/crud/[tableName]',
+            'description' => 'Get Form',
+            'extraParams' => ['_accessToken'=>'ACCESS_TOKEN','page'=>1,'pageSize'=>1,'parentId'=>'OPTIONAL','search'=>'OPTIONAL','order'=>'OPTIONAL'],
+        ]);
     }
 
     public function dashboard(){
