@@ -29,7 +29,19 @@ $form = ActiveForm::begin(['id' => Yii::$app->controller->id.'-form']);
                 <div class="panel-heading"><?= ucfirst(Yii::$app->controller->id).' Form' ?></div>
                 <div class="panel-body">
                     <?= $form->field($model, 'id')->hiddenInput()->label(false) ?>
-                    <?= $form->field($model, 'name')->textInput() ?>
+                    <?php
+                    if($model->isNewRecord){
+                        echo $form->field($model, 'name')->textInput();
+                    }else{
+                        ?>
+                        <div class="form-group field-form-name">
+                            <label class="control-label" for="form-name">Name</label>
+                            <div id="form-name" class="form-control" aria-invalid="false"><?= $model->name ?></div>
+                            <div class="help-block"></div>
+                        </div>
+                        <?php
+                    }
+                    ?>
                     <?= $form->field($model, 'title')->textInput() ?>
                     <?= $form->field($model, 'status')->dropDownList($model->status_list) ?>
                 </div>
@@ -42,3 +54,19 @@ $form = ActiveForm::begin(['id' => Yii::$app->controller->id.'-form']);
 
 <?php
 ActiveForm::end();
+$ready = <<< JS
+let autoCreateName = true;
+$('#form-name').on('blur', function(){
+    autoCreateName = false;
+    if($.trim($(this).val()) === ""){
+        autoCreateName = true;
+    }
+});
+$('#form-title').on('change input paste', function(){
+    if(autoCreateName){
+        $('#form-name').val($(this).val().replace(/ /g,"_").toLowerCase());
+    }
+});
+JS;
+$this->registerJs($ready);
+

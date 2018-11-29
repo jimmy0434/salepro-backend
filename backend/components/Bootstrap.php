@@ -10,11 +10,13 @@ namespace backend\components;
 
 use cnd\admin\widgets\InfoBox;
 use cnd\core\admin\MenuManagerSection;
+use cnd\core\components\ActiveRecord;
 use common\models\User;
 use Yii;
 use yii\base\BootstrapInterface;
 use cnd\core\admin\MenuManager;
 use cnd\core\api\ApiDocFactory;
+use yii\base\Event;
 
 class Bootstrap implements BootstrapInterface
 {
@@ -37,6 +39,7 @@ class Bootstrap implements BootstrapInterface
         }
 
         $this->dashboard();
+        $this->synchronizeWithBiDb();
     }
 
     public function apiDefinitions(){
@@ -76,30 +79,54 @@ class Bootstrap implements BootstrapInterface
         ob_start();
         ?>
         <pre>
-        "data[form1][0][first_name]": "Ahmad",
-        "data[form1][0][last_name]": "Azo",
-        "data[form1][0][nationality]": "Syria",
-        "data[form1_speciality][0][name]": "Ecomizer",
-        "data[form1_speciality][0][since]": "2001",
-        "data[form1_speciality][0][parentIndex]": "0",
-        "data[form1_speciality][1][name]": "Infro Plast",
-        "data[form1_speciality][1][since]": "2011",
-        "data[form1_speciality][1][parentIndex]": "0",
-        "data[form1_clinic][0][name]": "Alfredo",
-        "data[form1_clinic][1][name]": "ash2ash",
-        "data[form1_clinic][1][parentIndex]": "0",
-        "data[form1_clinic_address][0][country]": "Lebanon",
-        "data[form1_clinic_address][0][city]": "Tripoli",
-        "data[form1_clinic_address][0][description]": "Kora",
-        "data[form1_clinic_address][0][parentIndex]": "0",
-        "data[form1_clinic_address][1][country]": "Lebanon",
-        "data[form1_clinic_address][1][city]": "Beirut",
-        "data[form1_clinic_address][1][description]": "Sen-l-Fil",
-        "data[form1_clinic_address][1][parentIndex]": "0",
-        "data[form1_clinic_address][2][country]": "Lebanon",
-        "data[form1_clinic_address][2][city]": "Tripoli",
-        "data[form1_clinic_address][2][description]": "Maarad Street",
-        "data[form1_clinic_address][2][parentIndex]": "1"
+{
+	"data": {
+		"doctor": [
+            {
+				"first_name": "Foued",
+				"last_name": "Meslh",
+				"nationality": "Lebanon",
+				"doctor_clinic": [
+					{
+						"name": "Auto Clinic",
+						"doctor_clinic_address": [
+							{
+								"country": "Lebanon",
+								"city": "Tripoli",
+								"description": "Monla Street"
+							},
+							{
+								"country": "Lebanon",
+								"city": "Saida",
+								"description": "Afro Street"
+							}
+						]
+					},
+					{
+						"name": "Ashata Leda",
+						"doctor_clinic_address": [
+							{
+								"country": "Lebanon",
+								"city": "Tripoli",
+								"description": "Abou Ali Street"
+							}
+						]
+					}
+				],
+				"doctor_speciality": [
+					{
+						"name": "Children",
+						"since": "2011"
+					},
+					{
+						"name": "Ecomizer",
+						"since": "1996"
+					}
+				]
+			}
+		]
+	}
+}
         </pre>
         <?php
         $dataExample = ob_get_clean();
@@ -116,9 +143,9 @@ class Bootstrap implements BootstrapInterface
         ApiDocFactory::register([
             'name' => 'Get Form Crud Data',
             'method' => 'GET',
-            'url' => '/forms/[id]/crud/[tableName]',
+            'url' => '/forms/[id]/crud',
             'description' => 'Get Form',
-            'extraParams' => ['_accessToken'=>'ACCESS_TOKEN','page'=>1,'pageSize'=>1,'parentId'=>'OPTIONAL','search'=>'OPTIONAL','order'=>'OPTIONAL'],
+            'extraParams' => ['_accessToken'=>'ACCESS_TOKEN','page'=>1,'pageSize'=>25,'search'=>'OPTIONAL','order'=>'OPTIONAL'],
         ]);
     }
 
@@ -132,5 +159,25 @@ class Bootstrap implements BootstrapInterface
                 'color' => 'green',
             ]);
         };
+    }
+
+    public function synchronizeWithBiDb(){
+        $ar = new ActiveRecord();
+        Event::on(ActiveRecord::className(), ActiveRecord::EVENT_AFTER_INSERT, function($event){
+            $this->biDbSync('add',$event);
+        });
+        Event::on(ActiveRecord::className(), ActiveRecord::EVENT_AFTER_UPDATE, function($event){
+            $this->biDbSync('edit',$event);
+        });
+        Event::on(ActiveRecord::className(), ActiveRecord::EVENT_AFTER_DELETE, function($event){
+            $this->biDbSync('delete',$event);
+        });
+    }
+
+    public function biDbSync($action, $event){
+        $className = ($event->sender)::className();
+        $tableName = $className::getTableSchema()->fullName;
+        echo Yii::$app->helper->print_r($tableName);
+        die();
     }
 }

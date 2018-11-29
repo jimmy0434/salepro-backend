@@ -31,6 +31,7 @@ class FormController extends SController
         $model = Form::findOne($id);
         if (!$model) {
             $model = new Form();
+            $model->setScenario('create');
         }
         if ($model === null) {
             throw new \yii\web\HttpException(404, 'The requested form could not be found.');

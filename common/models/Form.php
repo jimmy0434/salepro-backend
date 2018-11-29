@@ -8,8 +8,10 @@ use cnd\grid\DataLocator;
 use MJS\TopSort\Implementations\StringSort;
 use Yii;
 use yii\db\ActiveQuery;
+use yii\db\Expression;
 use yii\db\Schema;
 use yii\helpers\ArrayHelper;
+use yii\helpers\Inflector;
 use yii\helpers\Json;
 
 /**
@@ -54,8 +56,17 @@ class Form extends ActiveRecord
             [['name'], 'string', 'max' => 20],
             [['title'], 'string', 'max' => 255],
             [['name'], 'unique'],
+            [['name'], 'uniqueAsTable','on'=>'create'],
             [['content_id'], 'exist', 'skipOnError' => true, 'targetClass' => Content::className(), 'targetAttribute' => ['content_id' => 'id']],
         ]);
+    }
+
+    public function uniqueAsTable($attribute, $params){
+        $bi = Yii::$app->bi;
+        $tables = $bi->schema->tableNames;
+        if(in_array($this->$attribute, $tables)) {
+            $this->addError($attribute, "Form Name Not Accepted");
+        }
     }
 
     /**
@@ -146,11 +157,16 @@ class Form extends ActiveRecord
             $options = 'CHARACTER SET utf8 COLLATE utf8_unicode_ci ENGINE=InnoDB';
             $columns = [];
             $columns['id'] = $bi->getSchema()->createColumnSchemaBuilder(Schema::TYPE_PK);
-            $relation = null;
+            $relations = [];
+            $columns['user_id'] = $bi->getSchema()->createColumnSchemaBuilder(Schema::TYPE_INTEGER);
+            $relations[] = function () use ($bi, $tableName) {
+                $bi->createCommand()->createIndex(md5('idx' . $tableName . '-' . 'user_id'), $tableName, 'user_id')->execute();
+                $bi->createCommand()->addForeignKey(md5('fk' . $tableName . '-' . 'user_id'), $tableName, 'user_id', 'user', 'id', 'SET NULL', 'CASCADE')->execute();
+            };
             if ($parentName && is_string($parentName)) {
                 $relationColumnName = 'parent_relation_id';
                 $columns[$relationColumnName] = $bi->getSchema()->createColumnSchemaBuilder(Schema::TYPE_INTEGER);
-                $relation = function () use ($bi, $tableName, $relationColumnName, $parentName) {
+                $relations[] = function () use ($bi, $tableName, $relationColumnName, $parentName) {
                     $bi->createCommand()->createIndex(md5('idx' . $tableName . '-' . $relationColumnName), $tableName, $relationColumnName)->execute();
                     $bi->createCommand()->addForeignKey(md5('fk' . $tableName . '-' . $relationColumnName), $tableName, $relationColumnName, $parentName, 'id', 'CASCADE', 'CASCADE')->execute();
                 };
@@ -158,8 +174,12 @@ class Form extends ActiveRecord
             $columns['created_at'] = $bi->getSchema()->createColumnSchemaBuilder(Schema::TYPE_INTEGER);
             $columns['updated_at'] = $bi->getSchema()->createColumnSchemaBuilder(Schema::TYPE_INTEGER);
             $bi->createCommand()->createTable($tableName, $columns, $options)->execute();
-            if ($relation && is_callable($relation)) {
-                $relation();
+            if(!empty($relations) && is_array($relations)){
+                foreach($relations as $relation){
+                    if ($relation && is_callable($relation)) {
+                        $relation();
+                    }
+                }
             }
             $structure['oldName'] = $structure['name'];
         } else if ($tableName && $tableName != $oldTableName && !in_array($tableName, $tables)) {
@@ -298,7 +318,104 @@ class Form extends ActiveRecord
         }
     }
 
-    public function crudData($tableName, $page = 1, $pageSize = 25, $parentId = null, $search = null, $order = null)
+    public function getDownChildren($structure){
+        return array_filter(ArrayHelper::map($structure['fields'],function($row){
+            return $row['id'];
+        },function($row){
+            if($row['type'] == 'subform'){
+                return $row['name'];
+            }
+            return null;
+        }));
+    }
+
+    private function crudDataQuery($structure, &$query, $search, &$searchQ){
+        /**
+         * @var $structure array
+         * @var $query ActiveQuery
+         * @var $search string
+         * @var $relModel DynamicForm
+         */
+        $attrs = [];
+        $tableName = $structure['name'];
+        $fields = $structure['fields'];
+        if(!empty($fields) && is_array($fields)){
+            foreach($fields as $field){
+                if(!in_array($field['type'],['separator','title'])){
+                    if($field['type'] == "subform"){
+                        $relations = $this->getDownChildren($field);
+                        $relModel = DynamicForm::generateModel($field["name"],[],$relations);
+                        $relExp = new Expression('`'.$tableName.'`.`id`=`'.$field["name"].'`.`parent_relation_id`');
+                        $query->leftJoin($relModel::tableName(),$relExp);
+                        $this->crudDataQuery($field, $query, $search,$searchQ);
+                    }else{
+                        $attrs[$field['name']] = $field['dataType'];
+                    }
+                }
+            }
+        }
+        if ($search) {
+            if (!empty($attrs) && is_array($attrs)) {
+                $q = [];
+                foreach ($attrs as $name => $type) {
+                    if (in_array($type, ["string", "text"])) {
+                        $q[] = '`'.$tableName.'`.`' . $name . '` like "%' . $search . '%"';
+                    } else if (in_array($type, ["smallint", "integer", "bigint", "float", "decimal", "money"])) {
+                        $q[] = '`'.$tableName.'`.`' . $name . '` in (' . $search . ')';
+                    } else if (in_array($type, ["datetime", "date", "time"])) {
+                        $q[] = '`'.$tableName.'`.`' . $name . '` = "' . $search . '"';
+                    }
+                }
+                if (count($q) > 0) {
+                    $searchQ[] = implode(' OR ', $q);
+                }
+            }
+        }
+    }
+
+    public function crudData($page = 1, $pageSize = 25, $search = null, $order = null){
+        $structure = $this->structure;
+        $this->fixStructureNames($structure);
+        if(isset($structure['name'])){
+            /**
+             * @var $crudModel DynamicForm
+             */
+            $tableName = $structure['name'];
+            $relations = $this->getDownChildren($structure);
+            $crudModel = DynamicForm::generateModel($tableName, [], $relations);
+            $dataLocator = DataLocator::create($crudModel::className(), [
+                'orderBy' => $order ? $order : 'updated_at DESC, created_at DESC, id DESC',
+                'page' => $page,
+                'pageSize' => $pageSize,
+            ], function ($dl, $query) use ($search, $tableName, $crudModel, $structure) {
+                /**
+                 * @var $dl DataLocator
+                 * @var $query ActiveQuery
+                 * @var $m ActiveRecord
+                 */
+                $query->from([$tableName=>$crudModel::tableName()]);
+                $query->select($tableName.'.*');
+                $searchQ = [];
+                $query->andWhere(['user_id'=>Yii::$app->user->identity->id]);
+                $this->crudDataQuery($structure, $query, $search, $searchQ);
+                if (count($searchQ) > 0) {
+                    $query->andWhere('('.implode(' OR ', $searchQ).')');
+                }
+                $query->addGroupBy('`'.$tableName.'`.`id`');
+            });
+            Yii::trace(Yii::$app->helper->sql($dataLocator->getQuery()), 'Dynamic Model Form');
+            $response = [
+                'data' => $dataLocator->getData(),
+                'count' => count($dataLocator->getData()),
+                'totalCount' => intval($dataLocator->getDataCount()),
+                'currentPage' => intval($dataLocator->getPage()),
+            ];
+            return $response;
+        }
+        return null;
+    }
+
+    public function crudDataOld($tableName, $page = 1, $pageSize = 25, $parentId = null, $search = null, $order = null)
     {
         $crudModel = DynamicForm::generateModel($tableName);
         $dataLocator = DataLocator::create($crudModel::className(), [
