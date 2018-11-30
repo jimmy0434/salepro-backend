@@ -13,7 +13,6 @@ class m181129_131201_add_bi_tables extends Migration
      */
     public function safeUp()
     {
-        //$this->db = Yii::$app->bi;
         $this->createTable('user', [
             "id" => $this->primaryKey(),
             "name" => $this->string(),

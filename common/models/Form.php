@@ -265,27 +265,6 @@ class Form extends ActiveRecord
         return $list;
     }
 
-    public function sortFormData($data, $relations)
-    {
-        $sorter = new StringSort();
-        if (!empty($relations) && is_array($relations)) {
-            foreach ($relations as $tableName => $deps) {
-                $sorter->add($tableName, array_keys($deps));
-            }
-        }
-        $result = $sorter->sort();
-        $list = [];
-
-        if (!empty($result) && is_array($result)) {
-            foreach ($result as $tableName) {
-                if (isset($data[$tableName])) {
-                    $list[$tableName] = $data[$tableName];
-                }
-            }
-        }
-        return $list;
-    }
-
     public function toArray(array $fields = [], array $expand = [], $recursive = true)
     {
         $list = parent::toArray($fields, $expand, $recursive);

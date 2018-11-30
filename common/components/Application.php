@@ -8,6 +8,7 @@
 
 namespace common\components;
 
+use backend\components\BiMapSync;
 use cnd\cms\components\Cms;
 use cnd\core\components\Authentication;
 use cnd\core\components\Core;
@@ -39,6 +40,7 @@ use yii\web\UrlManager;
  * @property UrlManager  $urlManagerApi
  * @property Keycloak $keycloak
  * @property Connection $bi
+ * @property BiMapSync $biMapSync
  *
  */
 class Application extends \yii\web\Application

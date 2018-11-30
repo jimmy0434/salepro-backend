@@ -95,6 +95,14 @@ return [
         'guide' => [
             'class' => 'cnd\core\components\GuideDoc',
         ],
+        'biMapSync' => [
+            'class' => 'backend\components\BiMapSync',
+            'list' => [
+                'base_admin' => \backend\components\biSync\Admin::className(),
+                'base_role' => \backend\components\biSync\Role::className(),
+                'salesman' => \backend\components\biSync\Salesman::className(),
+            ],
+        ],
     ],
     'params' => $params,
 ];

@@ -177,7 +177,6 @@ class Bootstrap implements BootstrapInterface
     public function biDbSync($action, $event){
         $className = ($event->sender)::className();
         $tableName = $className::getTableSchema()->fullName;
-        echo Yii::$app->helper->print_r($tableName);
-        die();
+        Yii::$app->biMapSync->check($tableName, $event->sender, $action);
     }
 }
