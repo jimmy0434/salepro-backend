@@ -35,6 +35,9 @@ return [
             /*'autoLoginDefinition' => function($type){
                 return !in_array($type,[\cnd\admin\models\activerecords\User::TYPE_ROOT,\cnd\admin\models\activerecords\User::TYPE_ADMIN]);
             },*/
+            'roleFormExtraContent' => function($model, $form){
+                echo \yii\helpers\Html::a('Approval Process',['/approval/role','id'=>$model->id],['class'=>'btn btn-warning btn-block']);
+            },
         ],
         'filemanager' => [
             'class' => 'cnd\filemanager\Module',
