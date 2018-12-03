@@ -17,6 +17,8 @@ use common\widgets\FormPreview;
 use yii\helpers\Html;
 use yii\helpers\Url;
 
+$this->title = "Review Form `".$model->form->title."` requested by `".$model->user->name."`";
+
 ?>
 <div class="panel panel-default">
     <div class="panel-heading">

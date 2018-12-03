@@ -16,7 +16,7 @@ use common\models\FormApprovalUser;
 use common\widgets\FormPreview;
 use yii\helpers\Html;
 
-$this->title = "Review Form `".$model->formApproval->form->title."` by `".$model->user->name."`";
+$this->title = "Review Form `".$model->formApproval->form->title."` requested by `".$model->formApproval->user->name."`";
 
 try{
     echo FormPreview::widget([
