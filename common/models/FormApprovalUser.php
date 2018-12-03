@@ -12,6 +12,7 @@ use Yii;
  * @property int $form_approval_id
  * @property int $user_id
  * @property int $status
+ * @property string $message
  * @property int $created_at
  * @property int $updated_at
  *

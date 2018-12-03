@@ -91,6 +91,12 @@ $dv = new DataView([
     ],
     'rowLinks' => [
         function ($row){
+            if (isset($row->structure['fields']) && is_array($row->structure['fields']) && !empty($row->structure['fields']) && Yii::$app->permission->can('/form/publish-request')) {
+                return Html::a('Publish Request', Url::to(['publish-request', 'id' => $row->id]), ['class' => 'btn bg-maroon']);
+            }
+            return null;
+        },
+        function ($row){
             if (Yii::$app->permission->can('/form/manage-structure')) {
                 return Html::a('Form Structure', Url::to(['manage-structure', 'id' => $row->id]), ['class' => 'btn bg-orange']);
             }

@@ -29,6 +29,7 @@ class m181130_083723_add_approval_process_tables extends Migration
             'form_id' => $this->integer(),
             'type' => $this->tinyInteger(),
             'status' => $this->tinyInteger(),
+            'user_id' => $this->integer(),
         ]);
 
         $this->createTable('form_approval_user',[
@@ -36,6 +37,7 @@ class m181130_083723_add_approval_process_tables extends Migration
             'form_approval_id' => $this->integer(),
             'user_id' => $this->integer(),
             'status' => $this->tinyInteger(),
+            'message' => $this->text(),
         ]);
 
         $this->addRelations(function(){
@@ -44,6 +46,7 @@ class m181130_083723_add_approval_process_tables extends Migration
             $this->createIndexForeignKey('role_approval_user.user_id','base_user.id');
             $this->createIndexForeignKey('form_approval.role_approval_id','role_approval.id');
             $this->createIndexForeignKey('form_approval.form_id','form.id');
+            $this->createIndexForeignKey('form_approval.user_id','base_user.id');
             $this->createIndexForeignKey('form_approval_user.form_approval_id','form_approval.id');
             $this->createIndexForeignKey('form_approval_user.user_id','base_user.id');
         });

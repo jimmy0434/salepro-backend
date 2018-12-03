@@ -29,6 +29,7 @@ $form = ActiveForm::begin(['id' => Yii::$app->controller->id.'-form']);
                 <div class="panel-heading"><?= ucfirst(Yii::$app->controller->id).' Form' ?></div>
                 <div class="panel-body">
                     <?= $form->field($model, 'id')->hiddenInput()->label(false) ?>
+                    <?= $form->field($model, 'status')->hiddenInput()->label(false) ?>
                     <?php
                     if($model->isNewRecord){
                         echo $form->field($model, 'name')->textInput();
@@ -43,7 +44,6 @@ $form = ActiveForm::begin(['id' => Yii::$app->controller->id.'-form']);
                     }
                     ?>
                     <?= $form->field($model, 'title')->textInput() ?>
-                    <?= $form->field($model, 'status')->dropDownList($model->status_list) ?>
                 </div>
             </div>
         </div>

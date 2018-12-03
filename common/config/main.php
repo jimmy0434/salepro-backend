@@ -132,8 +132,11 @@ return [
                 'default' => function($name, $data){
                     return '<div class="text-muted">'.$data['message'].'</div>';
                 },
-                'lesson-request' => function ($name, $data) {
-                    return Html::tag('div', Html::a($data['message'],['/registration/view','id'=>$data['id']]),['class' => 'text-muted', 'data' => ['id' => $data['id']]]);
+                'form-approval' => function ($name, $data) {
+                    return Html::tag('div', Html::a($data['message'],['/form-approval/view','id'=>$data['id']]),['class' => 'text-muted', 'data' => ['id' => $data['id']]]);
+                },
+                'form-approval-response' => function ($name, $data) {
+                    return Html::tag('div', Html::a($data['message'],['/form-approval/response','id'=>$data['id']]),['class' => 'text-muted', 'data' => ['id' => $data['id']]]);
                 },
             ],
             'template' => function($content,$notification,$notificationUser){

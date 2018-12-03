@@ -9,14 +9,20 @@
 namespace backend\controllers;
 
 use common\models\Form;
+use common\models\FormApproval;
+use common\models\FormApprovalUser;
+use common\models\RoleApproval;
 use Yii;
 use cnd\core\components\SController;
+use yii\db\Exception;
 use yii\helpers\Json;
+use yii\helpers\Url;
 
 class FormController extends SController
 {
     public function actionIndex()
     {
+        Url::remember();
         $dataLocator = \cnd\grid\DataLocator::create(Form::className(), [
             'orderBy' => 'updated_at DESC, created_at DESC, id DESC',
         ]);
@@ -31,6 +37,7 @@ class FormController extends SController
         $model = Form::findOne($id);
         if (!$model) {
             $model = new Form();
+            $model->status = Form::STATUS_INACTIVE;
             $model->setScenario('create');
         }
         if ($model === null) {
@@ -53,6 +60,7 @@ class FormController extends SController
 
     public function actionManageStructure($id)
     {
+        Url::remember();
         $model = Form::findOne($id);
         if ($model === null) {
             throw new \yii\web\HttpException(404, 'The requested form could not be found.');
@@ -94,13 +102,64 @@ class FormController extends SController
         return $this->redirect(['index']);
     }
 
-    public function actionTables($id)
-    {
+    public function actionPublishRequest($id){
         $model = Form::findOne($id);
-        if ($model === null) {
-            throw new \yii\web\HttpException(404, 'The requested form could not be found.');
+        if($model) {
+            $roleId = Yii::$app->user->identity->role_id;
+            if (!$roleId) {
+                $roleId = 1;
+            }
+            if ($roleId > 0) {
+                $exist = FormApproval::find()->where(['role_approval_id' => $roleId, 'form_id' => $id, 'status' => FormApproval::STATUS_PENDING])->one();
+                if (!$exist) {
+                    $approval = RoleApproval::findOne($roleId);
+                    if ($approval) {
+                        $transaction = Yii::$app->db->beginTransaction();
+                        try {
+                            $request = new FormApproval();
+                            $request->role_approval_id = $approval->id;
+                            $request->form_id = $id;
+                            $request->user_id = Yii::$app->user->identity->id;
+                            $request->type = $approval->type;
+                            $request->status = FormApproval::STATUS_PENDING;
+                            if ($request->save()) {
+                                $users = $approval->roleApprovalUsers;
+                                if (!empty($users) && is_array($users)) {
+                                    if($approval->type == RoleApproval::TYPE_PARALLEL) {
+                                        foreach ($users as $assignedUser) {
+                                            $request->assignUser($assignedUser, $model);
+                                        }
+                                    }else if($approval->type == RoleApproval::TYPE_SERIES){
+                                        reset($users);
+                                        $k = key($users);
+                                        $assignedUser = $users[$k];
+                                        $request->assignUser($assignedUser, $model);
+                                    }
+                                }
+                                $transaction->commit();
+                                \Yii::$app->session->setFlash('success', 'Form in review mode');
+                            } else {
+                                throw new Exception("FormApproval not saved");
+                            }
+                        } catch (\Throwable $t) {
+                            $transaction->rollBack();
+                            \Yii::$app->session->setFlash('error', "Error Occurred");
+                        } catch (\Exception $e) {
+                            $transaction->rollBack();
+                            \Yii::$app->session->setFlash('error', "Error Occurred");
+                        }
+                    } else {
+                        \Yii::$app->session->setFlash('error', 'No approval defined');
+                    }
+                } else {
+                    \Yii::$app->session->setFlash('warning', 'Request already in review');
+                }
+            } else {
+                \Yii::$app->session->setFlash('error', 'You do not have role related to your account');
+            }
+        }else{
+            \Yii::$app->session->setFlash('error', 'Form not found');
         }
-        $model->synchronizeTables();
-        return null;
+        return $this->goBack();
     }
 }

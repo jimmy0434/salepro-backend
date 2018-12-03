@@ -21,7 +21,10 @@ Yii::$app->notification->enabled = false;
     <div id="form-builder">
         <form-Item :structure="structure" ref="rootItem"></form-Item>
         <div class="text-center">
-            <button type="button" class="btn btn-success btn-block btn-lg" @click="save">Save</button>
+            <button type="button" class="btn btn-info btn-lg" @click="save">Save</button>
+            &nbsp;&nbsp;&nbsp;
+            <a href="<?= \yii\helpers\Url::to(['/form/publish-request', 'id' => $model->id]) ?>" type="button"
+               class="btn btn-success btn-lg" v-if="structure.fields.length > 0">Publish Request</a>
         </div>
     </div>
     <script type="text/x-template" id="form-item">
@@ -179,8 +182,8 @@ Yii::$app->notification->enabled = false;
                                                             <div class="input-group">
                                                                 <span class="input-group-addon">\</span>
                                                                 <input type="text" class="form-control" id="validation"
-                                                                   placeholder="Validation"
-                                                                   v-model="field.validation">
+                                                                       placeholder="Validation"
+                                                                       v-model="field.validation">
                                                                 <span class="input-group-addon">\i</span>
                                                             </div>
                                                         </div>
@@ -188,7 +191,8 @@ Yii::$app->notification->enabled = false;
                                                     <div class="col-md-3">
                                                         <div class="form-group" style="margin-left:0;margin-right:0;">
                                                             <label for="dataType">Data Type</label>
-                                                            <select v-model="field.dataType" class="form-control" id="dataType">
+                                                            <select v-model="field.dataType" class="form-control"
+                                                                    id="dataType">
                                                                 <option v-for="(dataType, tpi) in dataTypes"
                                                                         v-bind:key="'dataType-'+tpi" :value="dataType">
                                                                     {{tpi | typeName}}
