@@ -32,12 +32,13 @@ class FormPreview extends Widget
          * @var $type string
          * @var $dataType string
          * @var $placeholder string
-         * @var $required string
+         * @var $required boolean
          * @var $validation string
          * @var $value string
          * @var $options array
          */
         extract($field);
+        $required = filter_var($required, FILTER_VALIDATE_BOOLEAN);
         ob_start();
         ?>
         <div class="form-group">
@@ -45,10 +46,10 @@ class FormPreview extends Widget
             <?php
             switch($type){
                 case "text":
-                    echo Html::textInput($name,null, ['placeholder' => $placeholder, 'class' => 'form-control']);
+                    echo Html::textInput($name,null, ['placeholder' => $placeholder, 'class' => 'form-control', 'pattern' => $validation?$validation:null]);
                     break;
                 case "textarea":
-                    echo Html::textarea($name,null, ['placeholder' => $placeholder, 'class' => 'form-control']);
+                    echo Html::textarea($name,null, ['placeholder' => $placeholder, 'class' => 'form-control', 'pattern' => $validation?$validation:null]);
                     break;
                 case "dropdownlist":
                     echo Html::dropDownList($name,null, $options, ['class' => 'form-control']);
@@ -59,6 +60,11 @@ class FormPreview extends Widget
                 case "radio":
                     echo Html::radioList($name,null, $options);
                     break;
+            }
+            if($note){
+                ?>
+                <span id="helpBlock" class="help-block"><?= $note ?></span>
+                <?php
             }
             ?>
         </div>
@@ -80,7 +86,7 @@ class FormPreview extends Widget
                  * @var $type string
                  * @var $dataType string
                  * @var $placeholder string
-                 * @var $required string
+                 * @var $required boolean
                  * @var $validation string
                  * @var $value string
                  * @var $options array
