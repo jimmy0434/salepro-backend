@@ -91,7 +91,7 @@ $dv = new DataView([
     ],
     'rowLinks' => [
         function ($row){
-            if (isset($row->structure['fields']) && is_array($row->structure['fields']) && !empty($row->structure['fields']) && Yii::$app->permission->can('/form/publish-request')) {
+            if (isset($row->structure['fields']) && is_array($row->structure['fields']) && !empty($row->structure['fields']) && Yii::$app->permission->can('/form/publish-request') && $row->status != Form::STATUS_ACTIVE) {
                 return Html::a('Publish Request', Url::to(['publish-request', 'id' => $row->id]), ['class' => 'btn bg-maroon']);
             }
             return null;

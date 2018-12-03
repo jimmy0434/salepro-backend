@@ -74,6 +74,7 @@ class FormController extends SController
             }
             if ($model->getOldAttribute('structure') != Json::encode($model->structure)) {
                 $model->version++;
+                $model->status = Form::STATUS_PENDING;
                 $model->synchronizeTables();
             }
             $model->save();
@@ -104,7 +105,7 @@ class FormController extends SController
 
     public function actionPublishRequest($id){
         $model = Form::findOne($id);
-        if($model) {
+        if($model && $model->status != Form::STATUS_ACTIVE) {
             $roleId = Yii::$app->user->identity->role_id;
             if (!$roleId) {
                 $roleId = 1;
@@ -158,7 +159,7 @@ class FormController extends SController
                 \Yii::$app->session->setFlash('error', 'You do not have role related to your account');
             }
         }else{
-            \Yii::$app->session->setFlash('error', 'Form not found');
+            \Yii::$app->session->setFlash('error', 'Form not found or it is active');
         }
         return $this->goBack();
     }
