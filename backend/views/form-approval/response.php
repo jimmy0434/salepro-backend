@@ -40,7 +40,7 @@ $this->title = "Review Response Form `".$model->form->title."` requested by `".$
                         if ($requestedUser->message) {
                             ?>
                             <dt class="text-primary"><?= $requestedUser->user->name ?></dt>
-                            <dd class="text-<?= $requestedUser->status == FormApproval::STATUS_APPROVED ? 'success' : 'danger' ?>"><?= $requestedUser->message ?></dd>
+                            <dd class="text-<?= $requestedUser->status == FormApproval::STATUS_APPROVED ? 'success' : 'danger' ?>"><?= nl2br($requestedUser->message) ?></dd>
                             <?php
                         }
                     }
