@@ -94,7 +94,7 @@ class FormApproval extends ActiveRecord
      */
     public function getUser()
     {
-        return $this->hasMany(User::className(), ['user_id' => 'id']);
+        return $this->hasOne(User::className(), ['id' => 'user_id']);
     }
 
     /**

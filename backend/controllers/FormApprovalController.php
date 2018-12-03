@@ -69,7 +69,7 @@ class FormApprovalController extends SController
     public function actionResponse($id)
     {
         $model = FormApproval::findOne($id);
-        if ($model && $model->form) {
+        if ($model && $model->form && $model->user) {
             return $this->render('response', ['model' => $model]);
         }
         return $this->redirect(['index']);

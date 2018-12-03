@@ -33,6 +33,7 @@ class Bootstrap implements BootstrapInterface
         $cmsSection = $navigator->section('CMS','fa fa-font',10);
         $cmsSection->item('File', ['/file/index'], 101);
         $cmsSection->item('Form', ['/form/index'], 102);
+        $cmsSection->item('Form Approval', ['/form-approval/index'], 103);
 
         if(!Yii::$app->user->isGuest && Yii::$app->user->identity->type == User::TYPE_ROOT){
             $this->apiDefinitions();
