@@ -10,6 +10,7 @@
 
 namespace backend\controllers;
 
+use cnd\admin\models\activerecords\Log;
 use cnd\grid\DataLocator;
 use common\models\FormApprovalQuery;
 use common\models\FormApprovalUser;
@@ -41,6 +42,7 @@ class FormApprovalController extends SController
                 }
             ], true, 'INNER JOIN');
         });
+        Log::trace("Show Forms Approval Requests List (page:" . $dataLocator->page . ", count: " . $dataLocator->pageSize . ")");
         if (Yii::$app->request->isAjax) {
             return $this->renderAjax('index', ['dataLocator' => $dataLocator]);
         }
@@ -57,12 +59,15 @@ class FormApprovalController extends SController
                 $model->status = $action == 'reject' ? FormApproval::STATUS_REJECTED : FormApproval::STATUS_APPROVED;
                 $model->message = $message;
                 if ($model->save()) {
+                    Log::trace("Form #".$model->formApproval->form->id." has been ".$model->status_label);
                     $model->formApproval->nextApprove($model);
                 }
                 return $this->redirect(['index']);
             }
+            Log::trace("View form approval details #".$model->formApproval->id." / #".$id." of form #".$model->formApproval->form->id);
             return $this->render('view', ['model' => $model]);
         }
+        Log::trace("form approval details #".$id.", record not found [Form Approval User or Form Approval or Form]");
         return $this->redirect(['index']);
     }
 
@@ -70,8 +75,10 @@ class FormApprovalController extends SController
     {
         $model = FormApproval::findOne($id);
         if ($model && $model->form && $model->user) {
+            Log::trace("View form approval response #".$id." of form #".$model->form->id." of user #".$model->user->id);
             return $this->render('response', ['model' => $model]);
         }
+        Log::trace("form approval response #".$id.", record not found [Form Approval or Form or User]");
         return $this->redirect(['index']);
     }
 }

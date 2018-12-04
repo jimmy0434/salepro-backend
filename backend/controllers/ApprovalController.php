@@ -8,6 +8,7 @@
 
 namespace backend\controllers;
 
+use cnd\admin\models\activerecords\Log;
 use common\models\RoleApproval;
 use common\models\RoleApprovalUser;
 use common\models\User;
@@ -39,6 +40,7 @@ class ApprovalController extends SController
                         $user->save();
                     }
                 }
+                Log::trace("Manage role approval process #".$id);
                 \Yii::$app->session->setFlash('success', ucfirst($this->id) . ' role saved successfully');
             } else {
                 \Yii::$app->session->setFlash('error', ucfirst($this->id) . ' role not saved');

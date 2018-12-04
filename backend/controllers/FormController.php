@@ -8,9 +8,10 @@
 
 namespace backend\controllers;
 
+use cnd\admin\models\activerecords\Log;
+use cnd\grid\DataLocator;
 use common\models\Form;
 use common\models\FormApproval;
-use common\models\FormApprovalUser;
 use common\models\RoleApproval;
 use Yii;
 use cnd\core\components\SController;
@@ -22,10 +23,14 @@ class FormController extends SController
 {
     public function actionIndex()
     {
+        /**
+         * @var $dataLocator DataLocator
+         */
         Url::remember();
-        $dataLocator = \cnd\grid\DataLocator::create(Form::className(), [
+        $dataLocator = DataLocator::create(Form::className(), [
             'orderBy' => 'updated_at DESC, created_at DESC, id DESC',
         ]);
+        Log::trace("Show Forms List (page:" . $dataLocator->page . ", count: " . $dataLocator->pageSize . ")");
         if (Yii::$app->request->isAjax) {
             return $this->renderAjax('index', ['dataLocator' => $dataLocator]);
         }
@@ -51,10 +56,13 @@ class FormController extends SController
                 \Yii::$app->session->setFlash('error', ucfirst($this->id) . ' not saved');
             }
             if ($isNew) {
+                Log::trace("Create new form meta data #" . $model->id);
                 return $this->redirect(['manage-structure', 'id' => $model->id]);
             }
+            Log::trace("Update form meta data #" . $id);
             return $this->redirect(['index']);
         }
+        Log::trace("Open form meta data form");
         return $this->render('form-meta-data', ['model' => $model]);
     }
 
@@ -76,6 +84,7 @@ class FormController extends SController
                 $model->version++;
                 $model->status = Form::STATUS_PENDING;
                 $model->synchronizeTables();
+                Log::trace("Form Structure Updated #" . $id);
             }
             $model->save();
             $response = [
@@ -85,6 +94,7 @@ class FormController extends SController
 
             return $response;
         }
+        Log::trace("Open form builder #" . $id);
         return $this->render('form-structure', ['model' => $model]);
     }
 
@@ -93,19 +103,23 @@ class FormController extends SController
         $model = Form::find()->where(['id' => $id])->one();
         if ($model !== null) {
             if ($model->delete()) {
+                Log::trace("Form deleted #" . $id);
                 \Yii::$app->session->setFlash('success', ucfirst($this->id) . ' deleted successfully');
             } else {
+                Log::trace("Form not deleted #" . $id);
                 \Yii::$app->session->setFlash('error', ucfirst($this->id) . ' not deleted');
             }
         } else {
+            Log::trace("Form not found to delete #" . $id);
             \Yii::$app->session->setFlash('error', ucfirst($this->id) . ' not found');
         }
         return $this->redirect(['index']);
     }
 
-    public function actionPublishRequest($id){
+    public function actionPublishRequest($id)
+    {
         $model = Form::findOne($id);
-        if($model && $model->status != Form::STATUS_ACTIVE) {
+        if ($model && $model->status != Form::STATUS_ACTIVE) {
             $roleId = Yii::$app->user->identity->role_id;
             if (!$roleId) {
                 $roleId = 1;
@@ -126,11 +140,11 @@ class FormController extends SController
                             if ($request->save()) {
                                 $users = $approval->roleApprovalUsers;
                                 if (!empty($users) && is_array($users)) {
-                                    if($approval->type == RoleApproval::TYPE_PARALLEL) {
+                                    if ($approval->type == RoleApproval::TYPE_PARALLEL) {
                                         foreach ($users as $assignedUser) {
                                             $request->assignUser($assignedUser, $model);
                                         }
-                                    }else if($approval->type == RoleApproval::TYPE_SERIES){
+                                    } else if ($approval->type == RoleApproval::TYPE_SERIES) {
                                         reset($users);
                                         $k = key($users);
                                         $assignedUser = $users[$k];
@@ -138,27 +152,34 @@ class FormController extends SController
                                     }
                                 }
                                 $transaction->commit();
+                                Log::trace("Publish Request: Form #" . $id . " in review mode.");
                                 \Yii::$app->session->setFlash('success', 'Form in review mode');
                             } else {
                                 throw new Exception("FormApproval not saved");
                             }
                         } catch (\Throwable $t) {
                             $transaction->rollBack();
+                            Log::trace("Publish Request: Exception; " . $t->getMessage() . ", Form #" . $id);
                             \Yii::$app->session->setFlash('error', "Error Occurred");
                         } catch (\Exception $e) {
                             $transaction->rollBack();
+                            Log::trace("Publish Request: Exception; " . $e->getMessage() . ", Form #" . $id);
                             \Yii::$app->session->setFlash('error', "Error Occurred");
                         }
                     } else {
+                        Log::trace("Publish Request: No approval defined, Form #" . $id);
                         \Yii::$app->session->setFlash('error', 'No approval defined');
                     }
                 } else {
+                    Log::trace("Publish Request: Request already in review, Form #" . $id);
                     \Yii::$app->session->setFlash('warning', 'Request already in review');
                 }
             } else {
+                Log::trace("Publish Request: You do not have role related to your account, Form #" . $id);
                 \Yii::$app->session->setFlash('error', 'You do not have role related to your account');
             }
-        }else{
+        } else {
+            Log::trace("Publish Request: Form #" . $id . " not found or it is active");
             \Yii::$app->session->setFlash('error', 'Form not found or it is active');
         }
         return $this->goBack();
