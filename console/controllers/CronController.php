@@ -21,6 +21,7 @@ class CronController extends Controller
 {
     public function actionLogTransfer()
     {
+        $out = "";
         $query = Log::find();
         $query->limit(100);
         $query->orderBy('id ASC');
@@ -29,8 +30,10 @@ class CronController extends Controller
             $dbTransaction = Yii::$app->db->beginTransaction();
             $biTransaction = Yii::$app->bi->beginTransaction();
             try {
-                foreach ($list as $log) {
-                    echo $this->ansiFormat('/'.str_repeat("-", 100).'\\', Console::FG_PURPLE) . PHP_EOL;
+                $count = count($list);
+                Console::startProgress(0, $count);
+                foreach ($list as $i => $log) {
+                    $out .= $this->ansiFormat('/'.str_repeat("-", 100).'\\', Console::FG_PURPLE) . PHP_EOL;
                     $attrs = $log->attributes;
                     $data = $attrs['data'];
                     unset($attrs['data']);
@@ -50,42 +53,45 @@ class CronController extends Controller
                                 'updated_at' => time(),
                             ];
                             Yii::$app->bi->createCommand()->insert('log_change', $changes)->execute();
-                            echo $this->ansiFormat("Attribute ", Console::FG_CYAN);
-                            echo $this->ansiFormat("" . $attribute . " ", Console::FG_YELLOW, Console::BOLD);
-                            echo $this->ansiFormat("changed From ", Console::FG_CYAN);
-                            echo $this->ansiFormat("".$item['oldValue']." ", Console::FG_GREY, Console::BOLD);
-                            echo $this->ansiFormat("To ", Console::FG_CYAN);
-                            echo $this->ansiFormat("".$item['newValue']." ", Console::FG_GREEN, Console::BOLD);
-                            echo "".PHP_EOL;
-                            echo "".PHP_EOL;
+                            $out .= $this->ansiFormat("Attribute ", Console::FG_CYAN);
+                            $out .= $this->ansiFormat("" . $attribute . " ", Console::FG_YELLOW, Console::BOLD);
+                            $out .= $this->ansiFormat("changed From ", Console::FG_CYAN);
+                            $out .= $this->ansiFormat("".$item['oldValue']." ", Console::FG_GREY, Console::BOLD);
+                            $out .= $this->ansiFormat("To ", Console::FG_CYAN);
+                            $out .= $this->ansiFormat("".$item['newValue']." ", Console::FG_GREEN, Console::BOLD);
+                            $out .= "".PHP_EOL;
+                            $out .= "".PHP_EOL;
                         }
                     }
-                    echo $this->ansiFormat("Transfer new log #", Console::FG_GREEN). $this->ansiFormat($log->id, Console::FG_YELLOW, Console::BOLD) . "." . PHP_EOL;
-                    echo "".PHP_EOL;
-                    echo Table::widget([
+                    $out .= $this->ansiFormat("Transfer new log #", Console::FG_GREEN). $this->ansiFormat($log->id, Console::FG_YELLOW, Console::BOLD) . "." . PHP_EOL;
+                    $out .= "".PHP_EOL;
+                    $out .= Table::widget([
                         'headers' => array_keys($attrs),
                         'rows' => [array_values($attrs)],
                     ]);
                     if ($log->delete()) {
-                        echo $this->ansiFormat("Delete original log #", Console::FG_RED) . $this->ansiFormat($log->id, Console::FG_YELLOW, Console::BOLD) . "." . PHP_EOL;
-                        echo "".PHP_EOL;
+                        $out .= $this->ansiFormat("Delete original log #", Console::FG_RED) . $this->ansiFormat($log->id, Console::FG_YELLOW, Console::BOLD) . "." . PHP_EOL;
+                        $out .= "".PHP_EOL;
                     }
-                    echo $this->ansiFormat('\\'.str_repeat("-", 100).'/', Console::FG_PURPLE) . PHP_EOL;
-                    echo "" . PHP_EOL;
+                    $out .= $this->ansiFormat('\\'.str_repeat("-", 100).'/', Console::FG_PURPLE) . PHP_EOL;
+                    $out .= "" . PHP_EOL;
+                    Console::updateProgress($i+1, $count);
                 }
+                Console::endProgress();
                 $dbTransaction->commit();
                 $biTransaction->commit();
             } catch (\Throwable $t) {
-                echo $t->getMessage() . PHP_EOL;
+                $out .= $t->getMessage() . PHP_EOL;
                 $dbTransaction->rollBack();
                 $biTransaction->rollBack();
             } catch (\Exception $e) {
-                echo $e->getMessage() . PHP_EOL;
+                $out .= $e->getMessage() . PHP_EOL;
                 $dbTransaction->rollBack();
                 $biTransaction->rollBack();
             }
         } else {
-            echo $this->ansiFormat("No logs to transfer", Console::FG_RED) . PHP_EOL;
+            $out .= $this->ansiFormat("No logs to transfer", Console::FG_RED) . PHP_EOL;
         }
+        echo $out;
     }
 }
