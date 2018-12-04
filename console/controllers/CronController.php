@@ -14,6 +14,8 @@ use Yii;
 use cnd\admin\models\activerecords\Log;
 use yii\console\Controller;
 use yii\console\widgets\Table;
+use yii\helpers\Console;
+use yii\helpers\Json;
 
 class CronController extends Controller
 {
@@ -28,18 +30,47 @@ class CronController extends Controller
             $biTransaction = Yii::$app->bi->beginTransaction();
             try {
                 foreach ($list as $log) {
-                    echo str_repeat("-", 100) . PHP_EOL;
+                    echo $this->ansiFormat('/'.str_repeat("-", 100).'\\', Console::FG_PURPLE) . PHP_EOL;
                     $attrs = $log->attributes;
+                    $data = $attrs['data'];
+                    unset($attrs['data']);
                     Yii::$app->bi->createCommand()->insert('log', $attrs)->execute();
-                    echo "Transfer new log #" . $log->id . "." . PHP_EOL;
+                    $id = Yii::$app->bi->getLastInsertID();
+                    if(Yii::$app->helper->isJson($data)){
+                        $data = Json::decode($data);
+                    }
+                    if(!empty($data) && is_array($data)){
+                        foreach($data as $attribute => $item){
+                            $changes = [
+                                'log_id' => $id,
+                                'name' => $attribute,
+                                'from' => $item['oldValue'],
+                                'to' => $item['newValue'],
+                                'created_at' => time(),
+                                'updated_at' => time(),
+                            ];
+                            Yii::$app->bi->createCommand()->insert('log_change', $changes)->execute();
+                            echo $this->ansiFormat("Attribute ", Console::FG_CYAN);
+                            echo $this->ansiFormat("" . $attribute . " ", Console::FG_YELLOW, Console::BOLD);
+                            echo $this->ansiFormat("changed From ", Console::FG_CYAN);
+                            echo $this->ansiFormat("".$item['oldValue']." ", Console::FG_GREY, Console::BOLD);
+                            echo $this->ansiFormat("To ", Console::FG_CYAN);
+                            echo $this->ansiFormat("".$item['newValue']." ", Console::FG_GREEN, Console::BOLD);
+                            echo "".PHP_EOL;
+                            echo "".PHP_EOL;
+                        }
+                    }
+                    echo $this->ansiFormat("Transfer new log #", Console::FG_GREEN). $this->ansiFormat($log->id, Console::FG_YELLOW, Console::BOLD) . "." . PHP_EOL;
+                    echo "".PHP_EOL;
                     echo Table::widget([
                         'headers' => array_keys($attrs),
                         'rows' => [array_values($attrs)],
                     ]);
                     if ($log->delete()) {
-                        echo "Original log #" . $log->id . " was deleted." . PHP_EOL;
+                        echo $this->ansiFormat("Delete original log #", Console::FG_RED) . $this->ansiFormat($log->id, Console::FG_YELLOW, Console::BOLD) . "." . PHP_EOL;
+                        echo "".PHP_EOL;
                     }
-                    echo str_repeat("-", 100) . PHP_EOL;
+                    echo $this->ansiFormat('\\'.str_repeat("-", 100).'/', Console::FG_PURPLE) . PHP_EOL;
                     echo "" . PHP_EOL;
                 }
                 $dbTransaction->commit();
@@ -54,7 +85,7 @@ class CronController extends Controller
                 $biTransaction->rollBack();
             }
         } else {
-            echo "No logs to transfer" . PHP_EOL;
+            echo $this->ansiFormat("No logs to transfer", Console::FG_RED) . PHP_EOL;
         }
     }
 }
