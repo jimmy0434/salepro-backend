@@ -13,8 +13,6 @@ namespace console\controllers;
 use Yii;
 use cnd\admin\models\activerecords\Log;
 use yii\console\Controller;
-use yii\console\widgets\Table;
-use yii\helpers\ArrayHelper;
 use yii\helpers\Console;
 use yii\helpers\Json;
 
@@ -34,7 +32,16 @@ class CronController extends Controller
                 $count = count($list);
                 Console::startProgress(0, $count);
                 foreach ($list as $i => $log) {
-                    $out .= $this->ansiFormat('/'.str_repeat("-", 100).'\\', Console::FG_PURPLE) . PHP_EOL;
+                    $out .= $this->ansiFormat('/'.str_repeat("=", 100).'\\', Console::FG_PURPLE) . PHP_EOL;
+                    $out .= " - ";
+                    $out .= $this->ansiFormat("Transfer new log #", Console::FG_GREEN). $this->ansiFormat($log->id, Console::FG_YELLOW, Console::BOLD) . "." . PHP_EOL;
+                    $out .= " - ";
+                    $out .= "(".$this->ansiFormat($log->level, Console::FG_RED).") : ";
+                    $out .= $this->ansiFormat($log->user->name, Console::FG_GREEN)." [";
+                    $out .= $this->ansiFormat($log->message, Console::FG_CYAN)."] ";
+                    $out .= "in ".$this->ansiFormat($log->app,Console::FG_YELLOW)." ";
+                    $out .= "on ".$this->ansiFormat(date('l, d F, Y H:i',strtotime($log->date)), Console::FG_PURPLE);
+                    $out .= "".PHP_EOL;
                     $attrs = $log->attributes;
                     $data = $attrs['data'];
                     unset($attrs['data']);
@@ -42,19 +49,6 @@ class CronController extends Controller
                     $id = Yii::$app->bi->getLastInsertID();
                     if(Yii::$app->helper->isJson($data)){
                         $data = Json::decode($data);
-                    }
-                    $out .= $this->ansiFormat("Transfer new log #", Console::FG_GREEN). $this->ansiFormat($log->id, Console::FG_YELLOW, Console::BOLD) . "." . PHP_EOL;
-                    $out .= "".PHP_EOL;
-                    if(!empty($attrs) && is_array($attrs)){
-                        $header = ["Attribute","Value"];
-                        $list = [];
-                        foreach($attrs as $name => $value){
-                            $list[] = [$name, $value];
-                        }
-                        $out .= Table::widget([
-                            'headers' => $header,
-                            'rows' => $list,
-                        ]);
                     }
 
                     if(!empty($data) && is_array($data)){
@@ -68,6 +62,7 @@ class CronController extends Controller
                                 'updated_at' => time(),
                             ];
                             Yii::$app->bi->createCommand()->insert('log_change', $changes)->execute();
+                            $out .= " - ";
                             $out .= $this->ansiFormat("Attribute ", Console::FG_CYAN);
                             $out .= $this->ansiFormat("" . $attribute . " ", Console::FG_YELLOW, Console::BOLD);
                             $out .= $this->ansiFormat("changed From ", Console::FG_CYAN);
@@ -75,15 +70,15 @@ class CronController extends Controller
                             $out .= $this->ansiFormat("To ", Console::FG_CYAN);
                             $out .= $this->ansiFormat("".$item['newValue']." ", Console::FG_GREEN, Console::BOLD);
                             $out .= "".PHP_EOL;
-                            $out .= "".PHP_EOL;
                         }
                     }
 
                     if ($log->delete()) {
+                        $out .= " - ";
                         $out .= $this->ansiFormat("Delete original log #", Console::FG_RED) . $this->ansiFormat($log->id, Console::FG_YELLOW, Console::BOLD) . "." . PHP_EOL;
                         $out .= "".PHP_EOL;
                     }
-                    $out .= $this->ansiFormat('\\'.str_repeat("-", 100).'/', Console::FG_PURPLE) . PHP_EOL;
+                    $out .= $this->ansiFormat('\\'.str_repeat("=", 100).'/', Console::FG_PURPLE) . PHP_EOL;
                     $out .= "" . PHP_EOL;
                     Console::updateProgress($i+1, $count);
                 }
