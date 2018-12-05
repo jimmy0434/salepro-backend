@@ -337,10 +337,12 @@ class Form extends ActiveRecord
             if (!empty($attrs) && is_array($attrs)) {
                 $q = [];
                 foreach ($attrs as $name => $type) {
-                    if (in_array($type, ["string", "text"])) {
+                    if (in_array($type, ["string", "text"]) && is_string($search)) {
                         $q[] = '`'.$tableName.'`.`' . $name . '` like "%' . $search . '%"';
-                    } else if (in_array($type, ["smallint", "integer", "bigint", "float", "decimal", "money"])) {
-                        $q[] = '`'.$tableName.'`.`' . $name . '` in (' . $search . ')';
+                    } else if (in_array($type, ["smallint", "integer", "bigint", "decimal", "money"]) && is_numeric($search)) {
+                        $q[] = '`' . $tableName . '`.`' . $name . '` in (' . $search . ')';
+                    }else if(in_array($type, ["float"]) && is_numeric($search)){
+                        $q[] = 'CAST(`' . $tableName . '`.`' . $name . '` AS DECIMAL) = CAST(' . $search . ' AS DECIMAL)';
                     } else if (in_array($type, ["datetime", "date", "time"])) {
                         $q[] = '`'.$tableName.'`.`' . $name . '` = "' . $search . '"';
                     }
@@ -375,7 +377,7 @@ class Form extends ActiveRecord
                 $query->from([$tableName=>$crudModel::tableName()]);
                 $query->select($tableName.'.*');
                 $searchQ = [];
-                $query->andWhere(['user_id'=>Yii::$app->user->identity->id]);
+                $query->andWhere(['`'.$tableName.'`.`user_id`'=>Yii::$app->user->identity->id]);
                 $this->crudDataQuery($structure, $query, $search, $searchQ);
                 if (count($searchQ) > 0) {
                     $query->andWhere('('.implode(' OR ', $searchQ).')');
@@ -392,60 +394,5 @@ class Form extends ActiveRecord
             return $response;
         }
         return null;
-    }
-
-    public function crudDataOld($tableName, $page = 1, $pageSize = 25, $parentId = null, $search = null, $order = null)
-    {
-        $crudModel = DynamicForm::generateModel($tableName);
-        $dataLocator = DataLocator::create($crudModel::className(), [
-            'orderBy' => $order ? $order : 'updated_at DESC, created_at DESC, id DESC',
-            'page' => $page,
-            'pageSize' => $pageSize
-        ], function ($dl, $query) use ($parentId, $search, $tableName) {
-            /**
-             * @var $dl DataLocator
-             * @var $query ActiveQuery
-             * @var $m ActiveRecord
-             */
-            if ($parentId > 0) {
-                $m = new $dl->query->modelClass();
-                if ($m && $m->hasProperty('parent_relation_id')) {
-                    $query->andWhere(['parent_relation_id' => $parentId]);
-                }
-            }
-            if ($search) {
-                $bi = Yii::$app->bi;
-                $attrs = array_filter(arrayHelper::map($bi->schema->getTableSchema($tableName)->columns, function ($row) {
-                    return $row->name;
-                }, function ($row) {
-                    if (in_array($row->name, ['parent_relation_id', 'created_at', 'updated_at'])) {
-                        return null;
-                    }
-                    return $row->type;
-                }));
-                if (!empty($attrs) && is_array($attrs)) {
-                    $q = [];
-                    foreach ($attrs as $name => $type) {
-                        if (in_array($type, ["string", "text"])) {
-                            $q[] = '`' . $name . '` like "%' . $search . '%"';
-                        } else if (in_array($type, ["smallint", "integer", "bigint", "float", "decimal", "money"])) {
-                            $q[] = '`' . $name . '` in (' . $search . ')';
-                        } else if (in_array($type, ["datetime", "date", "time"])) {
-                            $q[] = '`' . $name . '` = "' . $search . '"';
-                        }
-                    }
-                    if (count($q) > 0) {
-                        $query->andWhere(implode(' OR ', $q));
-                    }
-                }
-            }
-        });
-        $response = [
-            'data' => $dataLocator->getData(),
-            'count' => count($dataLocator->getData()),
-            'totalCount' => intval($dataLocator->getDataCount()),
-            'currentPage' => intval($dataLocator->getPage()),
-        ];
-        return $response;
     }
 }

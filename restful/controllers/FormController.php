@@ -8,6 +8,7 @@
 
 namespace restful\controllers;
 
+use cnd\admin\models\activerecords\Log;
 use cnd\grid\DataLocator;
 use common\models\DynamicForm;
 use http\Exception\InvalidArgumentException;
@@ -22,8 +23,10 @@ class FormController extends SController
     {
         $model = Form::findOne($id);
         if ($model) {
+            Log::trace("Request form meta data #".$id);
             return ['form' => $model];
         } else {
+            Log::trace("Requested form meta data #".$id." not found");
             $this->error('Form not found');
         }
     }
@@ -40,15 +43,19 @@ class FormController extends SController
                     foreach($data as $tableName => $records){
                         $this->saveFormTable($model, $tableName, $records, $result);
                     }
+                    Log::trace("Save data of form #".$id);
                     $transaction->commit();
                 } catch (\Exception $e) {
+                    Log::trace("Save data of form #".$id." Exception ".$e->getMessage());
                     $transaction->rollBack();
                 } catch (\Throwable $t) {
+                    Log::trace("Save data of form #".$id." Exception ".$t->getMessage());
                     $transaction->rollBack();
                 }
                 return ['result' => $result];
             }
         } else {
+            Log::trace("Save data of form #".$id.", Form not found");
             $this->error('Form not found');
         }
     }
@@ -128,8 +135,11 @@ class FormController extends SController
          */
         $model = Form::findOne($id);
         if ($model) {
-            return $model->crudData($page,$pageSize,$search,$order);
+            $crud = $model->crudData($page,$pageSize,$search,$order);
+            Log::trace("Request Form Crud [ID:".($id?$id:"--").",Search:".($search?$search:"--").",Page:".$page.",Page Size:".$pageSize.",Order:".($order?$order:"--").",Result Count:".intval($crud['count'])."]");
+            return $crud;
         } else {
+            Log::trace("Request Form Crud #".($id?$id:"--").", Form not found");
             $this->error('Form not found');
         }
     }

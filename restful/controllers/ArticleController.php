@@ -8,6 +8,7 @@
 
 namespace restful\controllers;
 
+use cnd\admin\models\activerecords\Log;
 use common\models\File;
 use common\models\Form;
 use Yii;
@@ -52,7 +53,7 @@ class ArticleController extends SController
                 $list[] = $data;
             }
         }
-
+        Log::trace("Request Secure Contents [Category:".($category?$category:"--").",Keyword:".($keyword?$keyword:"--").",Page:".$page.",Page Size:".$pageSize.",Result Count:".intval($q->count())."]");
         return ['articles' => $list, 'count' => intval($q->count())];
     }
 
