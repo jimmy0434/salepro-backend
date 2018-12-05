@@ -14,6 +14,7 @@ use Yii;
 use cnd\admin\models\activerecords\Log;
 use yii\console\Controller;
 use yii\console\widgets\Table;
+use yii\helpers\ArrayHelper;
 use yii\helpers\Console;
 use yii\helpers\Json;
 
@@ -42,6 +43,20 @@ class CronController extends Controller
                     if(Yii::$app->helper->isJson($data)){
                         $data = Json::decode($data);
                     }
+                    $out .= $this->ansiFormat("Transfer new log #", Console::FG_GREEN). $this->ansiFormat($log->id, Console::FG_YELLOW, Console::BOLD) . "." . PHP_EOL;
+                    $out .= "".PHP_EOL;
+                    if(!empty($attrs) && is_array($attrs)){
+                        $header = ["Attribute","Value"];
+                        $list = [];
+                        foreach($attrs as $name => $value){
+                            $list[] = [$name, $value];
+                        }
+                        $out .= Table::widget([
+                            'headers' => $header,
+                            'rows' => $list,
+                        ]);
+                    }
+
                     if(!empty($data) && is_array($data)){
                         foreach($data as $attribute => $item){
                             $changes = [
@@ -63,12 +78,7 @@ class CronController extends Controller
                             $out .= "".PHP_EOL;
                         }
                     }
-                    $out .= $this->ansiFormat("Transfer new log #", Console::FG_GREEN). $this->ansiFormat($log->id, Console::FG_YELLOW, Console::BOLD) . "." . PHP_EOL;
-                    $out .= "".PHP_EOL;
-                    $out .= Table::widget([
-                        'headers' => array_keys($attrs),
-                        'rows' => [array_values($attrs)],
-                    ]);
+
                     if ($log->delete()) {
                         $out .= $this->ansiFormat("Delete original log #", Console::FG_RED) . $this->ansiFormat($log->id, Console::FG_YELLOW, Console::BOLD) . "." . PHP_EOL;
                         $out .= "".PHP_EOL;
