@@ -32,10 +32,10 @@ class CronController extends Controller
                 $count = count($list);
                 Console::startProgress(0, $count);
                 foreach ($list as $i => $log) {
-                    $out .= $this->ansiFormat('/'.str_repeat("=", 100).'\\', Console::FG_PURPLE) . PHP_EOL;
-                    $out .= " - ";
+                    $out .= $this->ansiFormat('/'.str_repeat("=", 100), Console::FG_PURPLE) . PHP_EOL;
+                    $out .= $this->ansiFormat("|", Console::FG_PURPLE)." - ";
                     $out .= $this->ansiFormat("Transfer new log #", Console::FG_GREEN). $this->ansiFormat($log->id, Console::FG_YELLOW, Console::BOLD) . "." . PHP_EOL;
-                    $out .= " - ";
+                    $out .= $this->ansiFormat("|", Console::FG_PURPLE)." - ";
                     $out .= "(".$this->ansiFormat($log->level, Console::FG_RED).") : ";
                     $out .= $this->ansiFormat($log->user->name, Console::FG_GREEN)." [";
                     $out .= $this->ansiFormat($log->message, Console::FG_CYAN)."] ";
@@ -62,7 +62,7 @@ class CronController extends Controller
                                 'updated_at' => time(),
                             ];
                             Yii::$app->bi->createCommand()->insert('log_change', $changes)->execute();
-                            $out .= " - ";
+                            $out .= $this->ansiFormat("|", Console::FG_PURPLE)." - ";
                             $out .= $this->ansiFormat("Attribute ", Console::FG_CYAN);
                             $out .= $this->ansiFormat("" . $attribute . " ", Console::FG_YELLOW, Console::BOLD);
                             $out .= $this->ansiFormat("changed From ", Console::FG_CYAN);
@@ -74,11 +74,10 @@ class CronController extends Controller
                     }
 
                     if ($log->delete()) {
-                        $out .= " - ";
+                        $out .= $this->ansiFormat("|", Console::FG_PURPLE)." - ";
                         $out .= $this->ansiFormat("Delete original log #", Console::FG_RED) . $this->ansiFormat($log->id, Console::FG_YELLOW, Console::BOLD) . "." . PHP_EOL;
-                        $out .= "".PHP_EOL;
                     }
-                    $out .= $this->ansiFormat('\\'.str_repeat("=", 100).'/', Console::FG_PURPLE) . PHP_EOL;
+                    $out .= $this->ansiFormat('\\'.str_repeat("=", 100), Console::FG_PURPLE) . PHP_EOL;
                     $out .= "" . PHP_EOL;
                     Console::updateProgress($i+1, $count);
                 }
