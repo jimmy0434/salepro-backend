@@ -62,6 +62,9 @@ return [
                 ],
             ],
         ],
+		'errorHandler' => [
+            'errorAction' => 'api/guest/error',
+        ],
         'core' => [
             'apiAuthenticatorConfig' => [
                 'class' => \yii\filters\auth\CompositeAuth::className(),

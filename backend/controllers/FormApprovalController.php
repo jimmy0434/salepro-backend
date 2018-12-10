@@ -59,7 +59,7 @@ class FormApprovalController extends SController
                 $model->status = $action == 'reject' ? FormApproval::STATUS_REJECTED : FormApproval::STATUS_APPROVED;
                 $model->message = $message;
                 if ($model->save()) {
-                    Log::trace("Form #".$model->formApproval->form->id." has been ".$model->status_label);
+                    Log::trace("Form #".$model->formApproval->form->id." has been ".$model->formApproval->status_label);
                     $model->formApproval->nextApprove($model);
                 }
                 return $this->redirect(['index']);
