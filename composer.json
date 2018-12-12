@@ -38,7 +38,8 @@
     "npm-asset/vue": "*",
     "npm-asset/xml-js": "*",
     "npm-asset/vue-constants": "*",
-    "npm-asset/localforage": "*"
+    "npm-asset/localforage": "*",
+    "yii2mod/yii2-swagger": "*"
   },
   "require-dev": {
     "yiisoft/yii2-debug": "~2.0.0",
