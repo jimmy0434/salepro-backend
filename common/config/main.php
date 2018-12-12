@@ -1,13 +1,15 @@
 <?php
 
+use cnd\cms\models\activerecords\Content;
 use common\models\File;
 use yii\helpers\Html;
 use yii\web\Request;
+use common\models\Form;
 
 return [
     'aliases' => [
         '@bower' => '@vendor/bower-asset',
-        '@npm'   => '@vendor/npm-asset',
+        '@npm' => '@vendor/npm-asset',
     ],
     'vendorPath' => dirname(dirname(__DIR__)) . '/vendor',
     'bootstrap' => [
@@ -17,7 +19,7 @@ return [
         [
             'class' => 'cnd\core\BootstrapLanguage',
             'supportedLanguages' => [
-                'en'=>['English','ltr'],
+                'en' => ['English', 'ltr'],
             ],
         ],
     ],
@@ -27,7 +29,7 @@ return [
         ],
         'image' => [
             'class' => 'cnd\core\components\Image',
-            'baseUrl' => str_replace(['/backend/web','/restful/web'], '/cnd-static', (new Request())->getBaseUrl())
+            'baseUrl' => str_replace(['/backend/web', '/restful/web'], '/cnd-static', (new Request())->getBaseUrl())
         ],
         'authentication' => [
             'class' => 'cnd\core\components\Authentication',
@@ -64,8 +66,37 @@ return [
             'introsTemplate' => '@common/templates/intros.php',
             'introTemplate' => '@common/templates/intro.php',
             'introCol' => 6,
-            'afterContentSave' => function($models,$isNewRecord){
+            'afterContentSave' => function ($models, $isNewRecord) {
                 $model = $models['original'];
+                $en = $models['en'];
+                if (\Yii::$app->request->get('type')) {
+                    $type = \Yii::$app->request->get('type');
+                    switch ($type) {
+                        case "file":
+                            $file = new File();
+                            $file->content_id = $model->id;
+                            $file->title = $en->title;
+                            $file->status = File::STATUS_ACTIVE;
+                            if ($file->save()) {
+                                $model->section = 'file-' . $file->id;
+                                $connection = \Yii::$app->db;
+                                $connection->createCommand()->update(Content::tableName(), ['section' => $model->section], 'id = '.$model->id)->execute();
+                            }
+                            break;
+                        case "form":
+                            $form = new Form();
+                            $form->content_id = $model->id;
+                            $form->name = $form->createSlug($en->title);
+                            $form->title = $en->title;
+                            $form->status = Form::STATUS_PENDING;
+                            if ($form->save()) {
+                                $model->section = 'form-' . $form->id;
+                                $connection = \Yii::$app->db;
+                                $connection->createCommand()->update(Content::tableName(), ['section' => $model->section], 'id = '.$model->id)->execute();
+                            }
+                            break;
+                    }
+                }
                 $section = $model->section;
                 if ($section) {
                     $section = explode('-', $section);
@@ -110,41 +141,41 @@ return [
             'emailsTemplates' => [
                 'forgotPassword' => [
                     'title' => 'Forgot Password',
-                    'data' => ['link','name'],
+                    'data' => ['link', 'name'],
                 ],
                 'activateAccount' => [
                     'title' => 'Activate Account',
-                    'data' => ['name','link'],
+                    'data' => ['name', 'link'],
                 ],
                 'accountActivated' => [
                     'title' => 'Account Activated',
-                    'data' => ['profile','name'],
+                    'data' => ['profile', 'name'],
                 ],
                 'userResetPassword' => [
                     'title' => 'User Reset Password',
-                    'data' => ['username','email','password'],
+                    'data' => ['username', 'email', 'password'],
                 ],
             ],
         ],
         'notification' => [
             'class' => 'cnd\notification\components\Notification',
             'messageTemplates' => [
-                'default' => function($name, $data){
-                    return '<div class="text-muted">'.$data['message'].'</div>';
+                'default' => function ($name, $data) {
+                    return '<div class="text-muted">' . $data['message'] . '</div>';
                 },
                 'form-approval' => function ($name, $data) {
-                    return Html::tag('div', Html::a($data['message'],['/form-approval/view','id'=>$data['id']]),['class' => 'text-muted', 'data' => ['id' => $data['id']]]);
+                    return Html::tag('div', Html::a($data['message'], ['/form-approval/view', 'id' => $data['id']]), ['class' => 'text-muted', 'data' => ['id' => $data['id']]]);
                 },
                 'form-approval-response' => function ($name, $data) {
-                    return Html::tag('div', Html::a($data['message'],['/form-approval/response','id'=>$data['id']]),['class' => 'text-muted', 'data' => ['id' => $data['id']]]);
+                    return Html::tag('div', Html::a($data['message'], ['/form-approval/response', 'id' => $data['id']]), ['class' => 'text-muted', 'data' => ['id' => $data['id']]]);
                 },
             ],
-            'template' => function($content,$notification,$notificationUser){
+            'template' => function ($content, $notification, $notificationUser) {
                 ob_start();
                 ?>
                 <div class="notification-box notification-box-<?= strtolower($notificationUser->status_label) ?>">
                     <div class="notification-header">
-                        <span class="date"><?= date('l, d F, Y @H:i',strtotime($notificationUser->date)) ?></span>
+                        <span class="date"><?= date('l, d F, Y @H:i', strtotime($notificationUser->date)) ?></span>
                     </div>
                     <div class="notification-body">
                         <?= $content ?>
@@ -161,7 +192,7 @@ return [
             'iosPassPhrase' => 'pass*123',
             'env' => 'prod',
             'data' => [
-                'default' => function($name, $data){
+                'default' => function ($name, $data) {
                     return [
                         'message' => $data['message'],
                         'name' => $name,

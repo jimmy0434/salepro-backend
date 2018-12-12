@@ -15,10 +15,26 @@ use http\Exception\InvalidArgumentException;
 use Yii;
 use cnd\core\api\SController;
 use common\models\Form;
-use yii\helpers\ArrayHelper;
+use Swagger\Annotations as SWG;
 
 class FormController extends SController
 {
+    /**
+     * @SWG\Get(
+     *     path="/forms/{id}",
+     *     tags={"Cms"},
+     *     summary="Find Form Meta Data",
+     *     @SWG\Response(
+     *         response = 200,
+     *         description = "Form Meta Data",
+     *         @SWG\Schema(ref = "#/definitions/Form")
+     *     ),
+     *     security = {{"Bearer": {}}},
+     *     @SWG\Parameter( name="Authorization", in="header", required=true, type="string", default="Bearer TOKEN", description="Authorization" ),
+     *
+     *     @SWG\Parameter(name="id", required=true, in="path", type="integer", description="The Form ID")
+     * )
+     */
     public function actionOne($id)
     {
         $model = Form::findOne($id);
@@ -31,6 +47,41 @@ class FormController extends SController
         }
     }
 
+    /**
+     * @SWG\Post(
+     *     path="/forms/{id}",
+     *     tags={"Cms"},
+     *     summary="Add Form Structure Data",
+     *     @SWG\Response(
+     *         response = 200,
+     *         description = "Form Meta Data",
+     *         @SWG\Schema(ref = "#/definitions/Form")
+     *     ),
+     *     security = {{"Bearer": {}}},
+     *     @SWG\Parameter( name="Authorization", in="header", required=true, type="string", default="Bearer TOKEN", description="Authorization" ),
+     *
+     *     @SWG\Parameter(name="id", required=true, in="path", type="integer", description="The Form ID"),
+     *     @SWG\Parameter(name="data", required=true, in="body", @SWG\Schema(type="object"), description="The Form Structure Data")
+     * )
+     */
+
+    /**
+     * @SWG\Put(
+     *     path="/forms/{id}",
+     *     tags={"Cms"},
+     *     summary="Edit Form Structure Data",
+     *     @SWG\Response(
+     *         response = 200,
+     *         description = "Form Meta Data",
+     *         @SWG\Schema(ref = "#/definitions/Form")
+     *     ),
+     *     security = {{"Bearer": {}}},
+     *     @SWG\Parameter( name="Authorization", in="header", required=true, type="string", default="Bearer TOKEN", description="Authorization" ),
+     *
+     *     @SWG\Parameter(name="id", required=true, in="path", type="integer", description="The Form ID"),
+     *     @SWG\Parameter(name="data", required=true, in="body", @SWG\Schema(type="object"), description="The Form Structure Data")
+     * )
+     */
     public function actionSave($id){
         $model = Form::findOne($id);
         $result = [];
@@ -119,6 +170,26 @@ class FormController extends SController
         }
     }
 
+    /**
+     * @SWG\Get(
+     *     path="/forms/{id}/crud",
+     *     tags={"Cms"},
+     *     summary="Find Form Meta Data",
+     *     @SWG\Response(
+     *         response = 200,
+     *         description = "Form Meta Data",
+     *         @SWG\Schema(ref = "#/definitions/Form")
+     *     ),
+     *     security = {{"Bearer": {}}},
+     *     @SWG\Parameter( name="Authorization", in="header", required=true, type="string", default="Bearer TOKEN", description="Authorization" ),
+     *
+     *     @SWG\Parameter(name="id", required=true, in="path", type="integer", description="The Form ID"),
+     *     @SWG\Parameter(name="page", required=true, in="query", type="integer", description="Page start from 1", default=1),
+     *     @SWG\Parameter(name="pageSize", required=true, in="query", type="integer", description="Page Size default 25", default=25),
+     *     @SWG\Parameter(name="search", required=false, in="query", type="string", description="Crud search data"),
+     *     @SWG\Parameter(name="order", required=false, in="query", type="string", description="Crud order columns")
+     * )
+     */
     public function actionCrud()
     {
         $id = Yii::$app->request->get('id');

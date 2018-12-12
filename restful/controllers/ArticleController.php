@@ -13,10 +13,27 @@ use common\models\File;
 use common\models\Form;
 use Yii;
 use cnd\core\api\SController;
+use Swagger\Annotations as SWG;
 
+/**
+ * Class ArticleController
+ */
 class ArticleController extends SController
 {
-
+    /**
+     * @SWG\Get(
+     *     path="/contents",
+     *     tags={"Cms"},
+     *     summary="Retrieves the collection of Secure Cms Contents resources.",
+     *     @SWG\Response(
+     *         response = 200,
+     *         description = "Contents collection response",
+     *         @SWG\Schema(ref = "#/definitions/Content")
+     *     ),
+     *     security = {{"Bearer": {}}},
+     *     @SWG\Parameter( name="Authorization", in="header", required=true, type="string", default="Bearer TOKEN", description="Authorization" )
+     * )
+     */
     public function actionList(){
         $category = Yii::$app->request->get('category');
         $keyword = Yii::$app->request->get('keyword');

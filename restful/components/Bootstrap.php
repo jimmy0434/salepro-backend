@@ -8,11 +8,13 @@
 
 namespace restful\components;
 
+use cnd\core\api\Response;
 use common\components\Application;
 use Yii;
 use yii\base\BootstrapInterface;
 use cnd\core\components\UrlRule;
-use \yii\web\Request;
+use yii\base\Event;
+use yii\web\Request;
 
 class Bootstrap implements BootstrapInterface
 {
@@ -23,11 +25,12 @@ class Bootstrap implements BootstrapInterface
 
         $baseUrl = str_replace('/restful/web', '/api', (new Request)->getBaseUrl());
 
+        UrlRule::register('get','/swagger/docs','/swagger/docs');
         UrlRule::register('get','/contents','/article/list');
         UrlRule::register('get','/files/<id:\d+>/download/<version:\d+>/<order:\d+>','/file/download');
         UrlRule::register('get','/forms/<id:\d+>','/form/one');
         UrlRule::register('get','/forms/<id:\d+>/crud','/form/crud');
-        UrlRule::register('post','/forms/<id:\d+>','/form/save');
+        UrlRule::register('post,put','/forms/<id:\d+>','/form/save');
 
         Yii::$app->setComponents(
             [
@@ -44,7 +47,13 @@ class Bootstrap implements BootstrapInterface
                     'class' => 'cnd\core\api\Response',
                     'charset' => 'UTF-8',
                     'on beforeSend' => function ($event) {
+                        /**
+                         * @var $event Event
+                         * @var $response Response
+                         */
                         $response = $event->sender;
+                        $response->data = $this->filterResponseData($response->data);
+                        //echo '<pre>'.print_r($response->data, true).'</pre>'; die();
                         if (($exception = \Yii::$app->getErrorHandler()->exception) !== null) {
                             if ($exception instanceof \yii\web\HttpException) {
                                 $response->statusCode = $exception->statusCode;
@@ -79,5 +88,70 @@ class Bootstrap implements BootstrapInterface
 
         $app->user->on(\yii\web\User::EVENT_BEFORE_LOGIN,['common\models\User', 'beforeLogin']);
 
+    }
+
+    public function filterResponseData($data){
+        if(isset($data['articles']) && !empty($data['articles']) && is_array($data['articles'])){
+            foreach($data['articles'] as &$article){
+                if(array_key_exists('privilege', $article)){
+                    unset($article['privilege']);
+                }
+                if(array_key_exists('original_id', $article)){
+                    unset($article['original_id']);
+                }
+                if(array_key_exists('language', $article)){
+                    unset($article['language']);
+                }
+                if(array_key_exists('config', $article)){
+                    unset($article['config']);
+                }
+                if(array_key_exists('setting', $article)){
+                    unset($article['setting']);
+                }
+                if(array_key_exists('section', $article)){
+                    unset($article['section']);
+                }
+                if(array_key_exists('gallery', $article)){
+                    unset($article['gallery']);
+                }
+                if(array_key_exists('owner', $article)){
+                    unset($article['owner']);
+                }
+            }
+        }
+        if(isset($data['user'])){
+            if(is_object($data['user'])){
+                $data['user'] = $data['user']->toArray();
+            }
+            $user = &$data['user'];
+            if(array_key_exists('username', $data['user'])){
+                unset($data['user']['username']);
+            }
+            if(array_key_exists('password_reset_token', $user)){
+                unset($user['password_reset_token']);
+            }
+            if(array_key_exists('email', $data['user'])){
+                unset($data['user']['email']);
+            }
+            if(array_key_exists('role_id', $data['user'])){
+                unset($data['user']['role_id']);
+            }
+            if(array_key_exists('register', $data['user'])){
+                unset($data['user']['register']);
+            }
+            if(array_key_exists('socialid', $data['user'])){
+                unset($data['user']['socialid']);
+            }
+            if(array_key_exists('phone', $data['user'])){
+                unset($data['user']['phone']);
+            }
+            if(array_key_exists('firebase_id', $data['user'])){
+                unset($data['user']['firebase_id']);
+            }
+            if(array_key_exists('social_data', $data['user'])){
+                unset($data['user']['social_data']);
+            }
+        }
+        return $data;
     }
 }
