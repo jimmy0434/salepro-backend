@@ -115,7 +115,7 @@ class Form extends ActiveRecord
     public function afterFind()
     {
         parent::afterFind();
-        if (!Yii::$app->helper->isJson($this->structure)) {
+        if (!Yii::$app->helper->isJson($this->structure) || !$this->version) {
             $this->structure = [
                 'id' => time(),
                 'name' => $this->name,

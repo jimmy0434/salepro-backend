@@ -135,16 +135,16 @@
         },
         {
             "name": "bower-asset/highcharts",
-            "version": "v6.2.0",
+            "version": "v7.0.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/highcharts/highcharts-dist.git",
-                "reference": "975cc145008100b5afdc77cd33495a13662c9b24"
+                "reference": "a06e400f40b9bfee22fd9419413817738c0fa1a9"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/highcharts/highcharts-dist/zipball/975cc145008100b5afdc77cd33495a13662c9b24",
-                "reference": "975cc145008100b5afdc77cd33495a13662c9b24",
+                "url": "https://api.github.com/repos/highcharts/highcharts-dist/zipball/a06e400f40b9bfee22fd9419413817738c0fa1a9",
+                "reference": "a06e400f40b9bfee22fd9419413817738c0fa1a9",
                 "shasum": null
             },
             "type": "bower-asset",
@@ -567,7 +567,7 @@
             "source": {
                 "type": "git",
                 "url": "https://cndcompany:Pass*123@bitbucket.org/cndprojects/yii2-cms.git",
-                "reference": "6d1da78a87c8e77b0d51ae8862332beb1d0b00bc"
+                "reference": "cd121386c67ab00686f012086aa0f8115ddbb77b"
             },
             "require": {
                 "bower-asset/fancybox": "*",
@@ -595,7 +595,7 @@
                 "jawdat",
                 "yii2"
             ],
-            "time": "2018-12-12T15:49:23+00:00"
+            "time": "2018-12-13T09:28:12+00:00"
         },
         {
             "name": "cndprojects/yii2-constantbehavior",
@@ -1678,10 +1678,10 @@
         },
         {
             "name": "npm-asset/vue",
-            "version": "2.5.20",
+            "version": "2.5.21",
             "dist": {
                 "type": "tar",
-                "url": "https://registry.npmjs.org/vue/-/vue-2.5.20.tgz",
+                "url": "https://registry.npmjs.org/vue/-/vue-2.5.21.tgz",
                 "reference": null,
                 "shasum": null
             },

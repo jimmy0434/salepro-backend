@@ -119,6 +119,37 @@ class Bootstrap implements BootstrapInterface
                 }
             }
         }
+        if(isset($data['categories']) && !empty($data['categories']) && is_array($data['categories'])){
+            foreach($data['categories'] as &$category){
+                if(is_object($category)){
+                    $category = $category->toArray();
+                }
+                if(array_key_exists('original_id', $category)){
+                    unset($category['original_id']);
+                }
+                if(array_key_exists('parent_id', $category)){
+                    unset($category['parent_id']);
+                }
+                if(array_key_exists('status', $category)){
+                    unset($category['status']);
+                }
+                if(array_key_exists('language', $category)){
+                    unset($category['language']);
+                }
+                if(array_key_exists('extra', $category)){
+                    unset($category['extra']);
+                }
+                if(array_key_exists('path', $category)){
+                    unset($category['path']);
+                }
+                if(array_key_exists('config', $category)){
+                    unset($category['config']);
+                }
+                if(array_key_exists('setting', $category)){
+                    unset($category['setting']);
+                }
+            }
+        }
         if(isset($data['user'])){
             if(is_object($data['user'])){
                 $data['user'] = $data['user']->toArray();

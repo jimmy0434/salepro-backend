@@ -10,7 +10,17 @@
 
 namespace common\models\definitions;
 
+use Swagger\Annotations as SWG;
 
+/**
+ * @SWG\Definition()
+ *
+ * @SWG\Property(property="id", type="integer")
+ * @SWG\Property(property="name", type="string")
+ * @SWG\Property(property="icon", type="string")
+ * @SWG\Property(property="created_at", type="integer")
+ * @SWG\Property(property="updated_at", type="integer")
+ */
 class Category
 {
 

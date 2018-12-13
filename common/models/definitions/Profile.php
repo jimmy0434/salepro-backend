@@ -11,7 +11,7 @@
 namespace common\models\definitions;
 
 /**
- * @SWG\Definition(required={"username", "email"})
+ * @SWG\Definition()
  *
  * @SWG\Property(property="id", type="integer")
  * @SWG\Property(property="name", type="string")

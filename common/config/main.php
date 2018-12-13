@@ -1,8 +1,11 @@
 <?php
 
+use cnd\cms\components\ContentManager;
 use cnd\cms\models\activerecords\Content;
+use cnd\grid\DataLocator;
 use common\models\File;
 use yii\helpers\Html;
+use yii\helpers\Url;
 use yii\web\Request;
 use common\models\Form;
 
@@ -80,7 +83,7 @@ return [
                             if ($file->save()) {
                                 $model->section = 'file-' . $file->id;
                                 $connection = \Yii::$app->db;
-                                $connection->createCommand()->update(Content::tableName(), ['section' => $model->section], 'id = '.$model->id)->execute();
+                                $connection->createCommand()->update(Content::tableName(), ['section' => $model->section], 'id = ' . $model->id)->execute();
                             }
                             break;
                         case "form":
@@ -92,7 +95,7 @@ return [
                             if ($form->save()) {
                                 $model->section = 'form-' . $form->id;
                                 $connection = \Yii::$app->db;
-                                $connection->createCommand()->update(Content::tableName(), ['section' => $model->section], 'id = '.$model->id)->execute();
+                                $connection->createCommand()->update(Content::tableName(), ['section' => $model->section], 'id = ' . $model->id)->execute();
                             }
                             break;
                     }
@@ -105,10 +108,120 @@ return [
                         $file = File::findOne($id);
                         if ($file !== null) {
                             $file->content_id = $model->id;
+                            $file->title = $en->title;
                             $file->save(false);
+                        }
+                    } else if ($section[0] == 'form' && isset($section[1])) {
+                        $id = $section[1];
+                        $form = Form::findOne($id);
+                        if ($form !== null) {
+                            $form->content_id = $model->id;
+                            $form->title = $en->title;
+                            if (!$form->version) {
+                                $form->name = $form->createSlug($en->title);
+                            }
+                            $form->save(false);
                         }
                     }
                 }
+            },
+            'afterContentDelete' => function ($model) {
+                /**
+                 * @var $model Content
+                 */
+                $section = $model->section;
+                if ($section) {
+                    $section = explode('-', $section);
+                    if ($section[0] == 'file' && isset($section[1])) {
+                        $id = $section[1];
+                        $file = File::findOne($id);
+                        if ($file) {
+                            $file->delete();
+                        }
+                    } else if ($section[0] == 'form' && isset($section[1])) {
+                        $id = $section[1];
+                        $form = Form::findOne($id);
+                        if ($form) {
+                            $form->delete();
+                        }
+                    }
+                }
+            },
+            'headerAppend' => function ($dataLocator, $contentManager) {
+                Url::remember();
+                /**
+                 * @var $dataLocator DataLocator
+                 * @var $contentManager ContentManager
+                 */
+                ob_start();
+                if (Yii::$app->permission->can('/cms/content/manage')) {
+                    echo '&nbsp;&nbsp;' . Html::a('Add New File', Url::to(['manage', 'c' => $contentManager->category, 'type' => 'file']), ['class' => 'btn bg-olive']);
+                }
+                if (Yii::$app->permission->can('/cms/content/manage')) {
+                    echo '&nbsp;&nbsp;' . Html::a('Add New Form', Url::to(['manage', 'c' => $contentManager->category, 'type' => 'form']), ['class' => 'btn bg-navy']);
+                }
+                return ob_get_clean();
+            },
+            'rowButtons' => function ($dataLocator, $contentManager) {
+                /**
+                 * @var $dataLocator DataLocator
+                 * @var $contentManager ContentManager
+                 */
+                $fct = function ($model, $index) {
+                    /**
+                     * @var $model Content
+                     */
+                    $item = null;
+                    $section = $model->section;
+                    if ($section) {
+                        ob_start();
+                        list($type, $id) = explode('-', $section);
+                        switch ($type) {
+                            case "file":
+                                if (!$item) {
+                                    $item = File::findOne($id);
+                                }
+                                if ($item) {
+                                    if ($index == 0 && \Yii::$app->permission->can('/file/manage-upload')) {
+                                        echo Html::a('Upload', Url::to(['/file/manage-upload', 'id' => $item->id, 'c' => $model->id]), ['class' => 'btn bg-fuchsia']);
+                                    }
+                                    if ($index == 1 && $item->version && \Yii::$app->permission->can('/file/download')) {
+                                        echo Html::a('Download', Url::to(['/file/download', 'id' => $item->id, 'c' => $model->id]), ['class' => 'btn bg-olive', 'target' => '_blank']);
+                                    }
+                                }
+                                break;
+                            case "form":
+                                if (!$item) {
+                                    $item = Form::findOne($id);
+                                }
+                                if ($item) {
+                                    if ($index == 0 && \Yii::$app->permission->can('/form/manage-structure')) {
+                                        echo Html::a('Builder', Url::to(['/form/manage-structure', 'id' => $item->id, 'c' => $model->id]), ['class' => 'btn bg-maroon']);
+                                    }
+                                    if ($index == 1 && isset($item->structure['fields']) && is_array($item->structure['fields']) && !empty($item->structure['fields']) && $item->version && \Yii::$app->permission->can('/form/publish-request') && $item->status != Form::STATUS_ACTIVE) {
+                                        echo Html::a('Publish Request', Url::to(['/form/publish-request', 'id' => $item->id, 'c' => $model->id]), ['class' => 'btn bg-black']);
+                                    }
+                                }
+                                break;
+                        }
+                        return ob_get_clean();
+                    }
+                    return null;
+                };
+                return [
+                    function ($model) use ($fct) {
+                        /**
+                         * @var $model Content
+                         */
+                        return $fct($model, 1);
+                    },
+                    function ($model) use ($fct) {
+                        /**
+                         * @var $model Content
+                         */
+                        return $fct($model, 0);
+                    },
+                ];
             },
         ],
         'setting' => [

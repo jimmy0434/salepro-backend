@@ -31,9 +31,11 @@ class Bootstrap implements BootstrapInterface
 
         $navigator = MenuManager::block('Navigator', 10000);
         $cmsSection = $navigator->section('CMS','fa fa-font',10);
-        $cmsSection->item('File', ['/file/index'], 101);
-        $cmsSection->item('Form', ['/form/index'], 102);
-        $cmsSection->item('Form Approval', ['/form-approval/index'], 103);
+        $cmsSection->item('Form Approval', ['/form-approval/index'], 101);
+
+        $developer = MenuManager::block('Developer');
+        $developerSection = $developer->section('Documentation');
+        $developerSection->item('Swagger UI',['/swagger/docs'], 100);
 
         if(!Yii::$app->user->isGuest && Yii::$app->user->identity->type == User::TYPE_ROOT){
             $this->apiDefinitions();
@@ -176,7 +178,8 @@ class Bootstrap implements BootstrapInterface
     }
 
     public function biDbSync($action, $event){
-        $className = ($event->sender)::className();
+        $sender = $event->sender;
+        $className = $sender::className();
         $tableName = $className::getTableSchema()->fullName;
         Yii::$app->biMapSync->check($tableName, $event->sender, $action);
     }

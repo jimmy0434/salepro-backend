@@ -10,8 +10,10 @@
 
 namespace common\models\definitions;
 
+use Swagger\Annotations as SWG;
+
 /**
- * @SWG\Definition(required={"title"})
+ * @SWG\Definition()
  *
  * @SWG\Property(property="id", type="integer")
  * @SWG\Property(property="title", type="string")

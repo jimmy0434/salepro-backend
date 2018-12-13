@@ -53,7 +53,7 @@ class FileController extends SController
                 return $this->redirect(['manage-upload', 'id' => $model->id]);
             }
             Log::trace("Update file meta data #" . $id);
-            return $this->redirect(['index']);
+            return $this->goBack();
         }
         Log::trace("Open file meta data form");
         return $this->render('form-meta-data', ['model' => $model]);
@@ -115,7 +115,7 @@ class FileController extends SController
             Log::trace("File not found to delete #" . $id);
             \Yii::$app->session->setFlash('error', ucfirst($this->id) . ' not found');
         }
-        return $this->redirect(['index']);
+        return $this->goBack();
     }
 
     public function actionDownload($id)
@@ -142,7 +142,7 @@ class FileController extends SController
             }
         }
         \Yii::$app->session->setFlash('error', ucfirst($this->id) . ' not found');
-        return $this->redirect(['index']);
+        return $this->goBack();
     }
 
     public function createSlug($str, $delimiter = '-')

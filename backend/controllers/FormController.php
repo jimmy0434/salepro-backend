@@ -60,7 +60,7 @@ class FormController extends SController
                 return $this->redirect(['manage-structure', 'id' => $model->id]);
             }
             Log::trace("Update form meta data #" . $id);
-            return $this->redirect(['index']);
+            return $this->goBack();
         }
         Log::trace("Open form meta data form");
         return $this->render('form-meta-data', ['model' => $model]);
@@ -113,7 +113,7 @@ class FormController extends SController
             Log::trace("Form not found to delete #" . $id);
             \Yii::$app->session->setFlash('error', ucfirst($this->id) . ' not found');
         }
-        return $this->redirect(['index']);
+        return $this->goBack();
     }
 
     public function actionPublishRequest($id)
