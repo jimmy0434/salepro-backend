@@ -26,6 +26,7 @@ class Bootstrap implements BootstrapInterface
         $baseUrl = str_replace('/restful/web', '/api', (new Request)->getBaseUrl());
 
         UrlRule::register('get','/swagger/docs','/swagger/docs');
+        UrlRule::register('get','/categories','/article/categories');
         UrlRule::register('get','/contents','/article/list');
         UrlRule::register('get','/files/<id:\d+>/download/<version:\d+>/<order:\d+>','/file/download');
         UrlRule::register('get','/forms/<id:\d+>','/form/one');

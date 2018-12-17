@@ -165,7 +165,6 @@ class Bootstrap implements BootstrapInterface
     }
 
     public function synchronizeWithBiDb(){
-        $ar = new ActiveRecord();
         Event::on(ActiveRecord::className(), ActiveRecord::EVENT_AFTER_INSERT, function($event){
             $this->biDbSync('add',$event);
         });
@@ -178,9 +177,19 @@ class Bootstrap implements BootstrapInterface
     }
 
     public function biDbSync($action, $event){
+        /**
+         * @var $sender ActiveRecord
+         */
         $sender = $event->sender;
         $className = $sender::className();
-        $tableName = $className::getTableSchema()->fullName;
-        Yii::$app->biMapSync->check($tableName, $event->sender, $action);
+        if($sender->hasAttribute('original_id') && $sender->original_id){
+            $className::$loadLang = true;
+            $sender = $className::findOne($sender->original_id);
+            $action = 'edit';
+        }
+        if (!$sender->hasAttribute('original_id') || ($sender->hasAttribute('original_id') && !$sender->original_id)) {
+            $tableName = $className::getTableSchema()->fullName;
+            Yii::$app->biMapSync->check($tableName, $sender, $action);
+        }
     }
 }

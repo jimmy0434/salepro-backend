@@ -1,4 +1,11 @@
 <?php
+
+use backend\components\biSync\Admin;
+use backend\components\biSync\Category;
+use backend\components\biSync\Content;
+use backend\components\biSync\Role;
+use backend\components\biSync\Salesman;
+use backend\components\biSync\Tag;
 use \yii\web\Request;
 $baseUrl = str_replace('/backend/web', '/cnd-admin', (new Request)->getBaseUrl());
 
@@ -101,9 +108,12 @@ return [
         'biMapSync' => [
             'class' => 'backend\components\BiMapSync',
             'list' => [
-                'base_admin' => \backend\components\biSync\Admin::className(),
-                'base_role' => \backend\components\biSync\Role::className(),
-                'salesman' => \backend\components\biSync\Salesman::className(),
+                'base_admin' => Admin::className(),
+                'base_role' => Role::className(),
+                'salesman' => Salesman::className(),
+                'cms_category' => Category::className(),
+                'cms_tag' => Tag::className(),
+                'cms_content' => Content::className(),
             ],
         ],
     ],

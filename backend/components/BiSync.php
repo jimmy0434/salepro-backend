@@ -20,7 +20,8 @@ class BiSync extends Component
 
     private $_attrs = [];
 
-    public function getTargetTable(){
+    public function getTargetTable()
+    {
         throw new Exception("method " . static::className() . "::getTargetTable() should be implemented");
     }
 
@@ -29,10 +30,11 @@ class BiSync extends Component
         throw new Exception("method " . static::className() . "::run() should be implemented");
     }
 
-    public function execute(){
-        if($this->action == "delete"){
+    public function execute()
+    {
+        if ($this->action == "delete") {
             $this->delete();
-        }else{
+        } else {
             $this->update();
         }
     }
@@ -50,7 +52,12 @@ class BiSync extends Component
 
     public function delete()
     {
-        return Yii::$app->bi->createCommand()->delete($this->getTargetTable(), ['id' => $this->model->id])->execute();
+        return $this->deleteAll('id', $this->model->id);
+    }
+
+    public function deleteAll($attribute, $value)
+    {
+        return Yii::$app->bi->createCommand()->delete($this->getTargetTable(), [$attribute => $value])->execute();
     }
 
     public function update()
@@ -59,9 +66,9 @@ class BiSync extends Component
         $row = $query->from($this->getTargetTable())->where(['id' => $this->model->id])->one(Yii::$app->bi);
         $attrs = $this->getAttrs();
         $attrs['updated_at'] = time();
-        if($row){
+        if ($row) {
             Yii::$app->bi->createCommand()->update($this->getTargetTable(), $attrs, ['id' => $this->model->id])->execute();
-        }else{
+        } else {
             $attrs['id'] = $this->model->id;
             $attrs['created_at'] = time();
             Yii::$app->bi->createCommand()->insert($this->getTargetTable(), $attrs)->execute();
