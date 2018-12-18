@@ -9,7 +9,7 @@
 namespace restful\controllers;
 
 use cnd\admin\models\activerecords\Log;
-use cnd\cms\models\activerecords\Category;
+use common\models\Category;
 use common\models\File;
 use common\models\Form;
 use Yii;

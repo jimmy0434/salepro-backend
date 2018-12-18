@@ -131,9 +131,6 @@ class Bootstrap implements BootstrapInterface
                 if(array_key_exists('parent_id', $category)){
                     unset($category['parent_id']);
                 }
-                if(array_key_exists('status', $category)){
-                    unset($category['status']);
-                }
                 if(array_key_exists('language', $category)){
                     unset($category['language']);
                 }
