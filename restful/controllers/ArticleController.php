@@ -92,7 +92,21 @@ class ArticleController extends SController
      */
     public function actionCategories()
     {
-        return ['categories' => Category::treeList()];
+        $categories = Category::treeList();
+        $this->categoriesArrayIndex($categories);
+        return ['categories' => $categories];
+    }
+
+    private function categoriesArrayIndex(&$categories)
+    {
+        if (!empty($categories) && is_array($categories)) {
+            $categories = array_values($categories);
+            foreach ($categories as &$category) {
+                if (isset($category['children'])) {
+                    $this->categoriesArrayIndex($category['children']);
+                }
+            }
+        }
     }
 
 }
