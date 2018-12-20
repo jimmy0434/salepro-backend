@@ -13,7 +13,8 @@ function contentManager(appId, options) {
         brandsList: [],
         corporatesList: [],
         sectorsList: [],
-        saveCategoryUrl: null
+        saveCategoryUrl: null,
+        UploadCategoryIconUrl: null
     };
 
     let {
@@ -26,7 +27,8 @@ function contentManager(appId, options) {
         brandsList,
         corporatesList,
         sectorsList,
-        saveCategoryUrl
+        saveCategoryUrl,
+        UploadCategoryIconUrl
     } = $.extend({}, defaultOptions, options || {});
 
     let children = [
@@ -70,8 +72,18 @@ function contentManager(appId, options) {
         props: {
             model: Object,
             level: Number,
-            directory: Object,
-            classification: Object
+            directory: {
+                type: Object,
+                default() {
+                    return this.level === 1 ? this : undefined;
+                }
+            },
+            classification: {
+                type: Object,
+                default() {
+                    return this.level === 2 ? this : undefined;
+                }
+            }
         },
         data: function () {
             return {
@@ -86,6 +98,18 @@ function contentManager(appId, options) {
             },
             count() {
                 return this.model.children ? this.model.children.length : 0;
+            },
+            logo() {
+                let icon = this.model.data.icon;
+                if(typeof icon === 'string' || icon instanceof String) {
+                    return icon;
+                }else if(icon && typeof icon === 'object' && icon.constructor === Array && icon[0]){
+                    icon = JSON.parse(icon[0]);
+                    if(icon.url){
+                        icon = icon.url;
+                    }
+                }
+                return icon;
             }
         },
         methods: {
@@ -94,7 +118,7 @@ function contentManager(appId, options) {
                     this.open = !this.open;
                 }
             },
-            openFolder(){
+            openFolder() {
                 if (this.level === 3) {
                     app.activeFolder = this;
                 }
@@ -140,7 +164,7 @@ function contentManager(appId, options) {
                             parent: model.data.parent_id || this.model.data.id
                         },
                         beforeSend: () => {
-                            loader = popup.loader("");
+                            loader = popup.loader("Saving "+model.data.name);
                         },
                         success: (response) => {
                             loader.close();
@@ -153,26 +177,79 @@ function contentManager(appId, options) {
                         },
                         error: (jqXHR, exception) => {
                             loader.close();
-                            let msg = '';
-                            if (jqXHR.status === 0) {
-                                msg = 'Not connect, Verify Network.';
-                            } else if (jqXHR.status == 404) {
-                                msg = 'Requested page not found. [404]';
-                            } else if (jqXHR.status == 500) {
-                                msg = 'Internal Server Error [500].';
-                            } else if (exception === 'parsererror') {
-                                msg = 'Requested JSON parse failed.';
-                            } else if (exception === 'timeout') {
-                                msg = 'Time out error.';
-                            } else if (exception === 'abort') {
-                                msg = 'Ajax request aborted.';
-                            } else {
-                                msg = 'Uncaught Error : ' + jqXHR.responseText;
-                            }
-                            popup.warning(msg);
+                            this.onAjaxError(jqXHR, exception);
                         }
                     });
                 }
+            },
+            browseIcon() {
+                this.$refs['file-browse-' + this.model.data.id].click();
+            },
+            uploadIcon(event) {
+                const file = event.target.files[0];
+                const reader = new FileReader();
+                reader.onload = (e) => {
+                    this.uploadExecution(file, e.target.result);
+                };
+                reader.readAsDataURL(file);
+            },
+            uploadExecution(file, data){
+                let maxSize = 1024 * 512; // 512kb
+                let types = ["image/png","image/jpg","image/jpeg"];
+                if(file.size > maxSize){
+                    popup.warning("Maximum image size is 512 KB");
+                }else if(types.indexOf(file.type) === -1){
+                    popup.warning("Image type should be one of: "+types.join(", "));
+                }else {
+                    if (UploadCategoryIconUrl) {
+                        let loader;
+                        $.ajax({
+                            type: "post",
+                            url: UploadCategoryIconUrl,
+                            dataType: 'json',
+                            data: {
+                                id: this.model.data.id,
+                                data: data,
+                                extension: file.name.split('.').pop()
+                            },
+                            beforeSend: () => {
+                                loader = popup.loader("Uploading Icon");
+                            },
+                            success: (response) => {
+                                loader.close();
+                                if(response.done){
+                                    this.model.data.icon = data;
+                                    popup.success("new icon for `" + this.model.data.name + "` has been uploaded successfully");
+                                }else{
+                                    popup.error("new icon for `" + this.model.data.name + "` has not been uploaded");
+                                }
+                            },
+                            error: (jqXHR, exception) => {
+                                loader.close();
+                                this.onAjaxError(jqXHR, exception);
+                            }
+                        });
+                    }
+                }
+            },
+            onAjaxError(jqXHR, exception){
+                let msg = '';
+                if (jqXHR.status === 0) {
+                    msg = 'Not connect, Verify Network.';
+                } else if (jqXHR.status == 404) {
+                    msg = 'Requested page not found. [404]';
+                } else if (jqXHR.status == 500) {
+                    msg = 'Internal Server Error [500].';
+                } else if (exception === 'parsererror') {
+                    msg = 'Requested JSON parse failed.';
+                } else if (exception === 'timeout') {
+                    msg = 'Time out error.';
+                } else if (exception === 'abort') {
+                    msg = 'Ajax request aborted.';
+                } else {
+                    msg = 'Uncaught Error : ' + jqXHR.responseText;
+                }
+                popup.warning(msg);
             }
         }
     };

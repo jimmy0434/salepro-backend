@@ -124,23 +124,11 @@ function startUpload(files){
             toChunks(file,step, function(chunks){
                uploadChunk(0, chunks, (new Date()).getTime(),ext);
             });
-            /*let reader = new FileReader();
-            reader.addEventListener('load', function () {
-                var u = new Uint8Array(this.result),
-                    a = new Array(u.length),
-                    i = u.length;
-                while (i--) // map to hex
-                    a[i] = (u[i] < 16 ? '0' : '') + u[i].toString(16).toUpperCase();
-                u = null; // free memory
-                let chunks = toChunks(a,step);
-                uploadChunk(0, chunks, (new Date()).getTime(),ext);
-            });
-            reader.readAsArrayBuffer(file);*/
         }else{
-            msg("file extension must be one of : "+extensions.join(', '));
+            msg("file extension should be one of : "+extensions.join(', '));
         }
     }else{
-        msg("Must select a file");
+        msg("Select a file!");
     }
 }
 function toChunks(file, step, done){
@@ -153,15 +141,6 @@ function toChunks(file, step, done){
         done(list);
     });
 }
-/*function toChunks(hex,step){
-    msg("Start Loading File...");
-    let total = hex.length;
-    let list = [];
-    for(let i = 0; i < total; i += step){
-        list.push(hex.slice(i, i+step));
-    }
-    return list;
-}*/
 function extension(file){
     return file.name.split('.').pop();
 }

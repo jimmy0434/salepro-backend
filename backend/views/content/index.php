@@ -32,6 +32,7 @@ $sectorsList = Json::encode(Yii::$app->cms->category->childOf("cms.category.sect
 
 echo $this->render("content-manager", [], $context);
 $saveCategoryUrl = Url::to(['/content/save-category']);
+$UploadCategoryIconUrl = Url::to(['/content/upload-category-icon']);
 $ready = <<< JS
 contentManager('#content-manager', {
     contentHub: {$contentHub},
@@ -43,7 +44,8 @@ contentManager('#content-manager', {
     brandsList: {$brandsList},
     corporatesList: {$corporatesList},
     sectorsList: {$sectorsList},
-    saveCategoryUrl: '{$saveCategoryUrl}'
+    saveCategoryUrl: '{$saveCategoryUrl}',
+    UploadCategoryIconUrl: '{$UploadCategoryIconUrl}'
 });
 JS;
 
@@ -60,11 +62,13 @@ $css = <<< CSS
 #content-manager .side-categories .root-node{padding:25px 0 25px 8px;}
 #content-manager .grid-contents{flex:auto; padding:25px;}
 #content-manager .item { cursor: pointer;}
+#content-manager .item .file{overflow:hidden;}
 #content-manager .item .folder{  font-weight:bold;}
 #content-manager .item .file:not(.folder){ line-height:25px; padding-left:7px; border-radius:3px; border:1px solid transparent;}
 #content-manager .item .file:not(.folder):hover,
 #content-manager .item .file:not(.folder):focus{ background:#e5e5e5; border:1px solid #ccc;}
 #content-manager .item .file .glyphicon{font-weight: 100;}
+#content-manager .item .file > input[type=file]{position:absolute;left:-1000px;}
 #content-manager ul { padding-left: 1em; line-height: 1.5em; }
 #content-manager ul li{list-style:none;}
 #content-manager .input-new{position:relative;}

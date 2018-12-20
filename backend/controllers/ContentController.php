@@ -13,6 +13,8 @@ namespace backend\controllers;
 use cnd\cms\models\activerecords\Category;
 use Yii;
 use cnd\core\components\SController;
+use yii\helpers\Json;
+use yii\helpers\Url;
 use yii\web\Response;
 
 class ContentController extends SController
@@ -61,6 +63,59 @@ class ContentController extends SController
                 }
             }
             $response['model'] = $model;
+            return $response;
+        }
+        return $this->redirect(['index']);
+    }
+
+    public function actionUploadCategoryIcon(){
+        $request = Yii::$app->request;
+        $response = Yii::$app->response;
+        if ($request->isPost && $request->isAjax) {
+            $response->format = Response::FORMAT_JSON;
+            $response = [];
+
+            $id = $request->post('id');
+            $data = $request->post('data');
+            $extension = $request->post('extension');
+
+            $model = Category::findOne($id);
+            if ($model) {
+                list($type, $data) = explode(';', $data);
+                list(, $data) = explode(',', $data);
+                $data = base64_decode($data);
+                $path = Yii::getAlias("@static/public/media/categories");
+                if (!is_dir($path)) {
+                    mkdir($path, 0777);
+                }
+                $path .= "/" . date("Y-m");
+                if (!is_dir($path)) {
+                    mkdir($path, 0777);
+                }
+                $filename = "category-" . $id . "-" . time() . "." . $extension;
+                $path .= "/" . $filename;
+                if (file_put_contents($path, $data)) {
+                    $url = str_replace('/cnd-admin','',Url::base(true)) . '/cnd-static/public/media/categories/' . date('Y-m') . '/' . $filename;
+                    $icon = Json::encode([
+                        'id' => $filename,
+                        'title' => $filename,
+                        'thumbnail' => $url,
+                        'extension' => $extension,
+                        'icon' => $url,
+                        'url' => $url,
+                        'provider' => 'local',
+                        'type' => "image/".$extension,
+                        'size' => Yii::$app->helper->sizeFormat(filesize($path)),
+                    ]);
+                    $model->icon = [$icon];
+                    $model->save();
+                    $response['done'] = true;
+                }else{
+                    $response['done'] = false;
+                }
+            }else{
+                $response['done'] = false;
+            }
             return $response;
         }
         return $this->redirect(['index']);
