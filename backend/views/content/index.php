@@ -1,0 +1,64 @@
+<?php
+/**
+ * Created by PhpStorm.
+ * Project: masterpak
+ * Company: Codendot <https://codendot.com>
+ * User: Jawdat Sobh <jawdat@codendot.com>
+ * Date: 12/20/2018
+ * Time: 8:42 AM
+ *
+ * @var $this View
+ * @var $context ContentController
+ */
+
+use backend\controllers\ContentController;
+use yii\helpers\Json;
+use yii\web\JqueryAsset;
+use yii\web\View;
+
+$this->title = "Content Management";
+$context = $this->context;
+
+$contentHub = Json::encode(Yii::$app->cms->category->one("cms.category.contentHub"));
+$marketIntelligence = Json::encode(Yii::$app->cms->category->one("cms.category.marketIntelligence"));
+$competition = Json::encode(Yii::$app->cms->category->one("cms.category.competition"));
+$brands = Json::encode(Yii::$app->cms->category->one("cms.category.brands"));
+$corporates = Json::encode(Yii::$app->cms->category->one("cms.category.corporates"));
+$sectors = Json::encode(Yii::$app->cms->category->one("cms.category.sectors"));
+
+echo $this->render("content-manager", [], $context);
+$ready = <<< JS
+contentManager('#content-manager', {
+    contentHub: {$contentHub},
+    marketIntelligence: {$marketIntelligence},
+    competition: {$competition},
+    brands: {$brands},
+    corporates: {$corporates},
+    sectors: {$sectors}
+});
+JS;
+
+$this->registerJsFile(Yii::$app->helper->getAssetUrl('@npm/vue/dist/vue' . (YII_ENV_DEV ? '' : '.min') . '.js'), [
+    'depends' => JqueryAsset::className(),
+]);
+$this->registerJsFile(Yii::$app->helper->getAssetUrl('@backend/assets/dist/js/content-manager.js'), [
+    'depends' => JqueryAsset::className(),
+]);
+$this->registerJs($ready);
+$css = <<< CSS
+#content-manager{position:relative; background:#fff; border-radius:3px;border:1px solid #ccc;display:flex;flex-direction:row;}
+#content-manager .side-categories{min-height:600px; overflow:auto;border-right:1px solid #ccc; padding-right:10px;width:20%;min-width:25%;background:#f5f5f5;}
+#content-manager .side-categories .root-node{padding:25px 0 25px 8px;}
+#content-manager .grid-contents{flex:auto; padding:25px;}
+#content-manager .item { cursor: pointer;}
+#content-manager .item .folder{  font-weight:bold;}
+#content-manager .item .file:not(.folder){ line-height:25px; padding-left:7px; border-radius:3px; border:1px solid transparent;}
+#content-manager .item .file:not(.folder):hover,
+#content-manager .item .file:not(.folder):focus{ background:#e5e5e5; border:1px solid #ccc;}
+#content-manager ul { padding-left: 1em; line-height: 1.5em; }
+#content-manager ul li{list-style:none;}
+#content-manager .input-new{position:relative;}
+#content-manager .input-new .form-control{border:none; background:transparent;height:25px; line-height:25px; padding:0 7px;}
+#content-manager .input-new .form-control.edit-input{padding:0;}
+CSS;
+$this->registerCss($css);
