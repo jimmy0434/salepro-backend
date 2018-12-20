@@ -16,17 +16,25 @@ class m181220_072033_define_constants_categories_and_remove_old_data extends Mig
      */
     public function safeUp()
     {
-        Category::deleteAll();
-        Content::deleteAll();
-        File::deleteAll();
-        Form::deleteAll();
+        $this->addRelations(function(){
+            $this->truncateTable(Category::tableName());
+            $this->truncateTable(Content::tableName());
+            $this->truncateTable(File::tableName());
+            $this->truncateTable(Form::tableName());
+        });
 
-        $this->createCategory("Hub Content","contentHub");
-        $this->createCategory("Market Intelligence","marketIntelligence");
-        $this->createCategory("Competition","competition");
-        $this->createCategory("Brands","brands");
-        $this->createCategory("Corporates","corporates");
-        $this->createCategory("Sectors","sectors");
+        $directories = $this->createCategory("Directories", "directories");
+        $classifications = $this->createCategory("Classifications", "classifications");
+        if($directories) {
+            $this->createCategory("Content Hub", "contentHub", $directories->id);
+            $this->createCategory("Market Intelligence", "marketIntelligence", $directories->id);
+            $this->createCategory("Competitor Profiles", "competitor", $directories->id);
+        }
+        if($classifications) {
+            $this->createCategory("Corporate", "corporates", $classifications->id);
+            $this->createCategory("Sector", "sectors", $classifications->id);
+            $this->createCategory("Brand", "brands", $classifications->id);
+        }
 
     }
 
@@ -40,20 +48,26 @@ class m181220_072033_define_constants_categories_and_remove_old_data extends Mig
         return false;
     }
 
-    public function createCategory($name, $staticName)
+    public function createCategory($name, $staticName = null, $parentId = null)
     {
         $model = new Category();
         $model->status = Category::STATUS_ACTIVE;
         $model->config = '{"template":"none","comments":"0","tags":"0","category":"0","related":"0","reaction":"0","share":"0"}';
         $model->setting = '{"markdown":"0"}';
+        $model->parent_id = $parentId;
+        $model->path = $parentId;
         if ($model->save()) {
             $modelLang = new Category();
             $modelLang->language = "en";
             $modelLang->original_id = $model->id;
             $modelLang->name = $name;
             if ($modelLang->save()) {
-                Yii::$app->cms->setId("cms.category.".$staticName, $model->id);
+                if($staticName) {
+                    Yii::$app->cms->setId("cms.category." . $staticName, $model->id);
+                }
             }
+            return $model;
         }
+        return null;
     }
 }

@@ -13,6 +13,7 @@
 
 use backend\controllers\ContentController;
 use yii\helpers\Json;
+use yii\helpers\Url;
 use yii\web\JqueryAsset;
 use yii\web\View;
 
@@ -21,20 +22,28 @@ $context = $this->context;
 
 $contentHub = Json::encode(Yii::$app->cms->category->one("cms.category.contentHub"));
 $marketIntelligence = Json::encode(Yii::$app->cms->category->one("cms.category.marketIntelligence"));
-$competition = Json::encode(Yii::$app->cms->category->one("cms.category.competition"));
+$competitor = Json::encode(Yii::$app->cms->category->one("cms.category.competitor"));
 $brands = Json::encode(Yii::$app->cms->category->one("cms.category.brands"));
 $corporates = Json::encode(Yii::$app->cms->category->one("cms.category.corporates"));
 $sectors = Json::encode(Yii::$app->cms->category->one("cms.category.sectors"));
+$brandsList = Json::encode(Yii::$app->cms->category->childOf("cms.category.brands")->all());
+$corporatesList = Json::encode(Yii::$app->cms->category->childOf("cms.category.corporates")->all());
+$sectorsList = Json::encode(Yii::$app->cms->category->childOf("cms.category.sectors")->all());
 
 echo $this->render("content-manager", [], $context);
+$saveCategoryUrl = Url::to(['/content/save-category']);
 $ready = <<< JS
 contentManager('#content-manager', {
     contentHub: {$contentHub},
     marketIntelligence: {$marketIntelligence},
-    competition: {$competition},
+    competitor: {$competitor},
     brands: {$brands},
     corporates: {$corporates},
-    sectors: {$sectors}
+    sectors: {$sectors},
+    brandsList: {$brandsList},
+    corporatesList: {$corporatesList},
+    sectorsList: {$sectorsList},
+    saveCategoryUrl: '{$saveCategoryUrl}'
 });
 JS;
 
@@ -55,6 +64,7 @@ $css = <<< CSS
 #content-manager .item .file:not(.folder){ line-height:25px; padding-left:7px; border-radius:3px; border:1px solid transparent;}
 #content-manager .item .file:not(.folder):hover,
 #content-manager .item .file:not(.folder):focus{ background:#e5e5e5; border:1px solid #ccc;}
+#content-manager .item .file .glyphicon{font-weight: 100;}
 #content-manager ul { padding-left: 1em; line-height: 1.5em; }
 #content-manager ul li{list-style:none;}
 #content-manager .input-new{position:relative;}

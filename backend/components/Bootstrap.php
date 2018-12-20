@@ -30,6 +30,7 @@ class Bootstrap implements BootstrapInterface
         $userSection->item('Salesman', ['/salesman/index'], 2);
 
         $navigator = MenuManager::block('Navigator', 10000);
+        $navigator->item('Content Management', ['/content/index'],'fa fa-folder-open-o',5);
         $cmsSection = $navigator->section('CMS','fa fa-font',10);
         $cmsSection->item('Form Approval', ['/form-approval/index'], 101);
 

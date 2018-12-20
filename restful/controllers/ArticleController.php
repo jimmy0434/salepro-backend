@@ -32,19 +32,31 @@ class ArticleController extends SController
      *         @SWG\Schema(ref = "#/definitions/Content")
      *     ),
      *     security = {{"Bearer": {}}},
-     *     @SWG\Parameter( name="Authorization", in="header", required=true, type="string", default="Bearer TOKEN", description="Authorization" )
+     *     @SWG\Parameter( name="Authorization", in="header", required=true, type="string", default="Bearer TOKEN", description="Authorization" ),
+     *     @SWG\Parameter(name="page", required=false, in="query", type="integer", description="Page start from 1", default=1),
+     *     @SWG\Parameter(name="pageSize", required=false, in="query", type="integer", description="Page Size default 25", default=25),
+     *     @SWG\Parameter(name="category1", required=false, in="query", type="integer", description="Directory Category"),
+     *     @SWG\Parameter(name="category2", required=false, in="query", type="integer", description="Classification Category"),
+     *     @SWG\Parameter(name="keyword", required=false, in="query", type="string", description="Filter By Keyword")
      * )
      */
     public function actionList()
     {
-        $category = Yii::$app->request->get('category');
+        $category1 = Yii::$app->request->get('category1');
+        $category2 = Yii::$app->request->get('category2');
         $keyword = Yii::$app->request->get('keyword');
         $page = Yii::$app->request->get('page', 1);
         $pageSize = Yii::$app->request->get('pageSize', 25);
 
         $q = Yii::$app->cms->content->language(Yii::$app->language)->page($page, $pageSize);
-        if ($category != null) {
+        /*if ($category != null) {
             $q->category($category);
+        }*/
+        if ($category1) {
+            $q->condition([$q->table . '.category_id' => $category1]);
+        }
+        if ($category2) {
+            $q->condition('FIND_IN_SET("' . $category2 . '",' . $q->table . '.categories)>0');
         }
         if ($keyword != null) {
             $q->search($keyword);
@@ -72,7 +84,7 @@ class ArticleController extends SController
                 $list[] = $data;
             }
         }
-        Log::trace("Request Secure Contents [Category:" . ($category ? $category : "--") . ",Keyword:" . ($keyword ? $keyword : "--") . ",Page:" . $page . ",Page Size:" . $pageSize . ",Result Count:" . intval($q->count()) . "]");
+        Log::trace("Request Secure Contents [Directory Category:" . ($category1 ? $category1 : "--") . ",Classification Category:" . ($category2 ? $category2 : "--") . ",Keyword:" . ($keyword ? $keyword : "--") . ",Page:" . $page . ",Page Size:" . $pageSize . ",Result Count:" . intval($q->count()) . "]");
         return ['articles' => $list, 'count' => intval($q->count())];
     }
 
