@@ -12,6 +12,7 @@
  */
 
 use backend\controllers\ContentController;
+use cnd\cms\models\activerecords\Content;
 use yii\helpers\Json;
 use yii\helpers\Url;
 use yii\web\JqueryAsset;
@@ -33,6 +34,8 @@ $sectorsList = Json::encode(Yii::$app->cms->category->childOf("cms.category.sect
 echo $this->render("content-manager", [], $context);
 $saveCategoryUrl = Url::to(['/content/save-category']);
 $UploadCategoryIconUrl = Url::to(['/content/upload-category-icon']);
+$contentsUrl = Url::to(['/content/list']);
+$statuses = Json::encode((new Content())->status_list);
 $ready = <<< JS
 contentManager('#content-manager', {
     contentHub: {$contentHub},
@@ -45,11 +48,16 @@ contentManager('#content-manager', {
     corporatesList: {$corporatesList},
     sectorsList: {$sectorsList},
     saveCategoryUrl: '{$saveCategoryUrl}',
-    UploadCategoryIconUrl: '{$UploadCategoryIconUrl}'
+    UploadCategoryIconUrl: '{$UploadCategoryIconUrl}',
+    contentsUrl: '{$contentsUrl}',
+    statuses: {$statuses}
 });
 JS;
 
 $this->registerJsFile(Yii::$app->helper->getAssetUrl('@npm/vue/dist/vue' . (YII_ENV_DEV ? '' : '.min') . '.js'), [
+    'depends' => JqueryAsset::className(),
+]);
+$this->registerJsFile(Yii::$app->helper->getAssetUrl('@backend/assets/dist/js/vue-easycm.js'), [
     'depends' => JqueryAsset::className(),
 ]);
 $this->registerJsFile(Yii::$app->helper->getAssetUrl('@backend/assets/dist/js/content-manager.js'), [
@@ -74,5 +82,9 @@ $css = <<< CSS
 #content-manager .input-new{position:relative;}
 #content-manager .input-new .form-control{border:none; background:transparent;height:25px; line-height:25px; padding:0 7px;}
 #content-manager .input-new .form-control.edit-input{padding:0;}
+#content-manager .cm-container .cm-ul{padding:0;}
+#content-manager .thumbnail-fixes .img{height: 150px;background-size: auto 100%;background-position: center;background-repeat: no-repeat;background-color:#f0f0f0;position:relative;}
+#content-manager .thumbnail-fixes .img .target{position:absolute;bottom:2px;left:2px; display:block; padding:5px; background:rgba(0,0,0,0.5); color:#fff;border-radius:3px;}
+#content-manager .thumbnail-fixes .img .status{position:absolute;bottom:2px;right:2px; display:block; padding:5px; background:rgba(0,0,0,0.5); color:#fff;border-radius:3px;}
 CSS;
 $this->registerCss($css);
