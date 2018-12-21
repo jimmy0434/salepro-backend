@@ -5,6 +5,7 @@ use cnd\cms\models\activerecords\Content;
 use cnd\core\components\Migration;
 use common\models\File;
 use common\models\Form;
+use yii\helpers\Json;
 
 /**
  * Class m181220_072033_define_constants_categories_and_remove_old_data
@@ -52,8 +53,8 @@ class m181220_072033_define_constants_categories_and_remove_old_data extends Mig
     {
         $model = new Category();
         $model->status = Category::STATUS_ACTIVE;
-        $model->config = '{"template":"none","comments":"0","tags":"0","category":"0","related":"0","reaction":"0","share":"0"}';
-        $model->setting = '{"markdown":"0"}';
+        $model->config = Json::decode('{"template":"none","comments":"0","tags":"0","category":"0","related":"0","reaction":"0","share":"0"}');
+        $model->setting = Json::decode('{"markdown":"0"}');
         $model->parent_id = $parentId;
         $model->path = $parentId;
         if ($model->save()) {

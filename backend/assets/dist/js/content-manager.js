@@ -3,6 +3,8 @@ function contentManager(appId, options) {
 
     'use strict';
 
+    Vue.use(VueEasyCm);
+
     const defaultOptions = {
         contentHub: {},
         marketIntelligence: {},
@@ -14,7 +16,9 @@ function contentManager(appId, options) {
         corporatesList: [],
         sectorsList: [],
         saveCategoryUrl: null,
-        UploadCategoryIconUrl: null
+        UploadCategoryIconUrl: null,
+        contentsUrl: null,
+        statuses: {}
     };
 
     let {
@@ -28,7 +32,9 @@ function contentManager(appId, options) {
         corporatesList,
         sectorsList,
         saveCategoryUrl,
-        UploadCategoryIconUrl
+        UploadCategoryIconUrl,
+        contentsUrl,
+        statuses
     } = $.extend({}, defaultOptions, options || {});
 
     let children = [
@@ -51,6 +57,26 @@ function contentManager(appId, options) {
             })
         }
     ];
+
+    function onAjaxError(jqXHR, exception) {
+        let msg = '';
+        if (jqXHR.status === 0) {
+            msg = 'Not connect, Verify Network.';
+        } else if (jqXHR.status == 404) {
+            msg = 'Requested page not found. [404]';
+        } else if (jqXHR.status == 500) {
+            msg = 'Internal Server Error [500].';
+        } else if (exception === 'parsererror') {
+            msg = 'Requested JSON parse failed.';
+        } else if (exception === 'timeout') {
+            msg = 'Time out error.';
+        } else if (exception === 'abort') {
+            msg = 'Ajax request aborted.';
+        } else {
+            msg = 'Uncaught Error : ' + jqXHR.responseText;
+        }
+        popup.warning(msg);
+    };
 
     let tree = [
         {
@@ -101,11 +127,11 @@ function contentManager(appId, options) {
             },
             logo() {
                 let icon = this.model.data.icon;
-                if(typeof icon === 'string' || icon instanceof String) {
+                if (typeof icon === 'string' || icon instanceof String) {
                     return icon;
-                }else if(icon && typeof icon === 'object' && icon.constructor === Array && icon[0]){
+                } else if (icon && typeof icon === 'object' && icon.constructor === Array && icon[0]) {
                     icon = JSON.parse(icon[0]);
-                    if(icon.url){
+                    if (icon.url) {
                         icon = icon.url;
                     }
                 }
@@ -164,7 +190,7 @@ function contentManager(appId, options) {
                             parent: model.data.parent_id || this.model.data.id
                         },
                         beforeSend: () => {
-                            loader = popup.loader("Saving "+model.data.name);
+                            loader = popup.loader("Saving " + model.data.name);
                         },
                         success: (response) => {
                             loader.close();
@@ -177,7 +203,7 @@ function contentManager(appId, options) {
                         },
                         error: (jqXHR, exception) => {
                             loader.close();
-                            this.onAjaxError(jqXHR, exception);
+                            onAjaxError(jqXHR, exception);
                         }
                     });
                 }
@@ -193,14 +219,14 @@ function contentManager(appId, options) {
                 };
                 reader.readAsDataURL(file);
             },
-            uploadExecution(file, data){
+            uploadExecution(file, data) {
                 let maxSize = 1024 * 512; // 512kb
-                let types = ["image/png","image/jpg","image/jpeg"];
-                if(file.size > maxSize){
+                let types = ["image/png", "image/jpg", "image/jpeg"];
+                if (file.size > maxSize) {
                     popup.warning("Maximum image size is 512 KB");
-                }else if(types.indexOf(file.type) === -1){
-                    popup.warning("Image type should be one of: "+types.join(", "));
-                }else {
+                } else if (types.indexOf(file.type) === -1) {
+                    popup.warning("Image type should be one of: " + types.join(", "));
+                } else {
                     if (UploadCategoryIconUrl) {
                         let loader;
                         $.ajax({
@@ -217,44 +243,180 @@ function contentManager(appId, options) {
                             },
                             success: (response) => {
                                 loader.close();
-                                if(response.done){
+                                if (response.done) {
                                     this.model.data.icon = data;
                                     popup.success("new icon for `" + this.model.data.name + "` has been uploaded successfully");
-                                }else{
+                                } else {
                                     popup.error("new icon for `" + this.model.data.name + "` has not been uploaded");
                                 }
                             },
                             error: (jqXHR, exception) => {
                                 loader.close();
-                                this.onAjaxError(jqXHR, exception);
+                                onAjaxError(jqXHR, exception);
                             }
                         });
                     }
                 }
+            }
+        }
+    };
+
+    let contents = {
+        template: '#contents-template',
+        props: {},
+        data() {
+            return {
+                page: 1,
+                pageSize: 30,
+                list: [],
+                count: 0,
+                focusedItem: null
+            };
+        },
+        computed: {
+            activeFolder() {
+                return app.activeFolder;
             },
-            onAjaxError(jqXHR, exception){
-                let msg = '';
-                if (jqXHR.status === 0) {
-                    msg = 'Not connect, Verify Network.';
-                } else if (jqXHR.status == 404) {
-                    msg = 'Requested page not found. [404]';
-                } else if (jqXHR.status == 500) {
-                    msg = 'Internal Server Error [500].';
-                } else if (exception === 'parsererror') {
-                    msg = 'Requested JSON parse failed.';
-                } else if (exception === 'timeout') {
-                    msg = 'Time out error.';
-                } else if (exception === 'abort') {
-                    msg = 'Ajax request aborted.';
-                } else {
-                    msg = 'Uncaught Error : ' + jqXHR.responseText;
+            contextMenu() {
+                let list = [];
+                list.push({
+                    text: 'Add New',
+                    icon: 'fa fa-plus',
+                    children: [
+                        {
+                            text: 'Content'
+                        },
+                        {
+                            text: 'File'
+                        },
+                        {
+                            text: 'Form'
+                        }
+                    ]
+                });
+                if (this.focusedItem) {
+                    let section = this.focusedItem.section;
+                    if (section) {
+                        let [target] = section.split('-');
+                        if (target === "file") {
+                            list.push({
+                                text: 'File',
+                                icon: 'fa fa-file',
+                                children: [
+                                    {
+                                        text: 'Upload File'
+                                    },
+                                    {
+                                        text: 'Download File'
+                                    }
+                                ]
+                            });
+                        } else if (target === "form") {
+                            list.push({
+                                text: 'Form',
+                                icon: 'fa fa-file',
+                                children: [
+                                    {
+                                        text: 'Builder'
+                                    }
+                                ]
+                            });
+                        }
+                    }
+                    list.push({
+                        text: 'Change Image',
+                        icon: 'fa fa-image'
+                    });
+                    list.push({
+                        text: 'Edit',
+                        icon: 'fa fa-pencil'
+                    });
+                    list.push({
+                        text: 'Delete',
+                        icon: 'fa fa-remove'
+                    });
                 }
-                popup.warning(msg);
+                return list;
+            },
+            articles() {
+                let i, j, list = [], chunk = 4;
+                for (i = 0, j = this.list.length; i < j; i += chunk) {
+                    list.push(this.list.slice(i, i + chunk));
+                }
+                return list;
+            }
+        },
+        created() {
+            this.loadContents();
+        },
+        watch: {
+            activeFolder(value, oldValue) {
+                if (value !== oldValue) {
+                    this.loadContents();
+                }
+            }
+        },
+        methods: {
+            contextAction(path) {
+                console.log(path);
+            },
+            loadContents() {
+                if (contentsUrl) {
+                    let loader;
+                    $.ajax({
+                        type: "get",
+                        url: contentsUrl,
+                        dataType: "json",
+                        data: {
+                            page: this.page,
+                            pageSize: this.pageSize,
+                            directoryId: this.activeFolder.directory.model.data.id,
+                            classificationId: this.activeFolder.model.data.id
+                        },
+                        beforeSend: () => {
+                            loader = popup.loader("Contents Loading...");
+                        },
+                        success: (response) => {
+                            loader.close();
+                            if (response.list) {
+                                this.list = [...this.list, ...response.list];
+                            }
+                            if (response.count) {
+                                this.count = response.count;
+                            }
+                        },
+                        error: (jqXHR, exception) => {
+                            loader.close();
+                            onAjaxError(jqXHR, exception);
+                        }
+                    });
+                }
+            },
+            focusMe(article) {
+                this.focusedItem = article;
+            },
+            blurMe() {
+                this.focusedItem = null;
+            },
+            target(article){
+                let section = article.section;
+                if (section) {
+                    let [target] = section.split('-');
+                    if(target){
+                        return target;
+                    }
+                }
+                return "article";
+            },
+            status(article){
+                return statuses[article.status] || null;
             }
         }
     };
 
     Vue.component('item', treeItem);
+    Vue.component('contents', contents);
+
     let app = new Vue({
         el: appId,
         data() {

@@ -25,27 +25,9 @@ use yii\web\View;
             </item>
         </ul>
     </div>
-    <div class="grid-contents">
-        <div v-if="activeFolder">
-            <ol class="breadcrumb">
-                <li class="active">
-                    <img :src="activeFolder.directory.logo" v-if="activeFolder.directory.logo" style="position:relative;top:-2px;display:inline-block;height:24px;">
-                    {{ activeFolder.directory.model.data.name }}
-                </li>
-                <li class="active">
-                    <img :src="activeFolder.classification.logo" v-if="activeFolder.classification.logo" style="position:relative;top:-2px;display:inline-block;height:24px;">
-                    {{ activeFolder.classification.model.data.name }}
-                </li>
-                <li class="active">
-                    <img :src="activeFolder.logo" v-if="activeFolder.logo" style="position:relative;top:-2px;display:inline-block;height:24px;">
-                    {{ activeFolder.model.data.name }}
-                </li>
-            </ol>
-        </div>
-    </div>
+    <contents v-if="activeFolder"></contents>
 </div>
 </div>
-<!-- item template -->
 <script type="text/x-template" id="tree-item-template">
     <li>
         <div :class="{file: 'file', folder: isFolder}" @click="toggle">
@@ -54,7 +36,8 @@ use yii\web\View;
                 <span class="glyphicon glyphicon-plus text-success" v-if="isFolder && !open"></span>
                 <span class="glyphicon glyphicon-minus text-danger" v-if="isFolder && open"></span>
                 <span class="glyphicon glyphicon-picture text-muted" v-if="!logo" @click="browseIcon"></span>
-                <img :src="logo" v-if="logo" style="height:14px;display:inline-block;position:relative;top:-2px;" @click="browseIcon">
+                <img :src="logo" v-if="logo" style="height:14px;display:inline-block;position:relative;top:-2px;"
+                     @click="browseIcon">
                 <span :title="level === 3?'click to show contents, double click to edit':null">{{ model.data.name }}</span>
                 <span class="text-muted" v-if="count > 0"> ( {{count}} )</span>
             </div>
@@ -77,4 +60,53 @@ use yii\web\View;
             </li>
         </ul>
     </li>
+</script>
+<script type="text/x-template" id="contents-template">
+    <div class="grid-contents" @contextmenu="$easycm($event,$root)" @click.right.capture="blurMe()">
+        <div class="contents-area">
+            <easy-cm :list="contextMenu" @ecmcb="contextAction" :underline="true" :arrow="true"></easy-cm>
+            <ol class="breadcrumb">
+                <li class="pull-right text-muted" v-if="count">
+                <span v-if="count > list.length">
+                    Showing <strong class="text-success">{{list.length}}</strong> / <strong class="text-danger">{{count}}</strong> item<span
+                            v-if="list.length > 1">s</span>
+                </span>
+                    <span v-else>
+                    Showing <strong class="text-success">{{list.length}}</strong> item<span
+                                v-if="list.length > 1">s</span>
+                </span>
+                </li>
+                <li class="active">
+                    <img :src="activeFolder.directory.logo" v-if="activeFolder.directory.logo"
+                         style="position:relative;top:-2px;display:inline-block;height:24px;">
+                    {{ activeFolder.directory.model.data.name }}
+                </li>
+                <li class="active">
+                    <img :src="activeFolder.classification.logo" v-if="activeFolder.classification.logo"
+                         style="position:relative;top:-2px;display:inline-block;height:24px;">
+                    {{ activeFolder.classification.model.data.name }}
+                </li>
+                <li class="active">
+                    <img :src="activeFolder.logo" v-if="activeFolder.logo"
+                         style="position:relative;top:-2px;display:inline-block;height:24px;">
+                    {{ activeFolder.model.data.name }}
+                </li>
+            </ol>
+            <div class="row" v-if="count" v-for="(chunk, i) in articles" v-bind:key="'content-'+i">
+                <div class="col-md-3" v-for="(article, j) in chunk"
+                     v-bind:key="'content-'+article.id+'-'+j">
+                    <div class="thumbnail thumbnail-fixes" @click.right="focusMe(article)">
+                        <div class="img" v-bind:style="{ backgroundImage: 'url(' + article.cover + ')' }">
+                            <span class="target"
+                                  v-bind:class="{'fa' : true, 'fa-font' : target(article) === 'article', 'fa-file' : target(article) === 'file', 'fa-square' : target(article) === 'form'}"></span>
+                            <span class="status">{{ status(article )}}</span>
+                        </div>
+                        <div class="caption">
+                            <p class="text-center" style="margin:0;">{{ article.title }}</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
 </script>

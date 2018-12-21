@@ -11,6 +11,7 @@
 namespace backend\controllers;
 
 use cnd\cms\models\activerecords\Category;
+use cnd\cms\models\activerecords\Content;
 use Yii;
 use cnd\core\components\SController;
 use yii\helpers\Json;
@@ -42,8 +43,8 @@ class ContentController extends SController
                 $model = new Category();
                 $model->parent_id = $parent;
                 $model->status = Category::STATUS_ACTIVE;
-                $model->config = '{"template":"none","comments":"0","tags":"0","category":"0","related":"0","reaction":"0","share":"0"}';
-                $model->setting = '{"markdown":"0"}';
+                $model->config = Json::decode('{"template":"none","comments":"0","tags":"0","category":"0","related":"0","reaction":"0","share":"0"}');
+                $model->setting = Json::decode('{"markdown":"0"}');
                 $model->path = Yii::$app->cms->getId('cms.category.classifications') . ',' . $parent;
                 if ($model->save()) {
                     $modelLang = new Category();
@@ -68,7 +69,8 @@ class ContentController extends SController
         return $this->redirect(['index']);
     }
 
-    public function actionUploadCategoryIcon(){
+    public function actionUploadCategoryIcon()
+    {
         $request = Yii::$app->request;
         $response = Yii::$app->response;
         if ($request->isPost && $request->isAjax) {
@@ -95,7 +97,7 @@ class ContentController extends SController
                 $filename = "category-" . $id . "-" . time() . "." . $extension;
                 $path .= "/" . $filename;
                 if (file_put_contents($path, $data)) {
-                    $url = str_replace('/cnd-admin','',Url::base(true)) . '/cnd-static/public/media/categories/' . date('Y-m') . '/' . $filename;
+                    $url = str_replace('/cnd-admin', '', Url::base(true)) . '/cnd-static/public/media/categories/' . date('Y-m') . '/' . $filename;
                     $icon = Json::encode([
                         'id' => $filename,
                         'title' => $filename,
@@ -104,18 +106,50 @@ class ContentController extends SController
                         'icon' => $url,
                         'url' => $url,
                         'provider' => 'local',
-                        'type' => "image/".$extension,
+                        'type' => "image/" . $extension,
                         'size' => Yii::$app->helper->sizeFormat(filesize($path)),
                     ]);
                     $model->icon = [$icon];
                     $model->save();
                     $response['done'] = true;
-                }else{
+                } else {
                     $response['done'] = false;
                 }
-            }else{
+            } else {
                 $response['done'] = false;
             }
+            return $response;
+        }
+        return $this->redirect(['index']);
+    }
+
+    public function actionList()
+    {
+        $request = Yii::$app->request;
+        $response = Yii::$app->response;
+        if ($request->isGet && $request->isAjax) {
+            $response->format = Response::FORMAT_JSON;
+            $response = [];
+            $directoryId = $request->get("directoryId");
+            $classificationId = $request->get("classificationId");
+            $page = $request->get("page", 1);
+            $pageSize = $request->get("pageSize", 30);
+
+            $query = Content::find();
+            $query->where(['content.category_id' => $directoryId])->andWhere('FIND_IN_SET("' . $classificationId . '",content.categories)>0');
+            $query->andWhere(['content.original_id' => null, 'content.status' => [Content::STATUS_PUBLISH, Content::STATUS_HOT]]);
+            $query->from(['content' => Content::tableName()]);
+            $query->joinWith([
+                'languageRecord'
+            ], 'LEFT JOIN');
+            if($page == 1) {
+                $countQ = clone $query;
+                $response['count'] = $countQ->count();
+            }
+            $query->orderBy('content.position ASC, content.updated_at DESC');
+            $query->limit($pageSize)->offset(($page - 1) * $pageSize);
+            $response['list'] = $query->all();
+            $response['query'] = Yii::$app->helper->sql($query);
             return $response;
         }
         return $this->redirect(['index']);
