@@ -103,7 +103,7 @@ $css = <<< CSS
 #content-manager .input-new{position:relative;}
 #content-manager .input-new .form-control{border:none; background:transparent;height:25px; line-height:25px; padding:0 7px;}
 #content-manager .input-new .form-control.edit-input{padding:0;}
-#content-manager .cm-container .cm-ul{padding:0;}
+#content-manager .cm-container .cm-ul{padding:0;box-shadow: 0 0 1px #666;}
 #content-manager .thumbnail-fixes{position:relative;overflow:hidden;}
 #content-manager .thumbnail-fixes .img{height: 150px;background-size: auto 100%;background-position: center;background-repeat: no-repeat;background-color:#f0f0f0;position:relative;overflow:hidden;}
 #content-manager .thumbnail-fixes .img .target{position:absolute;bottom:2px;left:2px; display:block; padding:5px; background:rgba(0,0,0,0.5); color:#fff;border-radius:3px;}
