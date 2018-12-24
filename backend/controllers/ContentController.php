@@ -340,4 +340,52 @@ class ContentController extends \cnd\cms\modules\admin\controllers\ContentContro
         }
         return $this->redirect(['index']);
     }
+
+    public function actionDeleteContent()
+    {
+        $request = Yii::$app->request;
+        $response = Yii::$app->response;
+        if ($request->isPost && $request->isAjax) {
+            $response->format = Response::FORMAT_JSON;
+            $response = [];
+            $response['done'] = false;
+
+            $id = $request->post('id');
+
+            $transaction = Yii::$app->db->beginTransaction();
+            try {
+                $model = Content::findOne($id);
+                if ($model) {
+                    list($targetType, $targetId) = explode('-', $model->section);
+                    if ($targetType == 'file') {
+                        $target = File::findOne($targetId);
+                        if ($target) {
+                            if (!$target->delete()) {
+                                throw new Exception("File not deleted");
+                            }
+                        }
+                    } else if ($targetType == 'form') {
+                        $target = Form::findOne($targetId);
+                        if ($target) {
+                            if (!$target->delete()) {
+                                throw new Exception("Form not deleted");
+                            }
+                        }
+                    }
+                    if (!$model->delete()) {
+                        throw new Exception("Content not deleted");
+                    } else {
+                        $response['done'] = true;
+                    }
+                }
+                $transaction->commit();
+            } catch (\Throwable $t) {
+                $transaction->rollBack();
+            } catch (\Exception $e) {
+                $transaction->rollBack();
+            }
+            return $response;
+        }
+        return $this->redirect(['index']);
+    }
 }

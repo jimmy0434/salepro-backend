@@ -25,6 +25,7 @@ function contentManager(appId, options) {
         manageContentUrl: null,
         createContentUrl: null,
         renameTitleUrl: null,
+        deleteContentUrl: null,
         statuses: {}
     };
 
@@ -48,6 +49,7 @@ function contentManager(appId, options) {
         manageContentUrl,
         createContentUrl,
         renameTitleUrl,
+        deleteContentUrl,
         statuses
     } = $.extend({}, defaultOptions, options || {});
 
@@ -575,7 +577,33 @@ function contentManager(appId, options) {
                 this.openDialogFrame(url);
             },
             deleteContent({id}) {
-                console.log('deleteContent', id);
+                if (deleteContentUrl) {
+                    let loader;
+                    $.ajax({
+                        type: "post",
+                        url: deleteContentUrl,
+                        dataType: 'json',
+                        data: {id},
+                        beforeSend: () => {
+                            loader = popup.loader("Deleting Content...");
+                        },
+                        success: (response) => {
+                            loader.close();
+                            if (response.done) {
+                                this.list = this.list.filter(item => {
+                                    return item.id !== id;
+                                });
+                                popup.success("Content `" + this.focusedItem.title + "` has been deleted successfully");
+                            } else {
+                                popup.error("Content `" + this.focusedItem.title + "` has not been deleted");
+                            }
+                        },
+                        error: (jqXHR, exception) => {
+                            loader.close();
+                            onAjaxError(jqXHR, exception);
+                        }
+                    });
+                }
             },
             uploadFile({id}) {
                 let url = fileUploadUrl.replace('__ID__', id);

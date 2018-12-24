@@ -43,6 +43,7 @@ $fileDownloadUrl = Url::to(['/file/download', 'id' => '__ID__']);
 $manageContentUrl = Url::to(['/content/manage', 'id' => '__ID__', 'c' => '__C__']);
 $createContentUrl = Url::to(['/content/create']);
 $renameTitleUrl = Url::to(['/content/rename-title']);
+$deleteContentUrl = Url::to(['/content/delete-content']);
 $ready = <<< JS
 contentManager('#content-manager', {
     contentHub: {$contentHub},
@@ -64,6 +65,7 @@ contentManager('#content-manager', {
     manageContentUrl: '{$manageContentUrl}',
     createContentUrl: '{$createContentUrl}',
     renameTitleUrl: '{$renameTitleUrl}',
+    deleteContentUrl: '{$deleteContentUrl}',
     statuses: {$statuses}
 });
 JS;
