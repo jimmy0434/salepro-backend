@@ -25,7 +25,7 @@ use yii\web\View;
             </item>
         </ul>
     </div>
-    <contents v-if="activeFolder" :category="activeFolder.model.data.id"></contents>
+    <contents v-if="activeFolder" :category="activeFolder.model.data.id" ref="contents"></contents>
 </div>
 </div>
 <script type="text/x-template" id="tree-item-template">
@@ -92,22 +92,51 @@ use yii\web\View;
                     {{ activeFolder.model.data.name }}
                 </li>
             </ol>
+            <div v-if="addNew" class="input-add-new">
+                <div class="add-new-box">
+                    <div class="form-group">
+                        <input type="text" class="form-control add-new" v-model="addNew.title"
+                               placeholder="Type a content title" :ref="'newContentInput'">
+                    </div>
+                    <div class="form-group">
+                        <input type="text" class="form-control add-new" v-model="addNew.url" v-if="addNew.hasUrl"
+                               :placeholder="'Type ' + addNew.type">
+                    </div>
+                    <hr>
+                    <div class="text-center">
+                        <button class="btn btn-success btn-lg" type="button" @click="applyNewContent">Create</button>
+                        &nbsp;&nbsp;
+                        <button class="btn btn-default btn-lg" type="button" @click="cancelNewContent">Cancel</button>
+                    </div>
+                </div>
+            </div>
             <div v-if="count > 0">
                 <div class="row" v-for="(chunk, i) in articles" v-bind:key="'content-'+i">
                     <div class="col-md-3" v-for="(article, j) in chunk"
                          v-bind:key="'content-'+article.id+'-'+j">
                         <div class="thumbnail thumbnail-fixes" @click.right="focusMe(article)">
-                            <div class="img" v-bind:style="{ backgroundImage: 'url(' + article.cover + ')' }">
-                            <span class="target"
-                                  v-bind:class="{'fa' : true, 'fa-font' : target(article)[0] === 'article', 'fa-file' : target(article)[0] === 'file', 'fa-list-alt' : target(article)[0] === 'form'}"></span>
-                                <span class="status">{{ status(article )}}</span>
-                                <input type="file" @change="uploadCover" :ref="'article-file-browse-'+article.id">
+                            <input type="file" @change="uploadCover" :ref="'article-file-browse-'+article.id">
+                            <div class="img" v-bind:style="{ backgroundImage: 'url(' + article.cover + ')' }"
+                                 @dblclick="dblUploadImage(article)">
+                                <a href="javascript://" class="target"
+                                   v-bind:class="iconClass(article)" @click="openUrl(article)"></a>
+                                <span class="status" @click="changeStatus(article)">{{ status(article )}}</span>
                             </div>
                             <div class="caption">
-                                <p class="text-center" style="margin:0;">{{ article.title }}</p>
+                                <p class="text-center" style="margin:0;" @dblclick="enableEditTitleMode(article)"
+                                   v-if="editTitleMode !== article.id">{{ article.title }}</p>
+                                <div v-if="editTitleMode === article.id" class="input-edit">
+                                    <input type="text" class="form-control edit-input" v-model="article.title"
+                                           @keyup.enter="applyEditTitle(article)"
+                                           placeholder="Edit Title" :ref="'content-title-'+article.id">
+                                </div>
                             </div>
                         </div>
                     </div>
+                </div>
+                <div class="text-center" v-if="list.length < count">
+                    <hr>
+                    <button type="button" class="btn btn-default" @click="loadContents()">Load More</button>
                 </div>
             </div>
             <p v-else class="text-muted text-center">No contents found</p>

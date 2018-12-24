@@ -12,13 +12,15 @@ namespace backend\controllers;
 
 use cnd\cms\models\activerecords\Category;
 use cnd\cms\models\activerecords\Content;
+use common\models\File;
+use common\models\Form;
 use Yii;
-use cnd\core\components\SController;
+use yii\db\Exception;
 use yii\helpers\Json;
 use yii\helpers\Url;
 use yii\web\Response;
 
-class ContentController extends SController
+class ContentController extends \cnd\cms\modules\admin\controllers\ContentController
 {
     public function actionIndex()
     {
@@ -137,12 +139,12 @@ class ContentController extends SController
 
             $query = Content::find();
             $query->where(['content.category_id' => $directoryId])->andWhere('FIND_IN_SET("' . $classificationId . '",content.categories)>0');
-            $query->andWhere(['content.original_id' => null, 'content.status' => [Content::STATUS_PUBLISH, Content::STATUS_HOT]]);
+            $query->andWhere(['content.original_id' => null]);
             $query->from(['content' => Content::tableName()]);
             $query->joinWith([
                 'languageRecord'
             ], 'LEFT JOIN');
-            if($page == 1) {
+            if ($page == 1) {
                 $countQ = clone $query;
                 $response['count'] = $countQ->count();
             }
@@ -204,6 +206,136 @@ class ContentController extends SController
             } else {
                 $response['done'] = false;
             }
+            return $response;
+        }
+        return $this->redirect(['index']);
+    }
+
+    public function actionManage()
+    {
+        $response = Yii::$app->response;
+        $this->layout = '@backend/views/layout/dialog.php';
+        $ret = $this->manager->manage();
+        if ($ret instanceOf $response) {
+            echo "<script>window.addEventListener('load', function() {parent.postMessage( {'task': 'closeFancyBox'});});</script>";
+            exit(0);
+        }
+        return $ret;
+    }
+
+    public function actionCreate()
+    {
+        $request = Yii::$app->request;
+        $response = Yii::$app->response;
+        if ($request->isPost && $request->isAjax) {
+            $response->format = Response::FORMAT_JSON;
+            $response = [];
+            $response['done'] = false;
+
+            $title = $request->post('title');
+            $type = $request->post('type');
+            $directory = $request->post('directory');
+            $classification = $request->post('classification');
+            $hasUrl = $request->post('hasUrl');
+            $url = $request->post('url');
+
+            $transaction = Yii::$app->db->beginTransaction();
+            try {
+                $targetId = null;
+                $status = Content::STATUS_PUBLISH;
+                if ($type == 'file') {
+                    $target = new File();
+                    $target->title = $title;
+                    $target->status = File::STATUS_ACTIVE;
+                    if (!$target->save()) {
+                        throw new Exception("File not created");
+                    } else {
+                        $targetId = $target->id;
+                    }
+                } else if ($type == 'form') {
+                    $status = Content::STATUS_PENDING;
+                    $target = new Form();
+                    $target->title = $title;
+                    $target->name = $target->createSlug($title);
+                    $target->status = Form::STATUS_PENDING;
+                    if (!$target->save()) {
+                        throw new Exception("Form not created");
+                    } else {
+                        $targetId = $target->id;
+                    }
+                }
+                $model = new Content();
+                $model->status = $status;
+                if ($targetId) {
+                    $model->section = $type . '-' . $targetId;
+                } else if ($hasUrl && in_array($type, ['url', 'rss']) && $url) {
+                    $model->section = $type . '-0';
+                    $model->external_url = [
+                        'embedded' => 0,
+                        'url' => $url,
+                    ];
+                }
+                $model->category_id = $directory;
+                $model->categories = $classification;
+                if ($model->save()) {
+                    $lang = new Content();
+                    $lang->title = $title;
+                    $lang->language = "en";
+                    $lang->original_id = $model->id;
+                    if ($lang->save()) {
+                        $response['model'] = Content::findOne($model->id);
+                        $response['done'] = true;
+                    } else {
+                        throw new Exception("Content not created");
+                    }
+                } else {
+                    throw new Exception("Content not created");
+                }
+                $transaction->commit();
+            } catch (\Throwable $t) {
+                $transaction->rollBack();
+            } catch (\Exception $e) {
+                $transaction->rollBack();
+            }
+
+            return $response;
+        }
+        return $this->redirect(['index']);
+    }
+
+    public function actionRenameTitle()
+    {
+        $request = Yii::$app->request;
+        $response = Yii::$app->response;
+        if ($request->isPost && $request->isAjax) {
+            $response->format = Response::FORMAT_JSON;
+            $response = [];
+            $response['done'] = false;
+
+            $id = $request->post('id');
+            $title = $request->post('title');
+            $type = $request->post('type');
+
+            $lang = Content::find()->where(['original_id' => $id, 'language' => 'en'])->one();
+            if ($lang) {
+                $lang->title = $title;
+                if ($lang->save()) {
+                    if (in_array($type, ['file', 'form'])) {
+                        list($targetType, $targetId) = explode('-', $lang->original->section);
+                        if ($type == 'file' && $targetId && $targetType == $type) {
+                            $target = File::findOne($targetId);
+                            $target->title = $title;
+                            $target->save();
+                        } else if ($type == 'form' && $targetId && $targetType == $type) {
+                            $target = Form::findOne($targetId);
+                            $target->title = $title;
+                            $target->save();
+                        }
+                    }
+                    $response['done'] = true;
+                }
+            }
+
             return $response;
         }
         return $this->redirect(['index']);

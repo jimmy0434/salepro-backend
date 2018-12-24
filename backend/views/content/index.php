@@ -37,9 +37,12 @@ $UploadCategoryIconUrl = Url::to(['/content/upload-category-icon']);
 $UploadContentCoverUrl = Url::to(['/content/upload-content-cover']);
 $contentsUrl = Url::to(['/content/list']);
 $statuses = Json::encode((new Content())->status_list);
-$formBuilderUrl = Url::to(['/form/manage-structure','id'=>'__ID__','dialog'=>true]);
-$fileUploadUrl = Url::to(['/file/manage-upload','id'=>'__ID__','dialog'=>true]);
-$fileDownloadUrl = Url::to(['/file/download','id'=>'__ID__']);
+$formBuilderUrl = Url::to(['/form/manage-structure', 'id' => '__ID__', 'dialog' => true]);
+$fileUploadUrl = Url::to(['/file/manage-upload', 'id' => '__ID__', 'dialog' => true]);
+$fileDownloadUrl = Url::to(['/file/download', 'id' => '__ID__']);
+$manageContentUrl = Url::to(['/content/manage', 'id' => '__ID__', 'c' => '__C__']);
+$createContentUrl = Url::to(['/content/create']);
+$renameTitleUrl = Url::to(['/content/rename-title']);
 $ready = <<< JS
 contentManager('#content-manager', {
     contentHub: {$contentHub},
@@ -58,6 +61,9 @@ contentManager('#content-manager', {
     formBuilderUrl: '{$formBuilderUrl}',
     fileUploadUrl: '{$fileUploadUrl}',
     fileDownloadUrl: '{$fileDownloadUrl}',
+    manageContentUrl: '{$manageContentUrl}',
+    createContentUrl: '{$createContentUrl}',
+    renameTitleUrl: '{$renameTitleUrl}',
     statuses: {$statuses}
 });
 JS;
@@ -96,9 +102,13 @@ $css = <<< CSS
 #content-manager .input-new .form-control{border:none; background:transparent;height:25px; line-height:25px; padding:0 7px;}
 #content-manager .input-new .form-control.edit-input{padding:0;}
 #content-manager .cm-container .cm-ul{padding:0;}
-#content-manager .thumbnail-fixes .img{height: 150px;background-size: auto 100%;background-position: center;background-repeat: no-repeat;background-color:#f0f0f0;position:relative;}
+#content-manager .thumbnail-fixes{position:relative;overflow:hidden;}
+#content-manager .thumbnail-fixes .img{height: 150px;background-size: auto 100%;background-position: center;background-repeat: no-repeat;background-color:#f0f0f0;position:relative;overflow:hidden;}
 #content-manager .thumbnail-fixes .img .target{position:absolute;bottom:2px;left:2px; display:block; padding:5px; background:rgba(0,0,0,0.5); color:#fff;border-radius:3px;}
 #content-manager .thumbnail-fixes .img .status{position:absolute;bottom:2px;right:2px; display:block; padding:5px; background:rgba(0,0,0,0.5); color:#fff;border-radius:3px;}
-#content-manager .thumbnail-fixes .img input[type=file]{position:absolute;left:-1000px;}
+#content-manager .thumbnail-fixes input[type=file]{position:absolute;left:-1000px;}
+#content-manager .grid-contents .input-add-new{position:fixed;top:0;left:0;width:100%;height:100%;z-index:9901;background:rgba(0,0,0,0.5);}
+#content-manager .grid-contents .input-add-new .add-new-box{position:fixed;top:50%;left:50%;max-width:600px; width:90%;transform: translate(-50%,-50%);z-index:1;border-radius:3px;border:2px solid rgba(0,0,0,0.8);background:#fff;padding:25px;}
+#content-manager .grid-contents .input-add-new .add-new{height:50px;line-height:50px;padding:0 15px;font-size:24px;}
 CSS;
 $this->registerCss($css);

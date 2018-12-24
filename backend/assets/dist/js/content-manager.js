@@ -22,6 +22,9 @@ function contentManager(appId, options) {
         formBuilderUrl: null,
         fileUploadUrl: null,
         fileDownloadUrl: null,
+        manageContentUrl: null,
+        createContentUrl: null,
+        renameTitleUrl: null,
         statuses: {}
     };
 
@@ -42,6 +45,9 @@ function contentManager(appId, options) {
         formBuilderUrl,
         fileUploadUrl,
         fileDownloadUrl,
+        manageContentUrl,
+        createContentUrl,
+        renameTitleUrl,
         statuses
     } = $.extend({}, defaultOptions, options || {});
 
@@ -85,6 +91,14 @@ function contentManager(appId, options) {
         }
         popup.warning(msg);
     };
+
+    window.addEventListener('message', function (e) {
+        let task = e.data['task'];
+        if (task === 'closeFancyBox') {
+            $.fancybox.close();
+            app.refreshContents();
+        }
+    });
 
     let tree = [
         {
@@ -277,10 +291,12 @@ function contentManager(appId, options) {
         data() {
             return {
                 page: 1,
-                pageSize: 30,
+                pageSize: 40,
                 list: [],
                 count: 0,
-                focusedItem: null
+                focusedItem: null,
+                editTitleMode: false,
+                addNew: null
             };
         },
         computed: {
@@ -301,6 +317,12 @@ function contentManager(appId, options) {
                         },
                         {
                             text: 'Form'
+                        },
+                        {
+                            text: 'Url'
+                        },
+                        {
+                            text: 'Rss'
                         }
                     ]
                 });
@@ -349,9 +371,15 @@ function contentManager(appId, options) {
                 return list;
             },
             articles() {
-                let i, j, list = [], chunk = 4;
+                let i, j, list = [], chunk = 4, exist = {};
                 for (i = 0, j = this.list.length; i < j; i += chunk) {
-                    list.push(this.list.slice(i, i + chunk));
+                    list.push(this.list.slice(i, i + chunk).filter(item => {
+                        if (!exist[item.id]) {
+                            exist[item.id] = true;
+                            return true;
+                        }
+                        return false;
+                    }));
                 }
                 return list;
             }
@@ -393,6 +421,7 @@ function contentManager(appId, options) {
                             loader.close();
                             if (response.list) {
                                 this.list = [...this.list, ...response.list];
+                                this.page++;
                             }
                             if (response.count) {
                                 this.count = response.count;
@@ -433,7 +462,7 @@ function contentManager(appId, options) {
             },
             actions() {
                 let directoryId = this.activeFolder.directory.model.data.id;
-                let classificationId = this.activeFolder.classification.model.data.id;
+                let classificationId = this.activeFolder.model.data.id;
                 let list = {
                     'addContent': ['addContent', {
                         type: 'content',
@@ -447,6 +476,16 @@ function contentManager(appId, options) {
                     }],
                     'addFormContent': ['addContent', {
                         type: 'form',
+                        directory: directoryId,
+                        classification: classificationId
+                    }],
+                    'addUrlContent': ['addContent', {
+                        type: 'url',
+                        directory: directoryId,
+                        classification: classificationId
+                    }],
+                    'addRssContent': ['addContent', {
+                        type: 'rss',
                         directory: directoryId,
                         classification: classificationId
                     }]
@@ -475,10 +514,14 @@ function contentManager(appId, options) {
                 list['0.0'] = actions['addContent'];
                 list['0.1'] = actions['addFileContent'];
                 list['0.2'] = actions['addFormContent'];
+                list['0.3'] = actions['addUrlContent'];
+                list['0.4'] = actions['addRssContent'];
                 if (this.focusedItem) {
                     let [target] = this.target(this.focusedItem);
                     switch (target) {
                         case "article":
+                        case "url":
+                        case "rss":
                             list = this.resolvePureArticleAction(list, actions);
                             break;
                         case "file":
@@ -513,14 +556,23 @@ function contentManager(appId, options) {
                 return list;
             },
             addContent({type, directory, classification}) {
-                console.log('addContent', [type, directory, classification]);
+                let hasUrl = (type === 'url' || type === 'rss');
+                this.addNew = {type, directory, classification, title: null, hasUrl: hasUrl, url: ""};
+                this.$nextTick(() => {
+                    this.$refs.newContentInput.focus();
+                });
             },
             uploadImage({id}) {
                 let ref = 'article-file-browse-' + id;
                 this.$refs[ref][0].click();
             },
+            dblUploadImage(article) {
+                this.focusedItem = article;
+                this.uploadImage({id: article.id});
+            },
             manageContent({id}) {
-                console.log('manageContent', id);
+                let url = manageContentUrl.replace('__ID__', id).replace('__C__', this.activeFolder.directory.model.data.id);
+                this.openDialogFrame(url);
             },
             deleteContent({id}) {
                 console.log('deleteContent', id);
@@ -595,6 +647,104 @@ function contentManager(appId, options) {
                         });
                     }
                 }
+            },
+            enableEditTitleMode(article) {
+                this.editTitleMode = article.id;
+                this.$nextTick(() => {
+                    this.$refs['content-title-' + article.id][0].focus();
+                });
+            },
+            applyEditTitle(article) {
+                if (renameTitleUrl) {
+                    let loader;
+                    $.ajax({
+                        type: "post",
+                        url: renameTitleUrl,
+                        dataType: 'json',
+                        data: {
+                            id: article.id,
+                            title: article.title,
+                            type: this.target(article)[0]
+                        },
+                        beforeSend: () => {
+                            loader = popup.loader("Renaming content...");
+                        },
+                        success: (response) => {
+                            loader.close();
+                            if (response.done) {
+                                this.editTitleMode = false;
+                                popup.success("Content title `" + article.title + "` has been uploaded successfully");
+                            } else {
+                                popup.error("Content title `" + article.title + "` has not been uploaded");
+                            }
+                        },
+                        error: (jqXHR, exception) => {
+                            loader.close();
+                            onAjaxError(jqXHR, exception);
+                        }
+                    });
+                }
+            },
+            changeStatus(article) {
+                console.log(article.id);
+            },
+            cancelNewContent() {
+                this.addNew = null;
+            },
+            applyNewContent() {
+                let data = this.addNew;
+                if (data && $.trim(data.title) !== "") {
+                    if (createContentUrl) {
+                        let loader;
+                        $.ajax({
+                            type: "post",
+                            url: createContentUrl,
+                            dataType: 'json',
+                            data: data,
+                            beforeSend: () => {
+                                loader = popup.loader("Creating new content...");
+                            },
+                            success: (response) => {
+                                loader.close();
+                                if (response.done) {
+                                    this.addNew = null;
+                                    this.list.push(response.model);
+                                    this.count++;
+                                    popup.success("New content `" + data.title + "` has been uploaded successfully");
+                                } else {
+                                    popup.error("New content `" + data.title + "` has not been uploaded");
+                                }
+                            },
+                            error: (jqXHR, exception) => {
+                                loader.close();
+                                onAjaxError(jqXHR, exception);
+                            }
+                        });
+                    }
+                } else {
+                    this.addNew = null;
+                }
+            },
+            openUrl(article) {
+                let [target, targetId] = this.target(article);
+                if (target === 'url' || target === 'rss') {
+                    window.open(article.external_url.url);
+                } else if (target === 'form') {
+                    this.openDialogFrame(formBuilderUrl.replace('__ID__', targetId));
+                } else if (target === 'file') {
+                    this.openDialogFrame(fileUploadUrl.replace('__ID__', targetId));
+                }
+            },
+            iconClass(article) {
+                let [target, targetId] = this.target(article);
+                return {
+                    'fa': true,
+                    'fa-font': target === 'article',
+                    'fa-file': target === 'file',
+                    'fa-list-alt': target === 'form',
+                    'fa-rss': target === 'rss',
+                    'fa-link': target === 'url'
+                }
             }
         }
     };
@@ -609,6 +759,15 @@ function contentManager(appId, options) {
                 tree,
                 activeFolder: null
             };
+        },
+        methods: {
+            refreshContents() {
+                let item = this.$refs.contents;
+                item.page = 1;
+                item.list = [];
+                item.count = 0;
+                item.loadContents();
+            }
         }
     });
 
