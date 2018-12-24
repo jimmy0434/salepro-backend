@@ -25,7 +25,7 @@ use yii\web\View;
             </item>
         </ul>
     </div>
-    <contents v-if="activeFolder"></contents>
+    <contents v-if="activeFolder" :category="activeFolder.model.data.id"></contents>
 </div>
 </div>
 <script type="text/x-template" id="tree-item-template">
@@ -66,7 +66,7 @@ use yii\web\View;
         <div class="contents-area">
             <easy-cm :list="contextMenu" @ecmcb="contextAction" :underline="true" :arrow="true"></easy-cm>
             <ol class="breadcrumb">
-                <li class="pull-right text-muted" v-if="count">
+                <li class="pull-right text-muted" v-if="count > 0">
                 <span v-if="count > list.length">
                     Showing <strong class="text-success">{{list.length}}</strong> / <strong class="text-danger">{{count}}</strong> item<span
                             v-if="list.length > 1">s</span>
@@ -92,21 +92,24 @@ use yii\web\View;
                     {{ activeFolder.model.data.name }}
                 </li>
             </ol>
-            <div class="row" v-if="count" v-for="(chunk, i) in articles" v-bind:key="'content-'+i">
-                <div class="col-md-3" v-for="(article, j) in chunk"
-                     v-bind:key="'content-'+article.id+'-'+j">
-                    <div class="thumbnail thumbnail-fixes" @click.right="focusMe(article)">
-                        <div class="img" v-bind:style="{ backgroundImage: 'url(' + article.cover + ')' }">
+            <div v-if="count > 0">
+                <div class="row" v-for="(chunk, i) in articles" v-bind:key="'content-'+i">
+                    <div class="col-md-3" v-for="(article, j) in chunk"
+                         v-bind:key="'content-'+article.id+'-'+j">
+                        <div class="thumbnail thumbnail-fixes" @click.right="focusMe(article)">
+                            <div class="img" v-bind:style="{ backgroundImage: 'url(' + article.cover + ')' }">
                             <span class="target"
-                                  v-bind:class="{'fa' : true, 'fa-font' : target(article) === 'article', 'fa-file' : target(article) === 'file', 'fa-square' : target(article) === 'form'}"></span>
-                            <span class="status">{{ status(article )}}</span>
-                        </div>
-                        <div class="caption">
-                            <p class="text-center" style="margin:0;">{{ article.title }}</p>
+                                  v-bind:class="{'fa' : true, 'fa-font' : target(article)[0] === 'article', 'fa-file' : target(article)[0] === 'file', 'fa-list-alt' : target(article)[0] === 'form'}"></span>
+                                <span class="status">{{ status(article )}}</span>
+                            </div>
+                            <div class="caption">
+                                <p class="text-center" style="margin:0;">{{ article.title }}</p>
+                            </div>
                         </div>
                     </div>
                 </div>
             </div>
+            <p v-else class="text-muted text-center">No contents found</p>
         </div>
     </div>
 </script>

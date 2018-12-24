@@ -66,8 +66,11 @@ class FormController extends SController
         return $this->render('form-meta-data', ['model' => $model]);
     }
 
-    public function actionManageStructure($id)
+    public function actionManageStructure($id, $dialog = false)
     {
+        if($dialog){
+            $this->layout = '@backend/views/layout/dialog.php';
+        }
         Url::remember();
         $model = Form::findOne($id);
         if ($model === null) {

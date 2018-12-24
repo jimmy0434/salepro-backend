@@ -36,6 +36,9 @@ $saveCategoryUrl = Url::to(['/content/save-category']);
 $UploadCategoryIconUrl = Url::to(['/content/upload-category-icon']);
 $contentsUrl = Url::to(['/content/list']);
 $statuses = Json::encode((new Content())->status_list);
+$formBuilderUrl = Url::to(['/form/manage-structure','id'=>'__ID__','dialog'=>true]);
+$fileUploadUrl = Url::to(['/file/manage-upload','id'=>'__ID__','dialog'=>true]);
+$fileDownloadUrl = Url::to(['/file/download','id'=>'__ID__']);
 $ready = <<< JS
 contentManager('#content-manager', {
     contentHub: {$contentHub},
@@ -50,9 +53,17 @@ contentManager('#content-manager', {
     saveCategoryUrl: '{$saveCategoryUrl}',
     UploadCategoryIconUrl: '{$UploadCategoryIconUrl}',
     contentsUrl: '{$contentsUrl}',
+    formBuilderUrl: '{$formBuilderUrl}',
+    fileUploadUrl: '{$fileUploadUrl}',
+    fileDownloadUrl: '{$fileDownloadUrl}',
     statuses: {$statuses}
 });
 JS;
+
+$this->registerJsFile(Yii::$app->helper->getAssetUrl('@bower/fancybox/dist/jquery.fancybox.js'), [
+    'depends' => JqueryAsset::className(),
+]);
+$this->registerCssFile(Yii::$app->helper->getAssetUrl('@bower/fancybox/dist/jquery.fancybox.css'));
 
 $this->registerJsFile(Yii::$app->helper->getAssetUrl('@npm/vue/dist/vue' . (YII_ENV_DEV ? '' : '.min') . '.js'), [
     'depends' => JqueryAsset::className(),

@@ -18,6 +18,9 @@ function contentManager(appId, options) {
         saveCategoryUrl: null,
         UploadCategoryIconUrl: null,
         contentsUrl: null,
+        formBuilderUrl: null,
+        fileUploadUrl: null,
+        fileDownloadUrl: null,
         statuses: {}
     };
 
@@ -34,6 +37,9 @@ function contentManager(appId, options) {
         saveCategoryUrl,
         UploadCategoryIconUrl,
         contentsUrl,
+        formBuilderUrl,
+        fileUploadUrl,
+        fileDownloadUrl,
         statuses
     } = $.extend({}, defaultOptions, options || {});
 
@@ -263,7 +269,9 @@ function contentManager(appId, options) {
 
     let contents = {
         template: '#contents-template',
-        props: {},
+        props: {
+            category: Number
+        },
         data() {
             return {
                 page: 1,
@@ -314,7 +322,7 @@ function contentManager(appId, options) {
                         } else if (target === "form") {
                             list.push({
                                 text: 'Form',
-                                icon: 'fa fa-file',
+                                icon: 'fa fa-list-alt',
                                 children: [
                                     {
                                         text: 'Builder'
@@ -347,19 +355,22 @@ function contentManager(appId, options) {
             }
         },
         created() {
+            this.page = 1;
+            this.list = [];
+            this.count = 0;
             this.loadContents();
         },
         watch: {
-            activeFolder(value, oldValue) {
+            category(value, oldValue) {
                 if (value !== oldValue) {
+                    this.page = 1;
+                    this.list = [];
+                    this.count = 0;
                     this.loadContents();
                 }
             }
         },
         methods: {
-            contextAction(path) {
-                console.log(path);
-            },
             loadContents() {
                 if (contentsUrl) {
                     let loader;
@@ -398,18 +409,142 @@ function contentManager(appId, options) {
             blurMe() {
                 this.focusedItem = null;
             },
-            target(article){
+            target(article) {
                 let section = article.section;
                 if (section) {
-                    let [target] = section.split('-');
-                    if(target){
-                        return target;
+                    let [target, id] = section.split('-');
+                    if (target) {
+                        return [target,id];
                     }
                 }
-                return "article";
+                return ["article", article.id];
             },
-            status(article){
+            status(article) {
                 return statuses[article.status] || null;
+            },
+            contextAction(path) {
+                let [action, params] = this.resolveAction(path);
+                if(action && this[action]){
+                    let fct = this[action];
+                    fct.call(this, params);
+                }
+            },
+            actions() {
+                let directoryId = this.activeFolder.directory.model.data.id;
+                let classificationId = this.activeFolder.classification.model.data.id;
+                let list = {
+                    'addContent': ['addContent', {
+                        type: 'content',
+                        directory: directoryId,
+                        classification: classificationId
+                    }],
+                    'addFileContent': ['addContent', {
+                        type: 'file',
+                        directory: directoryId,
+                        classification: classificationId
+                    }],
+                    'addFormContent': ['addContent', {
+                        type: 'form',
+                        directory: directoryId,
+                        classification: classificationId
+                    }]
+                };
+                if (this.focusedItem) {
+                    list['uploadImage'] = ['uploadImage', {id: this.focusedItem.id}];
+                    list['manageContent'] = ['manageContent', {id: this.focusedItem.id}];
+                    list['deleteContent'] = ['deleteContent', {id: this.focusedItem.id}];
+                    let [target, targetId] = this.target(this.focusedItem);
+                    switch (target) {
+                        case "file":
+                            list['uploadFile'] = ['uploadFile', {id: targetId}];
+                            list['downloadFile'] = ['downloadFile', {id: targetId}];
+                            break;
+                        case "form":
+                            list['formBuilder'] = ['formBuilder', {id: targetId}];
+                            break;
+                    }
+                }
+                return list;
+            },
+            resolveAction(path) {
+                let actions = this.actions();
+                let pathName = path.join('.');
+                let list = {};
+                list['0.0'] = actions['addContent'];
+                list['0.1'] = actions['addFileContent'];
+                list['0.2'] = actions['addFormContent'];
+                if (this.focusedItem) {
+                    let [target] = this.target(this.focusedItem);
+                    switch (target) {
+                        case "article":
+                            list = this.resolvePureArticleAction(list, actions);
+                            break;
+                        case "file":
+                            list = this.resolveFileArticleAction(list, actions);
+                            break;
+                        case "form":
+                            list = this.resolveFormArticleAction(list, actions);
+                            break;
+                    }
+                }
+                return list[pathName] || [null,null];
+            },
+            resolvePureArticleAction(list, actions) {
+                list['1'] = actions['uploadImage'];
+                list['2'] = actions['manageContent'];
+                list['3'] = actions['deleteContent'];
+                return list;
+            },
+            resolveFileArticleAction(list, actions) {
+                list['1.0'] = actions['uploadFile'];
+                list['1.1'] = actions['downloadFile'];
+                list['2'] = actions['uploadImage'];
+                list['3'] = actions['manageContent'];
+                list['4'] = actions['deleteContent'];
+                return list;
+            },
+            resolveFormArticleAction(list, actions) {
+                list['1.0'] = actions['formBuilder'];
+                list['2'] = actions['uploadImage'];
+                list['3'] = actions['manageContent'];
+                list['4'] = actions['deleteContent'];
+                return list;
+            },
+            addContent({type, directory, classification}){
+                console.log('addContent',[type, directory, classification]);
+            },
+            uploadImage({id}){
+                console.log('uploadImage',id);
+            },
+            manageContent({id}){
+                console.log('manageContent',id);
+            },
+            deleteContent({id}){
+                console.log('deleteContent',id);
+            },
+            uploadFile({id}){
+                let url = fileUploadUrl.replace('__ID__', id);
+                this.openDialogFrame(url);
+            },
+            downloadFile({id}){
+                let url = fileDownloadUrl.replace('__ID__', id);
+                window.open(url);
+            },
+            formBuilder({id}){
+                let url = formBuilderUrl.replace('__ID__', id);
+                this.openDialogFrame(url);
+            },
+            openDialogFrame(url){
+                $.fancybox.open({
+                    src  : url,
+                    type : 'iframe',
+                    iframe : {
+                        css : {
+                            width  : '90vw',
+                            height : '90vh'
+                        }
+                    }
+                });
             }
         }
     };

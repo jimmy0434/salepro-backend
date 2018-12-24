@@ -59,8 +59,11 @@ class FileController extends SController
         return $this->render('form-meta-data', ['model' => $model]);
     }
 
-    public function actionManageUpload($id)
+    public function actionManageUpload($id, $dialog = false)
     {
+        if($dialog){
+            $this->layout = '@backend/views/layout/dialog.php';
+        }
         $model = File::findOne($id);
         if ($model === null) {
             throw new \yii\web\HttpException(404, 'The requested file could not be found.');

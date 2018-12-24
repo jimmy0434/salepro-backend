@@ -42,13 +42,15 @@ class ArticleController extends SController
      */
     public function actionList()
     {
+        $response = [];
+
         $category1 = Yii::$app->request->get('category1');
         $category2 = Yii::$app->request->get('category2');
         $keyword = Yii::$app->request->get('keyword');
         $page = Yii::$app->request->get('page', 1);
         $pageSize = Yii::$app->request->get('pageSize', 25);
 
-        $q = Yii::$app->cms->content->language(Yii::$app->language)->page($page, $pageSize);
+        $q = Yii::$app->cms->content->language(Yii::$app->language);
         /*if ($category != null) {
             $q->category($category);
         }*/
@@ -64,6 +66,12 @@ class ArticleController extends SController
         $q->publishedAndHotest();
         $q->sort(['position' => SORT_DESC, 'id' => SORT_DESC]);
 
+        if($page == 1) {
+            $countQ = clone $q->query;
+            $response['total'] =  intval($countQ->count());
+        }
+
+        $q->page($page, $pageSize);
         $articles = $q->all();
         $list = [];
         if (!empty($articles) && is_array($articles)) {
@@ -84,8 +92,10 @@ class ArticleController extends SController
                 $list[] = $data;
             }
         }
+        $response['list'] = $list;
+        $response['count'] = intval($q->count());
         Log::trace("Request Secure Contents [Directory Category:" . ($category1 ? $category1 : "--") . ",Classification Category:" . ($category2 ? $category2 : "--") . ",Keyword:" . ($keyword ? $keyword : "--") . ",Page:" . $page . ",Page Size:" . $pageSize . ",Result Count:" . intval($q->count()) . "]");
-        return ['articles' => $list, 'count' => intval($q->count())];
+        return $response;
     }
 
     /**
