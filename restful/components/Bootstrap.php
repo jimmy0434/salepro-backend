@@ -110,8 +110,11 @@ class Bootstrap implements BootstrapInterface
                 if(array_key_exists('setting', $article)){
                     unset($article['setting']);
                 }
-                if(array_key_exists('section', $article)){
-                    unset($article['section']);
+                if(array_key_exists('section', $article) && $article['section']){
+                    list($targetName, $targetId) = explode('-',$article['section']);
+                    if($targetName){
+                        $article['section'] = $targetName;
+                    }
                 }
                 if(array_key_exists('gallery', $article)){
                     unset($article['gallery']);
