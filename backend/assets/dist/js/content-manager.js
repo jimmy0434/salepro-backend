@@ -94,13 +94,10 @@ function contentManager(appId, options) {
         popup.warning(msg);
     };
 
-    window.addEventListener('message', function (e) {
-        let task = e.data['task'];
-        if (task === 'closeFancyBox') {
-            $.fancybox.close();
-            app.refreshContents();
-        }
-    });
+    window.closeFancyBox = function(){
+        $.fancybox.close();
+        app.refreshContents();
+    };
 
     let tree = [
         {

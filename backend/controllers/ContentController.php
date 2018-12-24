@@ -217,7 +217,7 @@ class ContentController extends \cnd\cms\modules\admin\controllers\ContentContro
         $this->layout = '@backend/views/layout/dialog.php';
         $ret = $this->manager->manage();
         if ($ret instanceOf $response) {
-            echo "<script>window.addEventListener('load', function() {parent.postMessage( {'task': 'closeFancyBox'});});</script>";
+            echo "<script>window.parent.closeFancyBox()</script>";
             exit(0);
         }
         return $ret;
