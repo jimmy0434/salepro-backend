@@ -154,4 +154,58 @@ class ContentController extends SController
         }
         return $this->redirect(['index']);
     }
+
+    public function actionUploadContentCover()
+    {
+        $request = Yii::$app->request;
+        $response = Yii::$app->response;
+        if ($request->isPost && $request->isAjax) {
+            $response->format = Response::FORMAT_JSON;
+            $response = [];
+
+            $id = $request->post('id');
+            $data = $request->post('data');
+            $extension = $request->post('extension');
+
+            $model = Content::findOne($id);
+            if ($model) {
+                list($type, $data) = explode(';', $data);
+                list(, $data) = explode(',', $data);
+                $data = base64_decode($data);
+                $path = Yii::getAlias("@static/public/media/contents");
+                if (!is_dir($path)) {
+                    mkdir($path, 0777);
+                }
+                $path .= "/" . date("Y-m");
+                if (!is_dir($path)) {
+                    mkdir($path, 0777);
+                }
+                $filename = "content-" . $id . "-" . time() . "." . $extension;
+                $path .= "/" . $filename;
+                if (file_put_contents($path, $data)) {
+                    $url = str_replace('/cnd-admin', '', Url::base(true)) . '/cnd-static/public/media/contents/' . date('Y-m') . '/' . $filename;
+                    $cover = Json::encode([
+                        'id' => $filename,
+                        'title' => $filename,
+                        'thumbnail' => $url,
+                        'extension' => $extension,
+                        'icon' => $url,
+                        'url' => $url,
+                        'provider' => 'local',
+                        'type' => "image/" . $extension,
+                        'size' => Yii::$app->helper->sizeFormat(filesize($path)),
+                    ]);
+                    $model->gallery = [$cover];
+                    $model->save();
+                    $response['done'] = true;
+                } else {
+                    $response['done'] = false;
+                }
+            } else {
+                $response['done'] = false;
+            }
+            return $response;
+        }
+        return $this->redirect(['index']);
+    }
 }

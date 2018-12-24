@@ -101,6 +101,7 @@ use yii\web\View;
                             <span class="target"
                                   v-bind:class="{'fa' : true, 'fa-font' : target(article)[0] === 'article', 'fa-file' : target(article)[0] === 'file', 'fa-list-alt' : target(article)[0] === 'form'}"></span>
                                 <span class="status">{{ status(article )}}</span>
+                                <input type="file" @change="uploadCover" :ref="'article-file-browse-'+article.id">
                             </div>
                             <div class="caption">
                                 <p class="text-center" style="margin:0;">{{ article.title }}</p>

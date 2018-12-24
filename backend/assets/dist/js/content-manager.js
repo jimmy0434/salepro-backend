@@ -17,6 +17,7 @@ function contentManager(appId, options) {
         sectorsList: [],
         saveCategoryUrl: null,
         UploadCategoryIconUrl: null,
+        UploadContentCoverUrl: null,
         contentsUrl: null,
         formBuilderUrl: null,
         fileUploadUrl: null,
@@ -36,6 +37,7 @@ function contentManager(appId, options) {
         sectorsList,
         saveCategoryUrl,
         UploadCategoryIconUrl,
+        UploadContentCoverUrl,
         contentsUrl,
         formBuilderUrl,
         fileUploadUrl,
@@ -251,9 +253,9 @@ function contentManager(appId, options) {
                                 loader.close();
                                 if (response.done) {
                                     this.model.data.icon = data;
-                                    popup.success("new icon for `" + this.model.data.name + "` has been uploaded successfully");
+                                    popup.success("Icon for `" + this.model.data.name + "` has been uploaded successfully");
                                 } else {
-                                    popup.error("new icon for `" + this.model.data.name + "` has not been uploaded");
+                                    popup.error("Icon for `" + this.model.data.name + "` has not been uploaded");
                                 }
                             },
                             error: (jqXHR, exception) => {
@@ -414,7 +416,7 @@ function contentManager(appId, options) {
                 if (section) {
                     let [target, id] = section.split('-');
                     if (target) {
-                        return [target,id];
+                        return [target, id];
                     }
                 }
                 return ["article", article.id];
@@ -424,7 +426,7 @@ function contentManager(appId, options) {
             },
             contextAction(path) {
                 let [action, params] = this.resolveAction(path);
-                if(action && this[action]){
+                if (action && this[action]) {
                     let fct = this[action];
                     fct.call(this, params);
                 }
@@ -487,7 +489,7 @@ function contentManager(appId, options) {
                             break;
                     }
                 }
-                return list[pathName] || [null,null];
+                return list[pathName] || [null, null];
             },
             resolvePureArticleAction(list, actions) {
                 list['1'] = actions['uploadImage'];
@@ -510,41 +512,89 @@ function contentManager(appId, options) {
                 list['4'] = actions['deleteContent'];
                 return list;
             },
-            addContent({type, directory, classification}){
-                console.log('addContent',[type, directory, classification]);
+            addContent({type, directory, classification}) {
+                console.log('addContent', [type, directory, classification]);
             },
-            uploadImage({id}){
-                console.log('uploadImage',id);
+            uploadImage({id}) {
+                let ref = 'article-file-browse-' + id;
+                this.$refs[ref][0].click();
             },
-            manageContent({id}){
-                console.log('manageContent',id);
+            manageContent({id}) {
+                console.log('manageContent', id);
             },
-            deleteContent({id}){
-                console.log('deleteContent',id);
+            deleteContent({id}) {
+                console.log('deleteContent', id);
             },
-            uploadFile({id}){
+            uploadFile({id}) {
                 let url = fileUploadUrl.replace('__ID__', id);
                 this.openDialogFrame(url);
             },
-            downloadFile({id}){
+            downloadFile({id}) {
                 let url = fileDownloadUrl.replace('__ID__', id);
                 window.open(url);
             },
-            formBuilder({id}){
+            formBuilder({id}) {
                 let url = formBuilderUrl.replace('__ID__', id);
                 this.openDialogFrame(url);
             },
-            openDialogFrame(url){
+            openDialogFrame(url) {
                 $.fancybox.open({
-                    src  : url,
-                    type : 'iframe',
-                    iframe : {
-                        css : {
-                            width  : '90vw',
-                            height : '90vh'
+                    src: url,
+                    type: 'iframe',
+                    iframe: {
+                        css: {
+                            width: '90vw',
+                            height: '90vh'
                         }
                     }
                 });
+            },
+            uploadCover(event) {
+                const file = event.target.files[0];
+                const reader = new FileReader();
+                reader.onload = (e) => {
+                    this.uploadExecution(file, e.target.result);
+                };
+                reader.readAsDataURL(file);
+            },
+            uploadExecution(file, data) {
+                let maxSize = 1024 * 1024; // 1MB
+                let types = ["image/png", "image/jpg", "image/jpeg"];
+                if (file.size > maxSize) {
+                    popup.warning("Maximum image size is 1 MB");
+                } else if (types.indexOf(file.type) === -1) {
+                    popup.warning("Image type should be one of: " + types.join(", "));
+                } else {
+                    if (UploadContentCoverUrl) {
+                        let loader;
+                        $.ajax({
+                            type: "post",
+                            url: UploadContentCoverUrl,
+                            dataType: 'json',
+                            data: {
+                                id: this.focusedItem.id,
+                                data: data,
+                                extension: file.name.split('.').pop()
+                            },
+                            beforeSend: () => {
+                                loader = popup.loader("Uploading Cover");
+                            },
+                            success: (response) => {
+                                loader.close();
+                                if (response.done) {
+                                    this.focusedItem.cover = data;
+                                    popup.success("cover for `" + this.focusedItem.title + "` has been uploaded successfully");
+                                } else {
+                                    popup.error("cover for `" + this.focusedItem.title + "` has not been uploaded");
+                                }
+                            },
+                            error: (jqXHR, exception) => {
+                                loader.close();
+                                onAjaxError(jqXHR, exception);
+                            }
+                        });
+                    }
+                }
             }
         }
     };

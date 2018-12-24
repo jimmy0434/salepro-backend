@@ -34,6 +34,7 @@ $sectorsList = Json::encode(Yii::$app->cms->category->childOf("cms.category.sect
 echo $this->render("content-manager", [], $context);
 $saveCategoryUrl = Url::to(['/content/save-category']);
 $UploadCategoryIconUrl = Url::to(['/content/upload-category-icon']);
+$UploadContentCoverUrl = Url::to(['/content/upload-content-cover']);
 $contentsUrl = Url::to(['/content/list']);
 $statuses = Json::encode((new Content())->status_list);
 $formBuilderUrl = Url::to(['/form/manage-structure','id'=>'__ID__','dialog'=>true]);
@@ -52,6 +53,7 @@ contentManager('#content-manager', {
     sectorsList: {$sectorsList},
     saveCategoryUrl: '{$saveCategoryUrl}',
     UploadCategoryIconUrl: '{$UploadCategoryIconUrl}',
+    UploadContentCoverUrl: '{$UploadContentCoverUrl}',
     contentsUrl: '{$contentsUrl}',
     formBuilderUrl: '{$formBuilderUrl}',
     fileUploadUrl: '{$fileUploadUrl}',
@@ -97,5 +99,6 @@ $css = <<< CSS
 #content-manager .thumbnail-fixes .img{height: 150px;background-size: auto 100%;background-position: center;background-repeat: no-repeat;background-color:#f0f0f0;position:relative;}
 #content-manager .thumbnail-fixes .img .target{position:absolute;bottom:2px;left:2px; display:block; padding:5px; background:rgba(0,0,0,0.5); color:#fff;border-radius:3px;}
 #content-manager .thumbnail-fixes .img .status{position:absolute;bottom:2px;right:2px; display:block; padding:5px; background:rgba(0,0,0,0.5); color:#fff;border-radius:3px;}
+#content-manager .thumbnail-fixes .img input[type=file]{position:absolute;left:-1000px;}
 CSS;
 $this->registerCss($css);
