@@ -279,10 +279,16 @@ class Form extends ActiveRecord
         if (isset($structure['name'])) {
             $structure['name'] = $this->createSlug(strtolower(($parentName && is_string($parentName) ? $parentName . "_" : "") . $structure['name']));
             $structure['oldName'] = $structure['name'];
+            if(isset($structure['isRoot'])){
+                $structure['isRoot'] = filter_var($structure['isRoot'], FILTER_VALIDATE_BOOLEAN);
+            }
             if (isset($structure['fields'])) {
                 $fields = $structure['fields'];
                 if (!empty($fields) && is_array($fields)) {
                     foreach ($fields as $index => $field) {
+                        if(isset($field['required'])){
+                            $structure['fields'][$index]['required'] = filter_var($field['required'], FILTER_VALIDATE_BOOLEAN);
+                        }
                         if (in_array($field['type'], ['separator', 'title'])) {
                             continue;
                         } else if ($field['type'] == 'subform') {

@@ -29,10 +29,10 @@ class Bootstrap implements BootstrapInterface
         $userSection = $data->section('Users');
         $userSection->item('Salesman', ['/salesman/index'], 2);
 
+
         $navigator = MenuManager::block('Navigator', 10000);
         $navigator->item('Content Management', ['/content/index'],'fa fa-folder-open-o',5);
-        $cmsSection = $navigator->section('CMS','fa fa-font',10);
-        $cmsSection->item('Form Approval', ['/form-approval/index'], 101);
+        $navigator->item('Form Approval', ['/form-approval/index'], 'fa fa-check', 6);
 
         $developer = MenuManager::block('Developer');
         $developerSection = $developer->section('Documentation');
@@ -150,6 +150,13 @@ class Bootstrap implements BootstrapInterface
             'url' => '/forms/[id]/crud',
             'description' => 'Get Form',
             'extraParams' => ['_accessToken'=>'ACCESS_TOKEN','page'=>1,'pageSize'=>25,'search'=>'OPTIONAL','order'=>'OPTIONAL'],
+        ]);
+
+        ApiDocFactory::register([
+            'name' => 'Ping Request',
+            'method' => 'GET',
+            'url' => '/ping',
+            'description' => 'Check Connectivity',
         ]);
     }
 

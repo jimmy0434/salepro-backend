@@ -92,7 +92,7 @@ class ArticleController extends SController
                 $list[] = $data;
             }
         }
-        $response['list'] = $list;
+        $response['articles'] = $list;
         $response['count'] = intval($q->count());
         Log::trace("Request Secure Contents [Directory Category:" . ($category1 ? $category1 : "--") . ",Classification Category:" . ($category2 ? $category2 : "--") . ",Keyword:" . ($keyword ? $keyword : "--") . ",Page:" . $page . ",Page Size:" . $pageSize . ",Result Count:" . intval($q->count()) . "]");
         return $response;

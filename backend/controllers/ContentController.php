@@ -271,7 +271,7 @@ class ContentController extends \cnd\cms\modules\admin\controllers\ContentContro
                 } else if ($hasUrl && in_array($type, ['url', 'rss']) && $url) {
                     $model->section = $type . '-0';
                     $model->external_url = [
-                        'embedded' => 0,
+                        'embeded' => 0,
                         'url' => $url,
                     ];
                 }
