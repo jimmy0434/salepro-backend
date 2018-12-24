@@ -94,7 +94,7 @@ function contentManager(appId, options) {
         popup.warning(msg);
     };
 
-    window.closeFancyBox = function(){
+    window.closeFancyBox = function () {
         $.fancybox.close();
         app.refreshContents();
     };
@@ -574,33 +574,39 @@ function contentManager(appId, options) {
                 this.openDialogFrame(url);
             },
             deleteContent({id}) {
-                if (deleteContentUrl) {
-                    let loader;
-                    $.ajax({
-                        type: "post",
-                        url: deleteContentUrl,
-                        dataType: 'json',
-                        data: {id},
-                        beforeSend: () => {
-                            loader = popup.loader("Deleting Content...");
-                        },
-                        success: (response) => {
-                            loader.close();
-                            if (response.done) {
-                                this.list = this.list.filter(item => {
-                                    return item.id !== id;
-                                });
-                                popup.success("Content `" + this.focusedItem.title + "` has been deleted successfully");
-                            } else {
-                                popup.error("Content `" + this.focusedItem.title + "` has not been deleted");
+                popup.confirm('Delete Content','Are you sure you want to delete this content?', confirmed => {
+                    if (confirmed && deleteContentUrl) {
+                        let loader;
+                        $.ajax({
+                            type: "post",
+                            url: deleteContentUrl,
+                            dataType: 'json',
+                            data: {id},
+                            beforeSend: () => {
+                                loader = popup.loader("Deleting Content...");
+                            },
+                            success: (response) => {
+                                loader.close();
+                                if (response.done) {
+                                    this.list = this.list.filter(item => {
+                                        if(item.id === id){
+                                            this.count--;
+                                            return false;
+                                        }
+                                        return true;
+                                    });
+                                    popup.success("Content `" + this.focusedItem.title + "` has been deleted successfully");
+                                } else {
+                                    popup.error("Content `" + this.focusedItem.title + "` has not been deleted");
+                                }
+                            },
+                            error: (jqXHR, exception) => {
+                                loader.close();
+                                onAjaxError(jqXHR, exception);
                             }
-                        },
-                        error: (jqXHR, exception) => {
-                            loader.close();
-                            onAjaxError(jqXHR, exception);
-                        }
-                    });
-                }
+                        });
+                    }
+                });
             },
             uploadFile({id}) {
                 let url = fileUploadUrl.replace('__ID__', id);

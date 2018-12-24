@@ -294,8 +294,10 @@ class ContentController extends \cnd\cms\modules\admin\controllers\ContentContro
                 $transaction->commit();
             } catch (\Throwable $t) {
                 $transaction->rollBack();
+                Yii::trace($t->getMessage().' at line '.$t->getLine(), 'Exception');
             } catch (\Exception $e) {
                 $transaction->rollBack();
+                Yii::trace($e->getMessage().' at line '.$e->getLine(), 'Exception');
             }
 
             return $response;
@@ -356,19 +358,21 @@ class ContentController extends \cnd\cms\modules\admin\controllers\ContentContro
             try {
                 $model = Content::findOne($id);
                 if ($model) {
-                    list($targetType, $targetId) = explode('-', $model->section);
-                    if ($targetType == 'file') {
-                        $target = File::findOne($targetId);
-                        if ($target) {
-                            if (!$target->delete()) {
-                                throw new Exception("File not deleted");
+                    if($model->section) {
+                        list($targetType, $targetId) = explode('-', $model->section);
+                        if ($targetType == 'file') {
+                            $target = File::findOne($targetId);
+                            if ($target) {
+                                if (!$target->delete()) {
+                                    throw new Exception("File not deleted");
+                                }
                             }
-                        }
-                    } else if ($targetType == 'form') {
-                        $target = Form::findOne($targetId);
-                        if ($target) {
-                            if (!$target->delete()) {
-                                throw new Exception("Form not deleted");
+                        } else if ($targetType == 'form') {
+                            $target = Form::findOne($targetId);
+                            if ($target) {
+                                if (!$target->delete()) {
+                                    throw new Exception("Form not deleted");
+                                }
                             }
                         }
                     }
@@ -381,8 +385,10 @@ class ContentController extends \cnd\cms\modules\admin\controllers\ContentContro
                 $transaction->commit();
             } catch (\Throwable $t) {
                 $transaction->rollBack();
+                Yii::trace($t->getMessage().' at line '.$t->getLine(), 'Exception');
             } catch (\Exception $e) {
                 $transaction->rollBack();
+                Yii::trace($e->getMessage().' at line '.$e->getLine(), 'Exception');
             }
             return $response;
         }
