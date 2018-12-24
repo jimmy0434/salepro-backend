@@ -51,9 +51,6 @@ class ArticleController extends SController
         $pageSize = Yii::$app->request->get('pageSize', 25);
 
         $q = Yii::$app->cms->content->language(Yii::$app->language);
-        /*if ($category != null) {
-            $q->category($category);
-        }*/
         if ($category1) {
             $q->condition([$q->table . '.category_id' => $category1]);
         }
