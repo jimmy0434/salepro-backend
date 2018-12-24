@@ -194,7 +194,7 @@ class ContentController extends \cnd\cms\modules\admin\controllers\ContentContro
                         'icon' => $url,
                         'url' => $url,
                         'provider' => 'local',
-                        'type' => "image/" . $extension,
+                        'type' => "image",
                         'size' => Yii::$app->helper->sizeFormat(filesize($path)),
                     ]);
                     $model->gallery = [$cover];
