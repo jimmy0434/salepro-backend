@@ -282,6 +282,32 @@ return [
                 'form-approval-response' => function ($name, $data) {
                     return Html::tag('div', Html::a($data['message'], ['/form-approval/response', 'id' => $data['id']]), ['class' => 'text-muted', 'data' => ['id' => $data['id']]]);
                 },
+                'file-update' => function($name, $data){
+                    return Html::tag('div', Html::a($data['message'], [
+                        '/file/index',
+                        '_page' => 1,
+                        '_pageSize' => 10,
+                        '_filter' => [
+                            'id' => [
+                                'condition' => '=',
+                                'value' => $data['id'],
+                            ],
+                        ],
+                    ]), ['class' => 'text-muted', 'data' => ['id' => $data['id']]]);
+                },
+                'form-update' => function($name, $data){
+                    return Html::tag('div', Html::a($data['message'], [
+                        '/form/index',
+                        '_page' => 1,
+                        '_pageSize' => 10,
+                        '_filter' => [
+                            'id' => [
+                                'condition' => '=',
+                                'value' => $data['id'],
+                            ],
+                        ],
+                    ]), ['class' => 'text-muted', 'data' => ['id' => $data['id']]]);
+                },
             ],
             'template' => function ($content, $notification, $notificationUser) {
                 ob_start();

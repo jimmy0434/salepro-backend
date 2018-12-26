@@ -129,11 +129,12 @@ class FormApproval extends ActiveRecord
                     } else {
                         $this->status = static::STATUS_REJECTED;
                     }
-                    $msg = "your requested publishing form `".$this->form->title."` was rejected";
+                    $msg = "your requested publishing form `" . $this->form->title . "` was rejected";
                     if ($this->save() && $this->status == static::STATUS_APPROVED) {
                         $this->form->status = Form::STATUS_ACTIVE;
                         $this->form->save();
-                        $msg = "your requested publishing form `".$this->form->title."` was approved";
+                        $msg = "your requested publishing form `" . $this->form->title . "` was approved";
+                        $this->notifySalesmen();
                     }
                     Yii::$app->notification->send('form-approval-response', [
                         'message' => $msg,
@@ -144,7 +145,7 @@ class FormApproval extends ActiveRecord
         } else if ($this->type == RoleApproval::TYPE_SERIES) {
             $msg = null;
             if ($currentUserApprove->status == static::STATUS_APPROVED) {
-                if($this->roleApproval) {
+                if ($this->roleApproval) {
                     $users = $this->roleApproval->roleApprovalUsers;
                     foreach ($users as $i => $requestedUser) {
                         if ($requestedUser->user_id == $currentUserApprove->user_id) {
@@ -156,18 +157,19 @@ class FormApproval extends ActiveRecord
                                 if ($this->save()) {
                                     $this->form->status = Form::STATUS_ACTIVE;
                                     $this->form->save();
-                                    $msg = "your requested publishing form `".$this->form->title."` was approved";
+                                    $msg = "your requested publishing form `" . $this->form->title . "` was approved";
+                                    $this->notifySalesmen();
                                 }
                             }
                         }
                     }
                 }
-            }else if ($currentUserApprove->status == static::STATUS_REJECTED){
+            } else if ($currentUserApprove->status == static::STATUS_REJECTED) {
                 $this->status = static::STATUS_REJECTED;
                 $this->save();
-                $msg = "your requested publishing form `".$this->form->title."` was rejected";
+                $msg = "your requested publishing form `" . $this->form->title . "` was rejected";
             }
-            if($msg) {
+            if ($msg) {
                 Yii::$app->notification->send('form-approval-response', [
                     'message' => $msg,
                     'id' => $this->id,
@@ -194,6 +196,25 @@ class FormApproval extends ActiveRecord
                 ], [$requestUser->user_id], false, false);
             } else {
                 throw new Exception("FormApprovalUser not saved");
+            }
+        }
+    }
+
+    public function notifySalesmen()
+    {
+        if($this->form) {
+            if(isset($this->form->structure['name'])) {
+                $tableName = $this->form->structure['name'];
+                $sql = 'select distinct(user_id) from ' . $tableName;
+                try {
+                    $users = Yii::$app->bi->createCommand($sql)->queryColumn();
+                    if(!empty($users) && is_array($users)){
+                        Yii::$app->notification->send('form-update', [
+                            'message' => 'The Form `' . $this->form->title . '`` was updated',
+                            'id' => $this->form->id,
+                        ], $users);
+                    }
+                }catch(\Throwable $t){}catch(\Exception $e){}
             }
         }
     }

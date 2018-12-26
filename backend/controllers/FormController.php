@@ -187,4 +187,13 @@ class FormController extends SController
         }
         return $this->goBack();
     }
+
+    public function actionTest($id){
+        Yii::$app->response->format = 'json';
+        $model = Form::findOne($id);
+        $tableName = $model->structure['name'];
+        $sql = 'select distinct(user_id), id from '.$tableName;
+        $res = Yii::$app->bi->createCommand($sql)->queryAll();
+        return $res;
+    }
 }

@@ -12,8 +12,10 @@ use cnd\admin\models\activerecords\Log;
 use cnd\grid\DataLocator;
 use common\models\File;
 use common\models\FilePartition;
+use common\models\User;
 use Yii;
 use cnd\core\components\SController;
+use yii\helpers\ArrayHelper;
 
 class FileController extends SController
 {
@@ -94,6 +96,13 @@ class FileController extends SController
                     $model->version = $version;
                     $model->extension = $extension;
                     $model->save(false);
+                    $users = array_values(ArrayHelper::map(User::find()->where(['type'=>User::TYPE_SALESMAN, 'status' => User::STATUS_ACTIVE])->all(),'id','id'));
+                    if(!empty($users) && is_array($users)) {
+                        Yii::$app->notification->send('file-update', [
+                            'message' => 'The File `' . $model->title . '`` was updated',
+                            'id' => $model->id,
+                        ], $users);
+                    }
                 }
                 Log::trace("Upload new chunk number " . $order . " of version " . $version . " of file #" . $id);
             }
