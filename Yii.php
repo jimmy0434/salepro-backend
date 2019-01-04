@@ -43,6 +43,6 @@ class Yii extends BaseYii
 
 spl_autoload_register(['Yii', 'autoload'], true, true);
 if (!@include_once(__DIR__ . '/vendor/yiisoft/yii2/classes.php')) {
-    require_once __DIR__ . '/vendor/yiisoft/yii2/classes.php';;
+    require_once __DIR__ . '/vendor/yiisoft/yii2/classes.php';
 }
 Yii::$container = new \yii\di\Container();

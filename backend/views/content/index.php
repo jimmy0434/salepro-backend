@@ -27,9 +27,9 @@ $competitor = Json::encode(Yii::$app->cms->category->one("cms.category.competito
 $brands = Json::encode(Yii::$app->cms->category->one("cms.category.brands"));
 $corporates = Json::encode(Yii::$app->cms->category->one("cms.category.corporates"));
 $sectors = Json::encode(Yii::$app->cms->category->one("cms.category.sectors"));
-$brandsList = Json::encode(Yii::$app->cms->category->childOf("cms.category.brands")->all());
-$corporatesList = Json::encode(Yii::$app->cms->category->childOf("cms.category.corporates")->all());
-$sectorsList = Json::encode(Yii::$app->cms->category->childOf("cms.category.sectors")->all());
+$brandsList = Json::encode(Yii::$app->cms->category->active()->childOf("cms.category.brands")->all());
+$corporatesList = Json::encode(Yii::$app->cms->category->active()->childOf("cms.category.corporates")->all());
+$sectorsList = Json::encode(Yii::$app->cms->category->active()->childOf("cms.category.sectors")->all());
 
 echo $this->render("content-manager", [], $context);
 $saveCategoryUrl = Url::to(['/content/save-category']);
