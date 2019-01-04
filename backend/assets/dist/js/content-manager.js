@@ -57,19 +57,34 @@ function contentManager(appId, options) {
         {
             data: corporates,
             children: corporatesList.map(model => {
-                return {data: model}
+                return {
+                    data: model,
+                    children: Object.values(model.children || {}).map(subModel => {
+                        return {data: subModel}
+                    })
+                }
             })
         },
         {
             data: sectors,
             children: sectorsList.map(model => {
-                return {data: model}
+                return {
+                    data: model,
+                    children: Object.values(model.children || {}).map(subModel => {
+                        return {data: subModel}
+                    })
+                }
             })
         },
         {
             data: brands,
             children: brandsList.map(model => {
-                return {data: model}
+                return {
+                    data: model,
+                    children: Object.values(model.children || {}).map(subModel => {
+                        return {data: subModel}
+                    })
+                }
             })
         }
     ];
@@ -130,6 +145,12 @@ function contentManager(appId, options) {
                 default() {
                     return this.level === 2 ? this : undefined;
                 }
+            },
+            modelUp: {
+                type: Object,
+                default() {
+                    return this.level === 3 ? this : undefined;
+                }
             }
         },
         data: function () {
@@ -166,7 +187,7 @@ function contentManager(appId, options) {
                 }
             },
             openFolder() {
-                if (this.level === 3) {
+                if (this.level >= 3) {
                     app.activeFolder = this;
                 }
             },
@@ -421,6 +442,8 @@ function contentManager(appId, options) {
                             if (response.list) {
                                 this.list = [...this.list, ...response.list];
                                 this.page++;
+                            }else if(this.page === 1){
+                                this.list = [];
                             }
                             if (response.count) {
                                 this.count = response.count;

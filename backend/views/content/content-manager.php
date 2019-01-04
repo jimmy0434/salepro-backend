@@ -30,15 +30,15 @@ use yii\web\View;
 </div>
 <script type="text/x-template" id="tree-item-template">
     <li>
-        <div :class="{file: 'file', folder: isFolder}" @click="toggle">
+        <div :class="{file: 'file', folder: isFolder}">
             <input type="file" @change="uploadIcon" :ref="'file-browse-'+model.data.id">
-            <div v-if="!editMode" @dblclick="edit" @click="openFolder">
-                <span class="glyphicon glyphicon-plus text-success" v-if="isFolder && !open"></span>
-                <span class="glyphicon glyphicon-minus text-danger" v-if="isFolder && open"></span>
+            <div v-if="!editMode" @dblclick="edit">
+                <span class="glyphicon glyphicon-plus text-success" v-if="isFolder && !open" @click="toggle"></span>
+                <span class="glyphicon glyphicon-minus text-danger" v-if="isFolder && open" @click="toggle"></span>
                 <span class="glyphicon glyphicon-picture text-muted" v-if="!logo" @click="browseIcon"></span>
                 <img :src="logo" v-if="logo" style="height:14px;display:inline-block;position:relative;top:-2px;"
                      @click="browseIcon">
-                <span :title="level === 3?'click to show contents, double click to edit':null">{{ model.data.name }}</span>
+                <span :title="level === 3?'click to show contents, double click to edit':null" @click="openFolder">{{ model.data.name }}</span>
                 <span class="text-muted" v-if="count > 0"> ( {{count}} )</span>
             </div>
             <div v-if="editMode" class="input-new">
@@ -52,9 +52,9 @@ use yii\web\View;
                     class="item"
                     v-for="(subCategory, index) in model.children"
                     :key="'child' + index + '-' + level"
-                    :model="subCategory" :level="level+1" :directory="directory" :classification="classification">
+                    :model="subCategory" :level="level+1" :directory="directory" :classification="classification" :model-up="modelUp">
             </item>
-            <li v-if="level === 2" class="input-new">
+            <li v-if="level >= 2" class="input-new">
                 <input type="text" class="form-control" v-model="newCategoryName" @keyup.enter="addChild"
                        placeholder="Add New Category, then press Enter key">
             </li>
@@ -87,6 +87,11 @@ use yii\web\View;
                     {{ activeFolder.classification.model.data.name }}
                 </li>
                 <li class="active">
+                    <img :src="activeFolder.modelUp.logo" v-if="activeFolder.modelUp.logo"
+                         style="position:relative;top:-2px;display:inline-block;height:24px;">
+                    {{ activeFolder.modelUp.model.data.name }}
+                </li>
+                <li class="active" v-if="activeFolder.level === 4">
                     <img :src="activeFolder.logo" v-if="activeFolder.logo"
                          style="position:relative;top:-2px;display:inline-block;height:24px;">
                     {{ activeFolder.model.data.name }}

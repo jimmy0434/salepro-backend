@@ -13,6 +13,7 @@
 
 use backend\controllers\ContentController;
 use cnd\cms\models\activerecords\Content;
+use common\models\Category;
 use yii\helpers\Json;
 use yii\helpers\Url;
 use yii\web\JqueryAsset;
@@ -21,15 +22,32 @@ use yii\web\View;
 $this->title = "Content Management";
 $context = $this->context;
 
-$contentHub = Json::encode(Yii::$app->cms->category->one("cms.category.contentHub"));
-$marketIntelligence = Json::encode(Yii::$app->cms->category->one("cms.category.marketIntelligence"));
-$competitor = Json::encode(Yii::$app->cms->category->one("cms.category.competitor"));
-$brands = Json::encode(Yii::$app->cms->category->one("cms.category.brands"));
-$corporates = Json::encode(Yii::$app->cms->category->one("cms.category.corporates"));
-$sectors = Json::encode(Yii::$app->cms->category->one("cms.category.sectors"));
-$brandsList = Json::encode(Yii::$app->cms->category->active()->childOf("cms.category.brands")->all());
-$corporatesList = Json::encode(Yii::$app->cms->category->active()->childOf("cms.category.corporates")->all());
-$sectorsList = Json::encode(Yii::$app->cms->category->active()->childOf("cms.category.sectors")->all());
+$list = Category::treeList();
+
+$directoryId = Yii::$app->cms->getId("cms.category.directory");
+$classificationId = Yii::$app->cms->getId("cms.category.classification");
+$contentHubId = Yii::$app->cms->getId("cms.category.contentHub");
+$marketIntelligenceId = Yii::$app->cms->getId("cms.category.marketIntelligence");
+$competitorId = Yii::$app->cms->getId("cms.category.competitor");
+$brandsId = Yii::$app->cms->getId("cms.category.brands");
+$corporatesId = Yii::$app->cms->getId("cms.category.corporates");
+$sectorsId = Yii::$app->cms->getId("cms.category.sectors");
+
+$contentHub = Json::encode(isset($list[$directoryId]['children'][$contentHubId]) ? $list[$directoryId]['children'][$contentHubId] : []);
+$marketIntelligence = Json::encode(isset($list[$directoryId]['children'][$marketIntelligenceId]) ? $list[$directoryId]['children'][$marketIntelligenceId] : []);
+$competitor = Json::encode(isset($list[$directoryId]['children'][$competitorId]) ? $list[$directoryId]['children'][$competitorId] : []);
+
+$brands = isset($list[$classificationId]['children'][$brandsId]) ? $list[$classificationId]['children'][$brandsId] : [];
+$corporates = isset($list[$classificationId]['children'][$corporatesId]) ? $list[$classificationId]['children'][$corporatesId] : [];
+$sectors = isset($list[$classificationId]['children'][$sectorsId]) ? $list[$classificationId]['children'][$sectorsId] : [];
+
+$brandsList = Json::encode(isset($brands['children']) ? array_values($brands['children']) : []);
+$corporatesList = Json::encode(isset($corporates['children']) ? array_values($corporates['children']) : []);
+$sectorsList = Json::encode(isset($sectors['children']) ? array_values($sectors['children']) : []);
+
+$brands = Json::encode($brands);
+$corporates = Json::encode($corporates);
+$sectors = Json::encode($sectors);
 
 echo $this->render("content-manager", [], $context);
 $saveCategoryUrl = Url::to(['/content/save-category']);

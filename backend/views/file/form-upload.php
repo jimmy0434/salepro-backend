@@ -46,7 +46,7 @@ $uploadUrl = Url::current();
                     <!-- Drop Zone -->
                     <h4>Or drag and drop file below</h4>
                     <div class="upload-drop-zone" id="drop-zone">
-                        Just drag and drop xls file here
+                        Just drag and drop file here
                     </div>
 
                     <!-- Progress Bar -->
