@@ -31,7 +31,7 @@ class Category extends \cnd\cms\models\activerecords\Category
                 $ref['parent_id'] = $row->parent_id;
                 $ref['name'] = $row->name;
                 $ref['status'] = $row->status;
-                $ref['icon'] = $icon->url;
+                $ref['icon'] = $icon->url.'?t='.$row->updated_at;
                 if (!$row->parent_id) {
                     $list[$row->id] = &$ref;
                 } else {

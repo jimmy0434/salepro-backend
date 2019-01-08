@@ -122,6 +122,9 @@ class Bootstrap implements BootstrapInterface
                 if(array_key_exists('owner', $article)){
                     unset($article['owner']);
                 }
+                if(array_key_exists('cover', $article)){
+                    $article['cover'] .= '?t=' . $article['updated_at'];
+                }
             }
         }
         if(isset($data['categories']) && !empty($data['categories']) && is_array($data['categories'])){
