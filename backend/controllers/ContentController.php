@@ -244,9 +244,10 @@ class ContentController extends \cnd\cms\modules\admin\controllers\ContentContro
                 $targetId = null;
                 $status = Content::STATUS_PUBLISH;
                 if ($type == 'file') {
+                    $status = Content::STATUS_PENDING;
                     $target = new File();
                     $target->title = $title;
-                    $target->status = File::STATUS_ACTIVE;
+                    $target->status = File::STATUS_DRAFT;
                     if (!$target->save()) {
                         throw new Exception("File not created");
                     } else {

@@ -9,6 +9,7 @@
 namespace backend\controllers;
 
 use cnd\admin\models\activerecords\Log;
+use cnd\cms\models\activerecords\Content;
 use cnd\grid\DataLocator;
 use common\models\File;
 use common\models\FilePartition;
@@ -95,7 +96,13 @@ class FileController extends SController
                 if ($order == $count - 1) {
                     $model->version = $version;
                     $model->extension = $extension;
+                    $model->status = File::STATUS_ACTIVE;
                     $model->save(false);
+                    $content = Content::find()->where(['section'=>'file-'.$model->id])->one();
+                    if($content && $content->status == Content::STATUS_PENDING){
+                        $content->status = Content::STATUS_PUBLISH;
+                        $content->save(0);
+                    }
                     $users = array_values(ArrayHelper::map(User::find()->where(['type'=>User::TYPE_SALESMAN, 'status' => User::STATUS_ACTIVE])->all(),'id','id'));
                     if(!empty($users) && is_array($users)) {
                         Yii::$app->notification->send('file-update', [
