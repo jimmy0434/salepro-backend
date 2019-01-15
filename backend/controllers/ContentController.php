@@ -240,6 +240,7 @@ class ContentController extends \cnd\cms\modules\admin\controllers\ContentContro
             $url = $request->post('url');
 
             $transaction = Yii::$app->db->beginTransaction();
+            $target = null;
             try {
                 $targetId = null;
                 $status = Content::STATUS_PUBLISH;
@@ -284,6 +285,10 @@ class ContentController extends \cnd\cms\modules\admin\controllers\ContentContro
                     $lang->language = "en";
                     $lang->original_id = $model->id;
                     if ($lang->save()) {
+                        if ($target) {
+                            $target->content_id = $model->id;
+                            $target->save(false);
+                        }
                         $response['model'] = Content::findOne($model->id);
                         $response['done'] = true;
                     } else {
