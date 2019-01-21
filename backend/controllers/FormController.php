@@ -68,7 +68,7 @@ class FormController extends SController
 
     public function actionManageStructure($id, $dialog = false)
     {
-        if($dialog){
+        if ($dialog) {
             $this->layout = '@backend/views/layout/dialog.php';
         }
         Url::remember();
@@ -98,7 +98,7 @@ class FormController extends SController
             return $response;
         }
         Log::trace("Open form builder #" . $id);
-        return $this->render('form-structure', ['model' => $model]);
+        return $this->render('form-structure', ['model' => $model,'dialog'=>$dialog]);
     }
 
     public function actionDelete($id)
@@ -119,7 +119,7 @@ class FormController extends SController
         return $this->goBack();
     }
 
-    public function actionPublishRequest($id)
+    public function actionPublishRequest($id, $dialog = false)
     {
         $model = Form::findOne($id);
         if ($model && $model->status != Form::STATUS_ACTIVE) {
@@ -185,15 +185,6 @@ class FormController extends SController
             Log::trace("Publish Request: Form #" . $id . " not found or it is active");
             \Yii::$app->session->setFlash('error', 'Form not found or it is active');
         }
-        return $this->goBack();
-    }
-
-    public function actionTest($id){
-        Yii::$app->response->format = 'json';
-        $model = Form::findOne($id);
-        $tableName = $model->structure['name'];
-        $sql = 'select distinct(user_id), id from '.$tableName;
-        $res = Yii::$app->bi->createCommand($sql)->queryAll();
-        return $res;
+        return $this->redirect(['/form/manage-structure', 'id' => $id, 'dialog' => $dialog]);
     }
 }

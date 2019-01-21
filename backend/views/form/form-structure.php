@@ -22,7 +22,7 @@ Yii::$app->notification->enabled = false;
         <form-Item :structure="structure" ref="rootItem"></form-Item>
         <div class="text-center">
             <button type="button" class="btn btn-info btn-lg" @click="save">Save</button>
-        &nbsp;&nbsp;&nbsp;<a href="<?= \yii\helpers\Url::to(['/form/publish-request', 'id' => $model->id]) ?>" type="button"
+        &nbsp;&nbsp;&nbsp;<a href="<?= \yii\helpers\Url::to(['/form/publish-request', 'id' => $model->id,'dialog'=>$dialog]) ?>" type="button"
                              class="btn btn-success btn-lg" v-if="structure.fields.length > 0">Publish Request</a>
         </div>
     </div>
