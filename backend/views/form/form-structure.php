@@ -147,7 +147,7 @@ Yii::$app->notification->enabled = false;
                                                         <div class="form-group" style="margin-left:0;margin-right:0;">
                                                             <label for="name">Name</label>
                                                             <input type="text" class="form-control" id="name"
-                                                                   placeholder="Name" v-model="field.name">
+                                                                   placeholder="Name" v-model="field.name" @blur="validateFieldName(index)">
                                                         </div>
                                                     </div>
                                                     <div class="col-md-3">

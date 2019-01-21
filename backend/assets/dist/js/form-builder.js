@@ -27,22 +27,22 @@ function formBuilder(appId, options) {
         //BIGPK : 'bigpk',
         //UBIGPK : 'ubigpk',
         //CHAR : 'char',
-        STRING : 'string',
-        TEXT : 'text',
+        STRING: 'string',
+        TEXT: 'text',
         //TINYINT : 'tinyint',
         //SMALLINT : 'smallint',
-        INTEGER : 'integer',
+        INTEGER: 'integer',
         //BIGINT : 'bigint',
-        FLOAT : 'float',
+        FLOAT: 'float',
         //DOUBLE : 'double',
         //DECIMAL : 'decimal',
-        DATETIME : 'datetime',
+        DATETIME: 'datetime',
         //TIMESTAMP : 'timestamp',
-        TIME : 'time',
-        DATE : 'date',
+        TIME: 'time',
+        DATE: 'date',
         //BINARY : 'binary',
         //BOOLEAN : 'boolean',
-        MONEY : 'money',
+        MONEY: 'money',
         //JSON : 'json',
     });
 
@@ -87,12 +87,20 @@ function formBuilder(appId, options) {
         },
         filters: {
             typeName(value) {
+                switch (value) {
+                    case "RADIO":
+                        return "Multiple Choice";
+                    case "TEXT":
+                        return "Short Answer";
+                    case "TEXT_AREA":
+                        return "Paragraph";
+                }
                 return value.toLowerCase().replace(/_/g, ' ');
             }
         },
         watch: {
-            structure(list, oldList){
-                if(list !== oldList){
+            structure(list, oldList) {
+                if (list !== oldList) {
                     this.list = list;
                 }
             }
@@ -105,7 +113,7 @@ function formBuilder(appId, options) {
                 if (this.list.isRoot === 'false') {
                     this.list.isRoot = false;
                 }
-                if(!this.list.fields){
+                if (!this.list.fields) {
                     this.list.fields = [];
                 }
                 this.list.fields.forEach((item, index) => {
@@ -201,6 +209,13 @@ function formBuilder(appId, options) {
             },
             deleteOption(index, optionIndex) {
                 this.list.fields[index].options.splice(optionIndex, 1);
+            },
+            validateFieldName(index) {
+                this.list.fields[index].name = this.list.fields[index].name.replace(/ /g,"_").toLowerCase();
+                if (this.list.fields[index] && this.list.fields[index].name && (this.list.fields[index].name === "id" || this.list.fields[index].name === "user_id" || this.list.fields[index].name === "created_at" || this.list.fields[index].name === "updated_at")) {
+                    popup.warning("field name `" + this.list.fields[index].name + "` is not available.<br> kindly choose another name.");
+                    this.list.fields[index].name = "";
+                }
             }
         }
     };
@@ -219,12 +234,12 @@ function formBuilder(appId, options) {
         watch: {
             structure: {
                 deep: true,
-                handler(list, oldList){
+                handler(list, oldList) {
                     this.scrollPosition = window.pageYOffset || (document.documentElement || document.body.parentNode || document.body).scrollTop;
                     this.$nextTick(() => {
                         window.setTimeout(() => {
                             window.scrollTo(0, this.scrollPosition);
-                        },0);
+                        }, 0);
                     });
                 }
             }
@@ -262,7 +277,7 @@ function formBuilder(appId, options) {
                         },
                         success: (response) => {
                             loader.close();
-                            if(response.structure){
+                            if (response.structure) {
                                 console.log(response.structure);
                                 let updatedStructure = JSON.parse(response.structure);
                                 this.structure = updatedStructure;
