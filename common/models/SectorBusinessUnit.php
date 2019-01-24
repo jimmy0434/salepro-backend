@@ -16,7 +16,7 @@ use Yii;
  * @property Sector $sector
  * @property BusinessUnit $businessUnit
  */
-class SectorBusinessUnit extends \yii\db\ActiveRecord
+class SectorBusinessUnit extends \cnd\core\components\ActiveRecord
 {
     /**
      * {@inheritdoc}

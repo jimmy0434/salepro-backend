@@ -15,13 +15,20 @@ use Yii;
  * @property int $created_at
  * @property int $updated_at
  *
+ * @property array $type_list
+ * @property array $type_values
+ * @property string $type_label
+ *
  * @property BrandBusinessUnit[] $brandBusinessUnits
  * @property CorporateBusinessUnit[] $corporateBusinessUnits
  * @property Exhibition[] $exhibitions
  * @property SectorBusinessUnit[] $sectorBusinessUnits
  */
-class BusinessUnit extends \yii\db\ActiveRecord
+class BusinessUnit extends \cnd\core\components\ActiveRecord
 {
+    const TYPE_COMPANY = 1;
+    const TYPE_MANUFACTURING_PLANT = 2;
+
     /**
      * {@inheritdoc}
      */

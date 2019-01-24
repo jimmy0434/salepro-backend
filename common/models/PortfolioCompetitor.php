@@ -16,7 +16,7 @@ use Yii;
  * @property Competitor $competitor
  * @property Portfolio $portfolio
  */
-class PortfolioCompetitor extends \yii\db\ActiveRecord
+class PortfolioCompetitor extends \cnd\core\components\ActiveRecord
 {
     /**
      * {@inheritdoc}

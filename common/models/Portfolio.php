@@ -20,6 +20,10 @@ use Yii;
  * @property int $created_at
  * @property int $updated_at
  *
+ * @property array $target_list
+ * @property array $target_values
+ * @property string $target_label
+ *
  * @property Brand[] $brands
  * @property Corporate[] $corporates
  * @property PortfolioCompetitor[] $portfolioCompetitors
@@ -28,8 +32,14 @@ use Yii;
  * @property Product[] $products
  * @property Sector[] $sectors
  */
-class Portfolio extends \yii\db\ActiveRecord
+class Portfolio extends \cnd\core\components\ActiveRecord
 {
+
+    const TARGET_CORPORATE = 1;
+    const TARGET_BRAND = 2;
+    const TARGET_SECTOR = 3;
+    const TARGET_PRODUCT = 4;
+
     /**
      * {@inheritdoc}
      */

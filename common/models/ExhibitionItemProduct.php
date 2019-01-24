@@ -18,7 +18,7 @@ use Yii;
  * @property Product $product
  * @property ExhibitionItem $exhibitionItem
  */
-class ExhibitionItemProduct extends \yii\db\ActiveRecord
+class ExhibitionItemProduct extends \cnd\core\components\ActiveRecord
 {
     /**
      * {@inheritdoc}

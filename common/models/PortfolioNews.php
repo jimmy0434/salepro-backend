@@ -15,7 +15,7 @@ use Yii;
  *
  * @property Portfolio $portfolio
  */
-class PortfolioNews extends \yii\db\ActiveRecord
+class PortfolioNews extends \cnd\core\components\ActiveRecord
 {
     /**
      * {@inheritdoc}

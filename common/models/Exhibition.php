@@ -22,7 +22,7 @@ use Yii;
  * @property ExhibitionItem[] $exhibitionItems
  * @property ExhibitionItemProduct[] $exhibitionItemProducts
  */
-class Exhibition extends \yii\db\ActiveRecord
+class Exhibition extends \cnd\core\components\ActiveRecord
 {
     /**
      * {@inheritdoc}

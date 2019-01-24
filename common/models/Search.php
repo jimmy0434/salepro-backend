@@ -14,12 +14,20 @@ use Yii;
  * @property int $created_at
  * @property int $updated_at
  *
+ * @property array $target_list
+ * @property array $target_values
+ * @property string $target_label
+ *
  * @property Competitor[] $competitors
  * @property MarketResearch[] $marketResearches
  * @property SearchTag[] $searchTags
  */
-class Search extends \yii\db\ActiveRecord
+class Search extends \cnd\core\components\ActiveRecord
 {
+    const TARGET_PORTFOLIO = 1;
+    const TARGET_COMPETITOR = 2;
+    const TARGET_MARKET_RESEARCH = 3;
+
     /**
      * {@inheritdoc}
      */

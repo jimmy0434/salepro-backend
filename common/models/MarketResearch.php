@@ -22,7 +22,7 @@ use Yii;
  * @property File $file
  * @property Product $product
  */
-class MarketResearch extends \yii\db\ActiveRecord
+class MarketResearch extends \cnd\core\components\ActiveRecord
 {
     /**
      * {@inheritdoc}

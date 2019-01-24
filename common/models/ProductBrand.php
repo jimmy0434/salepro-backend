@@ -16,7 +16,7 @@ use Yii;
  * @property Brand $brand
  * @property Product $product
  */
-class ProductBrand extends \yii\db\ActiveRecord
+class ProductBrand extends \cnd\core\components\ActiveRecord
 {
     /**
      * {@inheritdoc}

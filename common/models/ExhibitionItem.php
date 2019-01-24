@@ -13,11 +13,19 @@ use Yii;
  * @property int $created_at
  * @property int $updated_at
  *
+ * @property array $by_list
+ * @property array $by_values
+ * @property string $by_label
+ *
  * @property Exhibition $exhibition
  * @property ExhibitionItemProduct[] $exhibitionItemProducts
  */
-class ExhibitionItem extends \yii\db\ActiveRecord
+class ExhibitionItem extends \cnd\core\components\ActiveRecord
 {
+    const BY_BRAND = 1;
+    const BY_SECTOR = 2;
+    const BY_PRODUCT = 3;
+
     /**
      * {@inheritdoc}
      */

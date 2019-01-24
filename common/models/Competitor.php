@@ -24,7 +24,7 @@ use Yii;
  * @property Form $form
  * @property PortfolioCompetitor[] $portfolioCompetitors
  */
-class Competitor extends \yii\db\ActiveRecord
+class Competitor extends \cnd\core\components\ActiveRecord
 {
     /**
      * {@inheritdoc}
