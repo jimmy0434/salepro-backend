@@ -31,6 +31,7 @@ class Bootstrap implements BootstrapInterface
 
 
         $navigator = MenuManager::block('Navigator', 10000);
+        $navigator->item('Portfolio Management', ['/portfolio/index'], 'fa fa-database', 5);
         $navigator->item('Form Approval', ['/form-approval/index'], 'fa fa-check', 6);
 
         $developer = MenuManager::block('Developer');
