@@ -32,8 +32,7 @@ class ProductBrand extends \yii\db\ActiveRecord
     public function rules()
     {
         return [
-            [['product_id', 'brand_id', 'created_at', 'updated_at'], 'integer'],
-            [['created_at', 'updated_at'], 'required'],
+            [['product_id', 'brand_id'], 'integer'],
             [['brand_id'], 'exist', 'skipOnError' => true, 'targetClass' => Brand::className(), 'targetAttribute' => ['brand_id' => 'id']],
             [['product_id'], 'exist', 'skipOnError' => true, 'targetClass' => Product::className(), 'targetAttribute' => ['product_id' => 'id']],
         ];

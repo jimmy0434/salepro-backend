@@ -35,8 +35,7 @@ class Search extends \yii\db\ActiveRecord
     {
         return [
             [['text'], 'string'],
-            [['target', 'created_at', 'updated_at'], 'integer'],
-            [['created_at', 'updated_at'], 'required'],
+            [['target'], 'integer'],
             [['title'], 'string', 'max' => 255],
         ];
     }

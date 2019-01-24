@@ -45,8 +45,7 @@ class Portfolio extends \yii\db\ActiveRecord
     {
         return [
             [['image'], 'string'],
-            [['brochure_id', 'presentation_id', 'video_id', 'search_id', 'target', 'created_at', 'updated_at'], 'integer'],
-            [['created_at', 'updated_at'], 'required'],
+            [['brochure_id', 'presentation_id', 'video_id', 'search_id', 'target'], 'integer'],
             [['uid', 'name', 'description'], 'string', 'max' => 255],
             [['uid'], 'unique'],
         ];

@@ -32,8 +32,7 @@ class CorporateFile extends \yii\db\ActiveRecord
     public function rules()
     {
         return [
-            [['corporate_id', 'file_id', 'created_at', 'updated_at'], 'integer'],
-            [['created_at', 'updated_at'], 'required'],
+            [['corporate_id', 'file_id'], 'integer'],
             [['corporate_id'], 'exist', 'skipOnError' => true, 'targetClass' => Corporate::className(), 'targetAttribute' => ['corporate_id' => 'id']],
             [['file_id'], 'exist', 'skipOnError' => true, 'targetClass' => File::className(), 'targetAttribute' => ['file_id' => 'id']],
         ];

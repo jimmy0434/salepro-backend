@@ -32,8 +32,7 @@ class SearchTag extends \yii\db\ActiveRecord
     public function rules()
     {
         return [
-            [['search_id', 'tag_id', 'created_at', 'updated_at'], 'integer'],
-            [['created_at', 'updated_at'], 'required'],
+            [['search_id', 'tag_id'], 'integer'],
             [['tag_id'], 'exist', 'skipOnError' => true, 'targetClass' => Tag::className(), 'targetAttribute' => ['tag_id' => 'id']],
             [['search_id'], 'exist', 'skipOnError' => true, 'targetClass' => Search::className(), 'targetAttribute' => ['search_id' => 'id']],
         ];

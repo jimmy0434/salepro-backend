@@ -36,9 +36,8 @@ class BusinessUnit extends \yii\db\ActiveRecord
     public function rules()
     {
         return [
-            [['type', 'created_at', 'updated_at'], 'integer'],
+            [['type'], 'integer'],
             [['image'], 'string'],
-            [['created_at', 'updated_at'], 'required'],
             [['uid', 'name'], 'string', 'max' => 255],
             [['uid'], 'unique'],
         ];

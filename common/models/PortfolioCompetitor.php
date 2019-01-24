@@ -32,8 +32,7 @@ class PortfolioCompetitor extends \yii\db\ActiveRecord
     public function rules()
     {
         return [
-            [['portfolio_id', 'competitor_id', 'created_at', 'updated_at'], 'integer'],
-            [['created_at', 'updated_at'], 'required'],
+            [['portfolio_id', 'competitor_id'], 'integer'],
             [['competitor_id'], 'exist', 'skipOnError' => true, 'targetClass' => Competitor::className(), 'targetAttribute' => ['competitor_id' => 'id']],
             [['portfolio_id'], 'exist', 'skipOnError' => true, 'targetClass' => Portfolio::className(), 'targetAttribute' => ['portfolio_id' => 'id']],
         ];

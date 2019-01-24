@@ -32,8 +32,7 @@ class SectorBrand extends \yii\db\ActiveRecord
     public function rules()
     {
         return [
-            [['sector_id', 'brand_id', 'created_at', 'updated_at'], 'integer'],
-            [['created_at', 'updated_at'], 'required'],
+            [['sector_id', 'brand_id'], 'integer'],
             [['sector_id'], 'exist', 'skipOnError' => true, 'targetClass' => Sector::className(), 'targetAttribute' => ['sector_id' => 'id']],
             [['brand_id'], 'exist', 'skipOnError' => true, 'targetClass' => Brand::className(), 'targetAttribute' => ['brand_id' => 'id']],
         ];

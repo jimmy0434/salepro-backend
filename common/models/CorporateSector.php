@@ -32,8 +32,7 @@ class CorporateSector extends \yii\db\ActiveRecord
     public function rules()
     {
         return [
-            [['corporate_id', 'sector_id', 'created_at', 'updated_at'], 'integer'],
-            [['created_at', 'updated_at'], 'required'],
+            [['corporate_id', 'sector_id'], 'integer'],
             [['corporate_id'], 'exist', 'skipOnError' => true, 'targetClass' => Corporate::className(), 'targetAttribute' => ['corporate_id' => 'id']],
             [['sector_id'], 'exist', 'skipOnError' => true, 'targetClass' => Sector::className(), 'targetAttribute' => ['sector_id' => 'id']],
         ];

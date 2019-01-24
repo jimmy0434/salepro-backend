@@ -34,8 +34,7 @@ class Corporate extends \yii\db\ActiveRecord
     public function rules()
     {
         return [
-            [['portfolio_id', 'created_at', 'updated_at'], 'integer'],
-            [['created_at', 'updated_at'], 'required'],
+            [['portfolio_id'], 'integer'],
             [['uid'], 'string', 'max' => 255],
             [['uid'], 'unique'],
             [['portfolio_id'], 'exist', 'skipOnError' => true, 'targetClass' => Portfolio::className(), 'targetAttribute' => ['portfolio_id' => 'id']],

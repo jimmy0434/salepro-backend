@@ -32,8 +32,7 @@ class ProductSector extends \yii\db\ActiveRecord
     public function rules()
     {
         return [
-            [['product_id', 'sector_id', 'created_at', 'updated_at'], 'integer'],
-            [['created_at', 'updated_at'], 'required'],
+            [['product_id', 'sector_id'], 'integer'],
             [['sector_id'], 'exist', 'skipOnError' => true, 'targetClass' => Sector::className(), 'targetAttribute' => ['sector_id' => 'id']],
             [['product_id'], 'exist', 'skipOnError' => true, 'targetClass' => Product::className(), 'targetAttribute' => ['product_id' => 'id']],
         ];

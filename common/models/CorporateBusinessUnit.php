@@ -32,8 +32,7 @@ class CorporateBusinessUnit extends \yii\db\ActiveRecord
     public function rules()
     {
         return [
-            [['corporate_id', 'business_unit_id', 'created_at', 'updated_at'], 'integer'],
-            [['created_at', 'updated_at'], 'required'],
+            [['corporate_id', 'business_unit_id'], 'integer'],
             [['corporate_id'], 'exist', 'skipOnError' => true, 'targetClass' => Corporate::className(), 'targetAttribute' => ['corporate_id' => 'id']],
             [['business_unit_id'], 'exist', 'skipOnError' => true, 'targetClass' => BusinessUnit::className(), 'targetAttribute' => ['business_unit_id' => 'id']],
         ];

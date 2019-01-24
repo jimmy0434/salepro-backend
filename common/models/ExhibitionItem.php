@@ -32,8 +32,7 @@ class ExhibitionItem extends \yii\db\ActiveRecord
     public function rules()
     {
         return [
-            [['exhibition_id', 'by', 'created_at', 'updated_at'], 'integer'],
-            [['created_at', 'updated_at'], 'required'],
+            [['exhibition_id', 'by'], 'integer'],
             [['exhibition_id'], 'exist', 'skipOnError' => true, 'targetClass' => Exhibition::className(), 'targetAttribute' => ['exhibition_id' => 'id']],
         ];
     }

@@ -38,8 +38,7 @@ class Exhibition extends \yii\db\ActiveRecord
     public function rules()
     {
         return [
-            [['file_id', 'business_unit_id', 'created_at', 'updated_at'], 'integer'],
-            [['created_at', 'updated_at'], 'required'],
+            [['file_id', 'business_unit_id'], 'integer'],
             [['name', 'country', 'region', 'year'], 'string', 'max' => 255],
             [['business_unit_id'], 'exist', 'skipOnError' => true, 'targetClass' => BusinessUnit::className(), 'targetAttribute' => ['business_unit_id' => 'id']],
             [['file_id'], 'exist', 'skipOnError' => true, 'targetClass' => File::className(), 'targetAttribute' => ['file_id' => 'id']],

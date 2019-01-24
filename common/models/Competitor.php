@@ -41,8 +41,7 @@ class Competitor extends \yii\db\ActiveRecord
     {
         return [
             [['image'], 'string'],
-            [['form_id', 'form_record_id', 'search_id', 'created_at', 'updated_at'], 'integer'],
-            [['created_at', 'updated_at'], 'required'],
+            [['form_id', 'form_record_id', 'search_id'], 'integer'],
             [['name', 'market_presence', 'year', 'product', 'business_unit'], 'string', 'max' => 255],
             [['search_id'], 'exist', 'skipOnError' => true, 'targetClass' => Search::className(), 'targetAttribute' => ['search_id' => 'id']],
             [['form_id'], 'exist', 'skipOnError' => true, 'targetClass' => Form::className(), 'targetAttribute' => ['form_id' => 'id']],

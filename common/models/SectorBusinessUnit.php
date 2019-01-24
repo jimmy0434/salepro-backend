@@ -32,8 +32,7 @@ class SectorBusinessUnit extends \yii\db\ActiveRecord
     public function rules()
     {
         return [
-            [['sector_id', 'business_unit_id', 'created_at', 'updated_at'], 'integer'],
-            [['created_at', 'updated_at'], 'required'],
+            [['sector_id', 'business_unit_id'], 'integer'],
             [['sector_id'], 'exist', 'skipOnError' => true, 'targetClass' => Sector::className(), 'targetAttribute' => ['sector_id' => 'id']],
             [['business_unit_id'], 'exist', 'skipOnError' => true, 'targetClass' => BusinessUnit::className(), 'targetAttribute' => ['business_unit_id' => 'id']],
         ];
