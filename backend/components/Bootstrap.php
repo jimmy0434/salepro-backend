@@ -31,7 +31,6 @@ class Bootstrap implements BootstrapInterface
 
 
         $navigator = MenuManager::block('Navigator', 10000);
-        $navigator->item('Content Management', ['/content/index'],'fa fa-folder-open-o',5);
         $navigator->item('Form Approval', ['/form-approval/index'], 'fa fa-check', 6);
 
         $developer = MenuManager::block('Developer');
@@ -52,19 +51,6 @@ class Bootstrap implements BootstrapInterface
         ]);
         ApiDocFactory::appendToParams('Edit Profile',[
             ['salesman[name]','string',false,'Name of the salesman'],
-        ]);
-        ApiDocFactory::register([
-            'name' => 'Secure Cms Contents',
-            'method' => 'GET',
-            'url' => '/contents',
-            'description' => 'Get Contents List',
-            'extraParams' => ['page'=>1,'pageSize'=>25,'category'=>'OPTIONAL','keyword'=>'OPTIONAL','_accessToken'=>'ACCESS_TOKEN'],
-            'params' => [
-                ['page','integer',false,'The page number. default is 1'],
-                ['pageSize','integer',false,'The page Size. default is 25'],
-                ['category','integer or string',false,'Category of contents, for static input use ex. cms.category.sectors'],
-                ['keyword','string',false,'Search contents'],
-            ],
         ]);
         ApiDocFactory::register([
             'name' => 'Download File Partition',

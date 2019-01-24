@@ -25,7 +25,6 @@ return [
     'bootstrap' => [
         'log',
         'cnd\admin\Bootstrap',
-        'cnd\cms\modules\admin\Bootstrap',
         'cnd\notification\Bootstrap',
         'backend\components\Bootstrap',
     ],
@@ -39,9 +38,6 @@ return [
             'class' => 'cnd\admin\Module',
             'name' => ['MASTER','Pak'],
             'shortName' => ['M','PK'],
-            /*'autoLoginDefinition' => function($type){
-                return !in_array($type,[\cnd\admin\models\activerecords\User::TYPE_ROOT,\cnd\admin\models\activerecords\User::TYPE_ADMIN]);
-            },*/
             'roleFormExtraContent' => function($model, $form){
                 echo \yii\helpers\Html::a('Approval Process',['/approval/role','id'=>$model->id],['class'=>'btn btn-warning btn-block']);
             },
@@ -54,9 +50,6 @@ return [
         ],
         'notification' => [
             'class' => 'cnd\notification\Module',
-        ],
-        'cms' => [
-            'class' => 'cnd\cms\modules\admin\Module',
         ],
     ],
     'components' => [

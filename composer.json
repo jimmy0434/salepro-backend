@@ -34,7 +34,6 @@
     "cndprojects/yii2-grid": "*",
     "cndprojects/yii2-notification": "*",
     "cndprojects/yii2-statistic": "*",
-    "cndprojects/yii2-cms": "*",
     "npm-asset/vue": "*",
     "npm-asset/xml-js": "*",
     "npm-asset/vue-constants": "*",
@@ -66,7 +65,6 @@
     "post-update-cmd": [
       "php yii migrate --migrationPath=@cnd/admin/migrations --interactive=0",
       "php yii migrate --migrationPath=@cnd/notification/migrations --interactive=0",
-      "php yii migrate --migrationPath=@cnd/cms/migrations --interactive=0",
       "php yii migrate --interactive=0",
       "php yii migrate --db=bi --migrationPath=@console/migrations/bi --interactive=0"
     ]
