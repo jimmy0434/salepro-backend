@@ -53,7 +53,10 @@
       "enabled": true
     },
     "bitbucket-oauth": {
-
+      "bitbucket.org": {
+        "consumer-key": "SQfTAZXBraqrfn5yR4",
+        "consumer-secret": "ZuwwYaprptr7JjF7PEQvsm5XRzdVXmWk"
+      }
     },
     "github-oauth": {
       "github.com": "1543cc3fccbada7c658fb9c81ee732d9d54a182e"
@@ -81,43 +84,43 @@
       "url": "https://asset-packagist.org"
     },
     {
-      "type": "vcs",
+      "type": "git",
       "url": "https://bitbucket.org/cndprojects/yii2-core.git"
     },
     {
-      "type": "vcs",
+      "type": "git",
       "url": "https://bitbucket.org/cndprojects/yii2-attributes.git"
     },
     {
-      "type": "vcs",
+      "type": "git",
       "url": "https://bitbucket.org/cndprojects/yii2-form.git"
     },
     {
-      "type": "vcs",
+      "type": "git",
       "url": "https://bitbucket.org/cndprojects/yii2-admin.git"
     },
     {
-      "type": "vcs",
+      "type": "git",
       "url": "https://bitbucket.org/cndprojects/yii2-constantbehavior.git"
     },
     {
-      "type": "vcs",
+      "type": "git",
       "url": "https://bitbucket.org/cndprojects/yii2-filemanager.git"
     },
     {
-      "type": "vcs",
+      "type": "git",
       "url": "https://bitbucket.org/cndprojects/yii2-grid.git"
     },
     {
-      "type": "vcs",
+      "type": "git",
       "url": "https://bitbucket.org/cndprojects/yii2-notification.git"
     },
     {
-      "type": "vcs",
+      "type": "git",
       "url": "https://bitbucket.org/cndprojects/yii2-statistic.git"
     },
     {
-      "type": "vcs",
+      "type": "git",
       "url": "https://bitbucket.org/cndprojects/yii2-cms.git"
     },
     {
