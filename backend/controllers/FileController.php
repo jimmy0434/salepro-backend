@@ -62,11 +62,8 @@ class FileController extends SController
         return $this->render('form-meta-data', ['model' => $model]);
     }
 
-    public function actionManageUpload($id, $dialog = false)
+    public function actionManageUpload($id)
     {
-        if($dialog){
-            $this->layout = '@backend/views/layout/dialog.php';
-        }
         $model = File::findOne($id);
         if ($model === null) {
             throw new \yii\web\HttpException(404, 'The requested file could not be found.');
@@ -98,11 +95,6 @@ class FileController extends SController
                     $model->extension = $extension;
                     $model->status = File::STATUS_ACTIVE;
                     $model->save(false);
-                    $content = Content::find()->where(['section'=>'file-'.$model->id])->one();
-                    if($content && $content->status == Content::STATUS_PENDING){
-                        $content->status = Content::STATUS_PUBLISH;
-                        $content->save(0);
-                    }
                     $users = array_values(ArrayHelper::map(User::find()->where(['type'=>User::TYPE_SALESMAN, 'status' => User::STATUS_ACTIVE])->all(),'id','id'));
                     if(!empty($users) && is_array($users)) {
                         Yii::$app->notification->send('file-update', [
@@ -170,5 +162,19 @@ class FileController extends SController
         $slug = strtolower(trim(preg_replace('/[\s-]+/', $delimiter, preg_replace('/[^A-Za-z0-9-]+/', $delimiter, preg_replace('/[&]/', 'and', preg_replace('/[\']/', '', iconv('UTF-8', 'ASCII//TRANSLIT', $str))))), $delimiter));
         return $slug;
 
+    }
+
+    public function actionPopupManagement(){
+        $id = Yii::$app->request->get('id');
+        $title = Yii::$app->request->get('title');
+        $this->layout = '@backend/views/layout/dialog.php';
+        if(!$id){
+            $model = new File();
+            $model->title = $title;
+            $model->status = File::STATUS_DRAFT;
+            $model->save();
+            $id = $model->id;
+        }
+        return $this->actionManageUpload($id);
     }
 }

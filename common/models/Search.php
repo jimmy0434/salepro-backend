@@ -14,19 +14,12 @@ use Yii;
  * @property int $created_at
  * @property int $updated_at
  *
- * @property array $target_list
- * @property array $target_values
- * @property string $target_label
- *
  * @property Competitor[] $competitors
  * @property MarketResearch[] $marketResearches
  * @property SearchTag[] $searchTags
  */
 class Search extends \cnd\core\components\ActiveRecord
 {
-    const TARGET_PORTFOLIO = 1;
-    const TARGET_COMPETITOR = 2;
-    const TARGET_MARKET_RESEARCH = 3;
 
     /**
      * {@inheritdoc}
@@ -41,11 +34,10 @@ class Search extends \cnd\core\components\ActiveRecord
      */
     public function rules()
     {
-        return [
+        return array_merge(parent::rules(),[
             [['text'], 'string'],
-            [['target'], 'integer'],
             [['title'], 'string', 'max' => 255],
-        ];
+        ]);
     }
 
     /**
@@ -94,5 +86,18 @@ class Search extends \cnd\core\components\ActiveRecord
     public static function find()
     {
         return new SearchQuery(get_called_class());
+    }
+
+    public static function updateRecord($target, $title, $text = null)
+    {
+        $model = static::find()->where(['target' => $target])->one();
+        if (!$model) {
+            $model = new static();
+            $model->target = $target;
+        }
+        $model->title = $title;
+        $model->text = $text;
+        $model->save();
+        return $model;
     }
 }

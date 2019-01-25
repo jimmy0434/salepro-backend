@@ -34,12 +34,12 @@ class Sector extends \cnd\core\components\ActiveRecord
      */
     public function rules()
     {
-        return [
+        return array_merge(parent::rules(),[
             [['portfolio_id'], 'integer'],
             [['uid'], 'string', 'max' => 255],
             [['uid'], 'unique'],
             [['portfolio_id'], 'exist', 'skipOnError' => true, 'targetClass' => Portfolio::className(), 'targetAttribute' => ['portfolio_id' => 'id']],
-        ];
+        ]);
     }
 
     /**
@@ -103,5 +103,15 @@ class Sector extends \cnd\core\components\ActiveRecord
     public static function find()
     {
         return new SectorQuery(get_called_class());
+    }
+
+    public static function relateToPortfolio($portfolioId) {
+        $model = static::find()->where(['portfolio_id'=>$portfolioId])->one();
+        if(!$model){
+            $model = new static();
+            $model->uid = uniqid('sector-', true);
+            $model->portfolio_id = $portfolioId;
+            $model->save();
+        }
     }
 }

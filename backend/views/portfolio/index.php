@@ -13,10 +13,112 @@
  */
 
 use backend\controllers\PortfolioController;
+use cnd\grid\Attribute;
 use cnd\grid\DataLocator;
+use cnd\grid\DataView;
+use common\models\Portfolio;
+use yii\helpers\Html;
+use yii\helpers\Url;
 use yii\web\View;
 
 $context = $this->context;
 
-$this->title = "Portfolio Management | " . $context->targets[$context->target];
-$this->title = "Portfolio Management | " . $context->targets[$context->target];
+$this->title = "Portfolio Management | " . $context->targets[$context->target].'s';
+?>
+    <div class="btn-group btn-group-justified" role="group" aria-label="targets">
+        <?php
+        foreach ($context->targets as $value => $label) {
+            echo Html::a($label.'s', ['index', 't' => $value], ['class' => 'btn btn-default ' . ($value == $context->target ? 'active' : '')]);
+        }
+        ?>
+    </div>
+    <hr>
+<?php
+
+$dv = new DataView([
+    'dataLocator' => $dataLocator,
+    'searchColumns' => DataView::SEARCH_COLUMNS_TWO,
+    'attributes' => [
+        'id' => [
+            'label' => 'ID',
+            'value' => function ($attribute, $data, $view) use ($dataLocator) {
+                /**
+                 * @var $attribute Attribute
+                 * @var $data Portfolio
+                 * @var $view DataView
+                 */
+                return str_pad($data->id, 8, '0', STR_PAD_LEFT);
+            },
+            'filterBy' => Attribute::FILTER_NUMBER,
+        ],
+        'image' => [
+            'label' => 'Image',
+            'value' => function ($attribute, $data, $view) use ($dataLocator) {
+                if ($dataLocator->export) {
+                    if ($data->profile !== null && $data->profile->imageFactory !== null) {
+                        $url = $data->profile->imageFactory->url;
+                        if ($url) {
+                            return \yii\bootstrap\Html::a('Show Image', $url, ['target' => '_blank']);
+                        }
+                    }
+                    return '';
+                } else {
+                    if (get_class($view) == \cnd\grid\Card::className()) {
+                        if ($data->profile !== null && $data->profile->imageFactory !== null) {
+                            return '<div style="position:relative;">' . $data->profile->imageFactory->displayImage(['100%', 'auto'], 'User Image', '', 'user-image') . '</div>';
+                        }
+                    } else {
+                        if ($data->profile !== null && $data->profile->imageFactory !== null) {
+                            return '<div style="position:relative;">' . $data->profile->imageFactory->displayImage('icon', 'User Image', '', 'user-image') . '</div>';
+                        }
+                    }
+                    return '';
+                }
+            },
+            'filterBy' => Attribute::FILTER_NONE,
+        ],
+        'name' => [
+            'label' => 'Name',
+            'value' => function ($attribute, $data, $view) use ($dataLocator) {
+                /**
+                 * @var $attribute Attribute
+                 * @var $data Portfolio
+                 * @var $view DataView
+                 */
+                return $data->name;
+            },
+        ],
+    ],
+    'headerLinks' => [
+        Yii::$app->permission->can('/portfolio/manage') ? Html::a('Add New', Url::to(['manage', 't' => $context->target]), ['class' => 'btn btn-success']) : null,
+    ],
+    'rowLinks' => [
+        function ($row) use ($context) {
+            if (Yii::$app->permission->can('/portfolio/manage')) {
+                return Html::a('Edit', Url::to(['manage', 'id' => $row->id, 't' => $context->target]), ['class' => 'btn btn-primary']);
+            }
+            return null;
+        },
+        function ($row) use ($context) {
+            if (Yii::$app->permission->can('/portfolio/delete')) {
+                return Html::a('Delete', Url::to(['delete', 'id' => $row->id, 't' => $context->target]), ['class' => 'btn btn-danger', 'data-confirm' => 'Are You Sure?']);
+            }
+            return null;
+        },
+    ]
+]);
+$dv->addView('grid', [
+    'class' => '\cnd\grid\GridTable',
+    'columns' => [
+        'id' => [
+            'sortable' => true,
+            'contentOptions' => [
+                'style' => 'text-align:center;white-space: nowrap;width:1%;'
+            ],
+        ],
+        'name' => [
+            'sortable' => true,
+        ],
+    ]
+]);
+echo $dv->render();

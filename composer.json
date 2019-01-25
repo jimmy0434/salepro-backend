@@ -51,6 +51,12 @@
     "process-timeout": 1800,
     "fxp-asset": {
       "enabled": true
+    },
+    "bitbucket-oauth": {
+
+    },
+    "github-oauth": {
+      "github.com": "1543cc3fccbada7c658fb9c81ee732d9d54a182e"
     }
   },
   "scripts": {
@@ -76,43 +82,43 @@
     },
     {
       "type": "vcs",
-      "url": "https://cndcompany:Pass*123@bitbucket.org/cndprojects/yii2-core.git"
+      "url": "https://bitbucket.org/cndprojects/yii2-core.git"
     },
     {
       "type": "vcs",
-      "url": "https://cndcompany:Pass*123@bitbucket.org/cndprojects/yii2-attributes.git"
+      "url": "https://bitbucket.org/cndprojects/yii2-attributes.git"
     },
     {
       "type": "vcs",
-      "url": "https://cndcompany:Pass*123@bitbucket.org/cndprojects/yii2-form.git"
+      "url": "https://bitbucket.org/cndprojects/yii2-form.git"
     },
     {
       "type": "vcs",
-      "url": "https://cndcompany:Pass*123@bitbucket.org/cndprojects/yii2-admin.git"
+      "url": "https://bitbucket.org/cndprojects/yii2-admin.git"
     },
     {
       "type": "vcs",
-      "url": "https://cndcompany:Pass*123@bitbucket.org/cndprojects/yii2-constantbehavior.git"
+      "url": "https://bitbucket.org/cndprojects/yii2-constantbehavior.git"
     },
     {
       "type": "vcs",
-      "url": "https://cndcompany:Pass*123@bitbucket.org/cndprojects/yii2-filemanager.git"
+      "url": "https://bitbucket.org/cndprojects/yii2-filemanager.git"
     },
     {
       "type": "vcs",
-      "url": "https://cndcompany:Pass*123@bitbucket.org/cndprojects/yii2-grid.git"
+      "url": "https://bitbucket.org/cndprojects/yii2-grid.git"
     },
     {
       "type": "vcs",
-      "url": "https://cndcompany:Pass*123@bitbucket.org/cndprojects/yii2-notification.git"
+      "url": "https://bitbucket.org/cndprojects/yii2-notification.git"
     },
     {
       "type": "vcs",
-      "url": "https://cndcompany:Pass*123@bitbucket.org/cndprojects/yii2-statistic.git"
+      "url": "https://bitbucket.org/cndprojects/yii2-statistic.git"
     },
     {
       "type": "vcs",
-      "url": "https://cndcompany:Pass*123@bitbucket.org/cndprojects/yii2-cms.git"
+      "url": "https://bitbucket.org/cndprojects/yii2-cms.git"
     },
     {
       "type": "package",

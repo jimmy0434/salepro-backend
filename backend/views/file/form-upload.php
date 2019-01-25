@@ -21,8 +21,9 @@ Yii::$app->notification->enabled = false;
 
 $this->title = 'Manage File Upload';
 $context = $this->context;
-$extensions = array_values(explode(',', Setting::get('file.allowed.extensions', 'pdf,png,jpg,mp4')));
-$uploadUrl = Url::current();
+$extensions = Yii::$app->request->get('ext', Setting::get('file.allowed.extensions', 'pdf,png,jpg,mp4'));
+$extensions = array_values(explode(',', $extensions));
+$uploadUrl = Url::to(['file/manage-upload', 'id' => $model->id]);
 ?>
     <div class="row">
         <div class="col-md-6">
@@ -89,6 +90,9 @@ $uploadUrl = Url::current();
     </div>
 <?php
 $exts = Json::encode($extensions);
+$fileId = $model->id;
+$fileName = $model->title;
+$extension = $model->extension;
 $ready = <<< JS
     let dropZone = document.getElementById('drop-zone');
     let uploadForm = document.getElementById('js-upload-form');
@@ -232,6 +236,7 @@ function uploadChunk(index, chunks, version, extension){
         });
     }else{
         msg("File was successfully uploaded");
+        window.parent.postMessage(JSON.stringify({"id":"{$fileId}","name":"{$fileName}", "extension":"{$extension}"}), "*");
     }
 }
 JS;

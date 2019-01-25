@@ -16,7 +16,7 @@ class m190124_123325_add_solution_tables extends Migration
             'id' => $this->primaryKey(),
             'uid' => $this->string()->unique(),
             'name' => $this->string(),
-            'description' => $this->string(),
+            'description' => $this->longText(),
             'image' => $this->mediumText(),
             'brochure_id' => $this->integer(),
             'presentation_id' => $this->integer(),
@@ -103,7 +103,7 @@ class m190124_123325_add_solution_tables extends Migration
             'id' => $this->primaryKey(),
             'title' => $this->string(),
             'text' => $this->longText(),
-            'target' => $this->tinyInteger(),
+            'target' => $this->string(),
         ]);
 
         $this->createTable('tag', [

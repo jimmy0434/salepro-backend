@@ -27,7 +27,7 @@ class PortfolioController extends SController
         $portfolio = new Portfolio();
         $this->target = Portfolio::TARGET_CORPORATE;
         $this->targets = $portfolio->target_list;
-        if (Yii::$app->request->get('t') && array_key_exists(Yii::$app->request->get('t'), $portfolio->target_values)) {
+        if (Yii::$app->request->get('t') && in_array(Yii::$app->request->get('t'), $portfolio->target_values)) {
             $this->target = Yii::$app->request->get('t');
         }
         return parent::beforeAction($action);
@@ -52,5 +52,33 @@ class PortfolioController extends SController
             return $this->renderAjax('index', ['dataLocator' => $dataLocator]);
         }
         return $this->render('index', ['dataLocator' => $dataLocator]);
+    }
+
+    public function actionManage($id = null)
+    {
+        $model = Portfolio::findOne($id);
+        if (!$model && !$id) {
+            $model = new Portfolio();
+            $model->target = $this->target;
+        }
+        if (!$model) {
+            throw new \yii\web\HttpException(404, 'The requested portfolio could not be found.');
+        }
+        $isNew = $model->isNewRecord;
+        if ($model->load(\Yii::$app->request->post()) && $model->validate()) {
+            if ($model->save()) {
+                \Yii::$app->session->setFlash('success', ucfirst($this->id) . ' saved successfully');
+            } else {
+                \Yii::$app->session->setFlash('error', ucfirst($this->id) . ' not saved');
+            }
+            if ($isNew) {
+                Log::trace("Create new portfolio data #" . $model->id);
+                //return $this->redirect(['manage', 'id' => $model->id, 't' => $model->target]);
+            }
+            Log::trace("Update portfolio data #" . $id);
+            return $this->redirect(['index', 't' => $model->target]);
+        }
+        Log::trace("Open portfolio data form");
+        return $this->render('form', ['model' => $model, 'isNew' => $isNew]);
     }
 }
