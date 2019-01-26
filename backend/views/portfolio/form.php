@@ -15,6 +15,7 @@
 
 use backend\controllers\PortfolioController;
 use backend\widgets\FileSelector;
+use backend\widgets\SearchTagInput;
 use cnd\filemanager\widgets\MediaInput;
 use cnd\form\ActiveForm;
 use common\models\Portfolio;
@@ -37,6 +38,10 @@ $form = ActiveForm::begin(['id' => Yii::$app->controller->id . '-form']);
                     <?= $form->field($model, 'target')->hiddenInput()->label(false) ?>
                     <?= $form->field($model, 'name')->textInput() ?>
                     <?= $form->field($model, 'description')->editorInput() ?>
+                    <?= SearchTagInput::widget([
+                        'model' => $model,
+                        'form' => $form,
+                    ]) ?>
                 </div>
             </div>
         </div>
@@ -56,7 +61,7 @@ $form = ActiveForm::begin(['id' => Yii::$app->controller->id . '-form']);
                         'model' => $model,
                         'property' => 'brochure_id',
                         'title' => 'Brochure',
-                        'fileName' => uniqid('portfolio-brochure-',true),
+                        'fileName' => uniqid('portfolio-brochure-', true),
                         'ext' => 'pdf',
                     ]) ?>
 
@@ -64,7 +69,7 @@ $form = ActiveForm::begin(['id' => Yii::$app->controller->id . '-form']);
                         'model' => $model,
                         'property' => 'presentation_id',
                         'title' => 'Presentation',
-                        'fileName' => uniqid('portfolio-presentation-',true),
+                        'fileName' => uniqid('portfolio-presentation-', true),
                         'ext' => 'pptx',
                     ]) ?>
 
@@ -72,7 +77,7 @@ $form = ActiveForm::begin(['id' => Yii::$app->controller->id . '-form']);
                         'model' => $model,
                         'property' => 'video_id',
                         'title' => 'Video',
-                        'fileName' => uniqid('portfolio-video-',true),
+                        'fileName' => uniqid('portfolio-video-', true),
                         'ext' => 'mp4',
                     ]) ?>
                 </div>

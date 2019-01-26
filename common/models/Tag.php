@@ -29,10 +29,10 @@ class Tag extends \cnd\core\components\ActiveRecord
      */
     public function rules()
     {
-        return [
+        return array_merge(parent::rules(), [
             [['name'], 'string', 'max' => 255],
             [['name'], 'unique'],
-        ];
+        ]);
     }
 
     /**

@@ -184,6 +184,11 @@ class m190124_123325_add_solution_tables extends Migration
         ]);
 
         $this->addRelations(function(){
+            $this->createIndexForeignKey('portfolio.brochure_id','file.id');
+            $this->createIndexForeignKey('portfolio.presentation_id','file.id');
+            $this->createIndexForeignKey('portfolio.video_id','file.id');
+            $this->createIndexForeignKey('portfolio.search_id','search.id');
+
             $this->createIndexForeignKey('corporate.portfolio_id','portfolio.id');
             $this->createIndexForeignKey('brand.portfolio_id','portfolio.id');
             $this->createIndexForeignKey('sector.portfolio_id','portfolio.id');

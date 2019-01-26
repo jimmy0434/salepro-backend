@@ -79,6 +79,10 @@ class Search extends \cnd\core\components\ActiveRecord
         return $this->hasMany(SearchTag::className(), ['search_id' => 'id']);
     }
 
+    public function getTags(){
+        return $this->hasMany(Tag::className(),['id'=>'tag_id'])->via('searchTags');
+    }
+
     /**
      * {@inheritdoc}
      * @return SearchQuery the active query used by this AR class.
@@ -88,7 +92,7 @@ class Search extends \cnd\core\components\ActiveRecord
         return new SearchQuery(get_called_class());
     }
 
-    public static function updateRecord($target, $title, $text = null)
+    public static function updateRecord($tags, $target, $title, $text = null)
     {
         $model = static::find()->where(['target' => $target])->one();
         if (!$model) {
@@ -98,6 +102,20 @@ class Search extends \cnd\core\components\ActiveRecord
         $model->title = $title;
         $model->text = $text;
         $model->save();
+        $tagsRels = $model->searchTags;
+        if(!empty($tagsRels) && is_array($tagsRels)){
+            foreach($tagsRels as $tagRel){
+                $tagRel->delete();
+            }
+        }
+        if(!empty($tags) && is_array($tags)){
+            foreach($tags as $tagId) {
+                $tag = new SearchTag();
+                $tag->tag_id = $tagId;
+                $tag->search_id = $model->id;
+                $tag->save();
+            }
+        }
         return $model;
     }
 }

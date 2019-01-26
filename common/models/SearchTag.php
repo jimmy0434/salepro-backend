@@ -31,11 +31,11 @@ class SearchTag extends \cnd\core\components\ActiveRecord
      */
     public function rules()
     {
-        return [
+        return array_merge(parent::rules(), [
             [['search_id', 'tag_id'], 'integer'],
             [['tag_id'], 'exist', 'skipOnError' => true, 'targetClass' => Tag::className(), 'targetAttribute' => ['tag_id' => 'id']],
             [['search_id'], 'exist', 'skipOnError' => true, 'targetClass' => Search::className(), 'targetAttribute' => ['search_id' => 'id']],
-        ];
+        ]);
     }
 
     /**
