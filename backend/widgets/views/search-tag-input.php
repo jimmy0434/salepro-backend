@@ -28,13 +28,16 @@ $form = $context->form;
 
 $tagSearchUrl = Url::to(['/search/find-tags']);
 $tagAddUrl = Url::to(['/search/add-tag']);
-$tags = ArrayHelper::map($model->search->tags, 'id', function ($data) use($model) {
-    $model->tags[] = $data->id;
-    return [
-        'id' => $data->id,
-        'text' => $data->name,
-    ];
-});
+$tags = [];
+if($model->search) {
+    $tags = ArrayHelper::map($model->search->tags, 'id', function ($data) use ($model) {
+        $model->tags[] = $data->id;
+        return [
+            'id' => $data->id,
+            'text' => $data->name,
+        ];
+    });
+}
 $tags = array_values($tags);
 $tagsList = Json::encode($tags);
 $tagsOptions = <<< JS

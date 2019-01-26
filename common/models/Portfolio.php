@@ -47,6 +47,8 @@ class Portfolio extends \cnd\core\components\ActiveRecord
 
     public $tags = [];
 
+    public $imageFactory;
+
     /**
      * {@inheritdoc}
      */
@@ -63,7 +65,7 @@ class Portfolio extends \cnd\core\components\ActiveRecord
         return array_merge(parent::rules(), [
             [['name', 'description'], 'string'],
             [['uid'], 'unique'],
-            [['tags'],'safe'],
+            [['tags'], 'safe'],
         ]);
     }
 
@@ -209,5 +211,32 @@ class Portfolio extends \cnd\core\components\ActiveRecord
             }
         }
         parent::afterSave($insert, $changedAttributes);
+    }
+
+    public function afterFind()
+    {
+        parent::afterFind();
+        if (is_string($this->image) && Yii::$app->helper->isJson($this->image)) {
+            $this->imageFactory = \Yii::createObject([
+                'class' => 'cnd\filemanager\components\FileOutput',
+                'data' => $this->image,
+            ]);
+        } else {
+            $this->imageFactory = \Yii::createObject([
+                'class' => 'cnd\filemanager\components\FileOutput',
+                'data' => Yii::$app->image->defaultUser,
+            ]);
+        }
+    }
+
+    public function toArray(array $fields = [], array $expand = [], $recursive = true)
+    {
+        $data = parent::toArray($fields, $expand, $recursive);
+        $data['image'] = $this->imageFactory->url;
+        $data['brochure'] = $this->brochure;
+        $data['presentation'] = $this->presentation;
+        $data['video'] = $this->video;
+        unset($data['brochure_id'],$data['presentation_id'],$data['video_id'],$data['search_id'],$data['target']);
+        return $data;
     }
 }

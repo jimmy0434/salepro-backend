@@ -20,7 +20,6 @@ return [
         'cnd\admin\modules\api\Bootstrap',
         'cnd\notification\modules\api\Bootstrap',
         'cnd\notification\Bootstrap',
-        'cnd\cms\modules\api\Bootstrap',
         'restful\components\Bootstrap',
     ],
     'modules' => [
@@ -38,9 +37,6 @@ return [
         ],
         'notification' => [
             'class' => 'cnd\notification\modules\api\Module',
-        ],
-        'cms' => [
-            'class' => 'cnd\cms\modules\api\Module',
         ],
     ],
     'components' => [
