@@ -87,6 +87,11 @@ class Corporate extends \cnd\core\components\ActiveRecord
         return $this->hasMany(CorporateSector::className(), ['corporate_id' => 'id']);
     }
 
+    public function getSectors()
+    {
+        return $this->hasMany(Sector::className(), ['id' => 'sector_id'])->via('corporateSectors');
+    }
+
     /**
      * {@inheritdoc}
      * @return CorporateQuery the active query used by this AR class.

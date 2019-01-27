@@ -31,11 +31,11 @@ class CorporateSector extends \cnd\core\components\ActiveRecord
      */
     public function rules()
     {
-        return [
+        return array_merge(parent::rules(), [
             [['corporate_id', 'sector_id'], 'integer'],
             [['corporate_id'], 'exist', 'skipOnError' => true, 'targetClass' => Corporate::className(), 'targetAttribute' => ['corporate_id' => 'id']],
             [['sector_id'], 'exist', 'skipOnError' => true, 'targetClass' => Sector::className(), 'targetAttribute' => ['sector_id' => 'id']],
-        ];
+        ]);
     }
 
     /**

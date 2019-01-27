@@ -14,6 +14,13 @@ namespace restful\controllers;
 use cnd\core\api\SController;
 use common\models\File;
 use common\models\Portfolio;
+use common\models\PortfolioQuery;
+use common\models\Product;
+use common\models\ProductQuery;
+use common\models\ProductSector;
+use common\models\ProductSectorQuery;
+use common\models\Sector;
+use common\models\SectorQuery;
 
 class PortfolioController extends SController
 {
@@ -85,13 +92,83 @@ class PortfolioController extends SController
         return ['portfolio' => $model];
     }
 
-    public function actionSectorsProducts($uid)
+    protected function products($uid, $relationModel, $relationName, $targetModel, $targetName)
     {
-
+        $query = Portfolio::find();
+        $query->from(['portfolioPrimary' => Portfolio::tableName()]);
+        $query->where(['portfolioPrimary.target' => Portfolio::TARGET_PRODUCT]);
+        $query->joinWith([
+            'product' => function ($query) use ($uid, $relationModel, $relationName, $targetModel, $targetName) {
+                /**
+                 * @var $query ProductQuery
+                 */
+                $query->from(['product' => Product::tableName()]);
+                $query->joinWith([
+                    $relationName => function ($query) use ($uid, $relationModel, $relationName, $targetModel, $targetName) {
+                        /**
+                         * @var $query ProductSectorQuery
+                         */
+                        $query->from([$relationName => $relationModel::tableName()]);
+                        $query->joinWith([
+                            $targetName => function ($query) use ($uid, $targetModel, $targetName) {
+                                /**
+                                 * @var $query SectorQuery
+                                 */
+                                $query->from([$targetName => $targetModel::tableName()]);
+                                $query->joinWith([
+                                    'portfolio' => function ($query) use ($uid) {
+                                        /**
+                                         * @var $query PortfolioQuery
+                                         */
+                                        $query->from(['portfolio' => Portfolio::tableName()]);
+                                        $query->where(['portfolio.uid' => $uid]);
+                                    }
+                                ]);
+                            },
+                        ]);
+                    },
+                ]);
+            },
+        ]);
+        $products = $query->all();
+        return ['products' => $products, 'query' => \Yii::$app->helper->sql($query)];
     }
 
+    /**
+     * @SWG\Get(
+     *     path="/sectors/{uid}/products",
+     *     tags={"Portfolio"},
+     *     summary="Retrieves all products of sector",
+     *     @SWG\Response(
+     *         response = 200,
+     *         description = "Portfolios response"
+     *     ),
+     *     security = {{"Bearer": {}}},
+     *     @SWG\Parameter( name="Authorization", in="header", required=true, type="string", default="Bearer TOKEN", description="Authorization" ),
+     *     @SWG\Parameter(name="uid", required=true, in="path", type="string", description="The Portfolio UID")
+     * )
+     */
+    public function actionSectorsProducts($uid)
+    {
+        return $this->products($uid, '\common\models\ProductSector', 'productSectors', '\common\models\Sector', 'sector');
+    }
+
+    /**
+     * @SWG\Get(
+     *     path="/brands/{uid}/products",
+     *     tags={"Portfolio"},
+     *     summary="Retrieves all products of brand",
+     *     @SWG\Response(
+     *         response = 200,
+     *         description = "Portfolios response"
+     *     ),
+     *     security = {{"Bearer": {}}},
+     *     @SWG\Parameter( name="Authorization", in="header", required=true, type="string", default="Bearer TOKEN", description="Authorization" ),
+     *     @SWG\Parameter(name="uid", required=true, in="path", type="string", description="The Portfolio UID")
+     * )
+     */
     public function actionBrandsProducts($uid)
     {
-
+        return $this->products($uid, '\common\models\ProductBrand', 'productBrands', '\common\models\Brand', 'brand');
     }
 }

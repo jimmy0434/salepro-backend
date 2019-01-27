@@ -85,7 +85,7 @@ $form = ActiveForm::begin(['id' => Yii::$app->controller->id . '-form']);
                 <div class="panel-heading"><?= 'Relations' ?></div>
                 <div class="panel-body">
                     <?php
-                    if (in_array($context->target, [Portfolio::TARGET_BRAND, Portfolio::TARGET_PRODUCT])) {
+                    if (in_array($context->target, [Portfolio::TARGET_BRAND, Portfolio::TARGET_PRODUCT, Portfolio::TARGET_CORPORATE])) {
                         $sectorsWidget = AutoCompleteInput::widget([
                             'model' => $model,
                             'form' => $form,
@@ -118,7 +118,9 @@ $form = ActiveForm::begin(['id' => Yii::$app->controller->id . '-form']);
                             'data' => $model->item->products,
                         ]);
                     }
-                    if ($context->target == Portfolio::TARGET_SECTOR) {
+                    if ($context->target == Portfolio::TARGET_CORPORATE) {
+                        echo $sectorsWidget;
+                    } else if ($context->target == Portfolio::TARGET_SECTOR) {
                         echo $brandsWidget;
                         echo $productsWidget;
                     } else if ($context->target == Portfolio::TARGET_BRAND) {

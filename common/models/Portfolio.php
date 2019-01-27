@@ -194,6 +194,10 @@ class Portfolio extends \cnd\core\components\ActiveRecord
         switch ($this->target) {
             case static::TARGET_CORPORATE:
                 Corporate::relateToPortfolio($this->id);
+                $item = $this->item;
+                if ($item) {
+                    $this->assignItems($this->sectorsIds, '\common\models\CorporateSector', 'sector_id', 'corporate_id', $item->id);
+                }
                 break;
             case static::TARGET_BRAND:
                 Brand::relateToPortfolio($this->id);
