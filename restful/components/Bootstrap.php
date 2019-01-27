@@ -28,6 +28,8 @@ class Bootstrap implements BootstrapInterface
         UrlRule::register('get','/ping','/public/ping');
         UrlRule::register('get','/swagger/docs','/swagger/docs');
         UrlRule::register('get','/portfolios','/portfolio/list');
+        UrlRule::register('get','/portfolios/<uid:.+>','/portfolio/one');
+        UrlRule::register('get','/search','/search/find');
         UrlRule::register('get','/files/<id:\d+>/download/<version:\d+>/<order:\d+>','/file/download');
         UrlRule::register('get','/forms/<id:\d+>','/form/one');
         UrlRule::register('get','/forms/<id:\d+>/crud','/form/crud');

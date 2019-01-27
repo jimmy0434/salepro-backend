@@ -34,7 +34,7 @@ class Search extends \cnd\core\components\ActiveRecord
      */
     public function rules()
     {
-        return array_merge(parent::rules(),[
+        return array_merge(parent::rules(), [
             [['text'], 'string'],
             [['title'], 'string', 'max' => 255],
         ]);
@@ -79,8 +79,9 @@ class Search extends \cnd\core\components\ActiveRecord
         return $this->hasMany(SearchTag::className(), ['search_id' => 'id']);
     }
 
-    public function getTags(){
-        return $this->hasMany(Tag::className(),['id'=>'tag_id'])->via('searchTags');
+    public function getTags()
+    {
+        return $this->hasMany(Tag::className(), ['id' => 'tag_id'])->via('searchTags');
     }
 
     /**
@@ -103,13 +104,13 @@ class Search extends \cnd\core\components\ActiveRecord
         $model->text = $text;
         $model->save();
         $tagsRels = $model->searchTags;
-        if(!empty($tagsRels) && is_array($tagsRels)){
-            foreach($tagsRels as $tagRel){
+        if (!empty($tagsRels) && is_array($tagsRels)) {
+            foreach ($tagsRels as $tagRel) {
                 $tagRel->delete();
             }
         }
-        if(!empty($tags) && is_array($tags)){
-            foreach($tags as $tagId) {
+        if (!empty($tags) && is_array($tags)) {
+            foreach ($tags as $tagId) {
                 $tag = new SearchTag();
                 $tag->tag_id = $tagId;
                 $tag->search_id = $model->id;
@@ -117,5 +118,18 @@ class Search extends \cnd\core\components\ActiveRecord
             }
         }
         return $model;
+    }
+
+    public function toArray(array $fields = [], array $expand = [], $recursive = true)
+    {
+        $list = parent::toArray($fields, $expand, $recursive);
+        $t = explode('-', $this->target);
+        if(isset($t[0])){
+            $list['target'] = [
+                'type' => $t[0],
+                'uid' => $this->target,
+            ];
+        }
+        return $list;
     }
 }

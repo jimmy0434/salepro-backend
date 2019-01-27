@@ -62,4 +62,12 @@ class PortfolioController extends SController
         ], false);
         return $query->all();
     }
+
+    public function actionOne($uid)
+    {
+        $query = Portfolio::find();
+        $query->where(['uid' => $uid]);
+        $model = $query->one();
+        return ['portfolio' => $model];
+    }
 }
