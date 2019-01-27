@@ -73,7 +73,7 @@ class PortfolioController extends SController
      *         description = "Portfolio response"
      *     ),
      *     security = {{"Bearer": {}}},
-     *     @SWG\Parameter( name="Authorization", in="header", required=true, type="string", default="Bearer TOKEN", description="Authorization" )
+     *     @SWG\Parameter( name="Authorization", in="header", required=true, type="string", default="Bearer TOKEN", description="Authorization" ),
      *     @SWG\Parameter(name="uid", required=true, in="path", type="string", description="The Portfolio UID")
      * )
      */
