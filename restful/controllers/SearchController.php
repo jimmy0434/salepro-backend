@@ -18,6 +18,23 @@ use cnd\core\api\SController;
 
 class SearchController extends SController
 {
+    /**
+     * @SWG\Get(
+     *     path="/search",
+     *     tags={"Search"},
+     *     summary="Search Contents",
+     *     @SWG\Response(
+     *         response = 200,
+     *         description = "Search results response"
+     *     ),
+     *     security = {{"Bearer": {}}},
+     *     @SWG\Parameter( name="Authorization", in="header", required=true, type="string", default="Bearer TOKEN", description="Authorization" ),
+     *     @SWG\Parameter(name="page", required=false, in="query", type="integer", description="Page start from 1", default=1),
+     *     @SWG\Parameter(name="pageSize", required=false, in="query", type="integer", description="Page Size default 25", default=25),
+     *     @SWG\Parameter(name="keyword", required=false, in="query", type="string", description="Filter By Keyword")
+     * )
+     */
+
     public function actionFind()
     {
         $keyword = Yii::$app->request->get('keyword');

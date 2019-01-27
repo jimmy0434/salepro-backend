@@ -63,6 +63,20 @@ class PortfolioController extends SController
         return $query->all();
     }
 
+    /**
+     * @SWG\Get(
+     *     path="/portfolios/{uid}",
+     *     tags={"Portfolio"},
+     *     summary="Retrieves portfolio resources",
+     *     @SWG\Response(
+     *         response = 200,
+     *         description = "Portfolio response"
+     *     ),
+     *     security = {{"Bearer": {}}},
+     *     @SWG\Parameter( name="Authorization", in="header", required=true, type="string", default="Bearer TOKEN", description="Authorization" )
+     *     @SWG\Parameter(name="uid", required=true, in="path", type="string", description="The Portfolio UID")
+     * )
+     */
     public function actionOne($uid)
     {
         $query = Portfolio::find();
