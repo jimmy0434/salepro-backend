@@ -81,4 +81,76 @@ class PortfolioController extends SController
         Log::trace("Open portfolio data form");
         return $this->render('form', ['model' => $model, 'isNew' => $isNew]);
     }
+
+    protected function findList($target, $q, $page = 1)
+    {
+        Yii::$app->response->format = 'json';
+        $response = [];
+        $total = Portfolio::find()->where(['target' => $target])->count();
+
+        $query = Portfolio::find()->where(['target' => $target]);
+        $query->andWhere('name like "%' . $q . '%"');
+        $query->limit(30);
+        $query->offset(($page - 1) * 30);
+        $list = $query->all();
+
+        if (!empty($list) && is_array($list)) {
+            foreach ($list as $model) {
+                $item = strtolower($model->target_label);
+                if ($model->hasProperty($item)) {
+                    $response[] = [
+                        'id' => $model->$item->id,
+                        'text' => $model->name,
+                    ];
+                }
+            }
+        }
+        return ['items' => $response, 'total_count' => $total];
+    }
+
+    protected function addItem($target)
+    {
+        Yii::$app->response->format = 'json';
+        $name = Yii::$app->request->post('name');
+        $model = new Portfolio();
+        $model->name = $name;
+        $model->target = $target;
+        if ($model->save()) {
+            $item = strtolower($model->target_label);
+            if ($model->hasProperty($item)) {
+                return ['id' => $model->$item->id];
+            }
+        }
+        return null;
+    }
+
+    public function actionFindSectors($q, $page = 1)
+    {
+        return $this->findList(Portfolio::TARGET_SECTOR, $q, $page);
+    }
+
+    public function actionFindBrands($q, $page = 1)
+    {
+        return $this->findList(Portfolio::TARGET_BRAND, $q, $page);
+    }
+
+    public function actionFindProducts($q, $page = 1)
+    {
+        return $this->findList(Portfolio::TARGET_PRODUCT, $q, $page);
+    }
+
+    public function actionAddSector()
+    {
+        return $this->addItem(Portfolio::TARGET_SECTOR);
+    }
+
+    public function actionAddBrand()
+    {
+        return $this->addItem(Portfolio::TARGET_BRAND);
+    }
+
+    public function actionAddProduct()
+    {
+        return $this->addItem(Portfolio::TARGET_PRODUCT);
+    }
 }

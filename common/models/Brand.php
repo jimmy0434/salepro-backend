@@ -79,12 +79,22 @@ class Brand extends \cnd\core\components\ActiveRecord
         return $this->hasMany(ProductBrand::className(), ['brand_id' => 'id']);
     }
 
+    public function getProducts()
+    {
+        return $this->hasMany(Product::className(), ['id' => 'product_id'])->via('productBrands');
+    }
+
     /**
      * @return \yii\db\ActiveQuery
      */
     public function getSectorBrands()
     {
         return $this->hasMany(SectorBrand::className(), ['brand_id' => 'id']);
+    }
+
+    public function getSectors()
+    {
+        return $this->hasMany(Sector::className(), ['id' => 'sector_id'])->via('sectorBrands');
     }
 
     /**

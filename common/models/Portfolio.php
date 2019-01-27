@@ -46,6 +46,9 @@ class Portfolio extends \cnd\core\components\ActiveRecord
     const TARGET_PRODUCT = 4;
 
     public $tags = [];
+    public $brandsIds = [];
+    public $sectorsIds = [];
+    public $productsIds = [];
 
     public $imageFactory;
 
@@ -65,7 +68,7 @@ class Portfolio extends \cnd\core\components\ActiveRecord
         return array_merge(parent::rules(), [
             [['name', 'description'], 'string'],
             [['uid'], 'unique'],
-            [['tags'], 'safe'],
+            [['tags', 'brandsIds', 'sectorsIds', 'productsIds'], 'safe'],
         ]);
     }
 
@@ -194,12 +197,27 @@ class Portfolio extends \cnd\core\components\ActiveRecord
                 break;
             case static::TARGET_BRAND:
                 Brand::relateToPortfolio($this->id);
+                $item = $this->item;
+                if ($item) {
+                    $this->assignItems($this->sectorsIds, '\common\models\SectorBrand', 'sector_id', 'brand_id', $item->id);
+                    $this->assignItems($this->productsIds, '\common\models\ProductBrand', 'product_id', 'brand_id', $item->id);
+                }
                 break;
             case static::TARGET_SECTOR:
                 Sector::relateToPortfolio($this->id);
+                $item = $this->item;
+                if ($item) {
+                    $this->assignItems($this->brandsIds, '\common\models\SectorBrand', 'brand_id', 'sector_id', $item->id);
+                    $this->assignItems($this->productsIds, '\common\models\ProductSector', 'product_id', 'sector_id', $item->id);
+                }
                 break;
             case static::TARGET_PRODUCT:
                 Product::relateToPortfolio($this->id);
+                $item = $this->item;
+                if ($item) {
+                    $this->assignItems($this->brandsIds, '\common\models\ProductBrand', 'brand_id', 'product_id', $item->id);
+                    $this->assignItems($this->sectorsIds, '\common\models\ProductSector', 'sector_id', 'product_id', $item->id);
+                }
                 break;
         }
         $search = Search::updateRecord($this->tags, $this->uid, $this->name, $this->description);
@@ -236,7 +254,34 @@ class Portfolio extends \cnd\core\components\ActiveRecord
         $data['brochure'] = $this->brochure;
         $data['presentation'] = $this->presentation;
         $data['video'] = $this->video;
-        unset($data['brochure_id'],$data['presentation_id'],$data['video_id'],$data['search_id'],$data['target']);
+        unset($data['brochure_id'], $data['presentation_id'], $data['video_id'], $data['search_id'], $data['target']);
         return $data;
+    }
+
+    public function getItem()
+    {
+        $item = strtolower($this->target_label);
+        if ($this->hasProperty($item)) {
+            return $this->$item;
+        }
+        return null;
+    }
+
+    protected function assignItems($items, $targetModel, $relationId, $byId, $byValue)
+    {
+        $old = $targetModel::find()->where([$byId => $byValue])->all();
+        if (!empty($old) && is_array($old)) {
+            foreach ($old as $m) {
+                $m->delete();
+            }
+        }
+        if (!empty($items) && is_array($items)) {
+            foreach ($items as $itemId) {
+                $m = new $targetModel();
+                $m->$byId = $byValue;
+                $m->$relationId = $itemId;
+                $m->save();
+            }
+        }
     }
 }

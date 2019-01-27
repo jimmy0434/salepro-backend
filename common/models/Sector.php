@@ -34,7 +34,7 @@ class Sector extends \cnd\core\components\ActiveRecord
      */
     public function rules()
     {
-        return array_merge(parent::rules(),[
+        return array_merge(parent::rules(), [
             [['portfolio_id'], 'integer'],
             [['uid'], 'string', 'max' => 255],
             [['uid'], 'unique'],
@@ -72,6 +72,11 @@ class Sector extends \cnd\core\components\ActiveRecord
         return $this->hasMany(ProductSector::className(), ['sector_id' => 'id']);
     }
 
+    public function getProducts()
+    {
+        return $this->hasMany(Product::className(), ['id' => 'product_id'])->via('productSectors');
+    }
+
     /**
      * @return \yii\db\ActiveQuery
      */
@@ -86,6 +91,11 @@ class Sector extends \cnd\core\components\ActiveRecord
     public function getSectorBrands()
     {
         return $this->hasMany(SectorBrand::className(), ['sector_id' => 'id']);
+    }
+
+    public function getBrands()
+    {
+        return $this->hasMany(Brand::className(), ['id' => 'brand_id'])->via('sectorBrands');
     }
 
     /**
@@ -105,9 +115,10 @@ class Sector extends \cnd\core\components\ActiveRecord
         return new SectorQuery(get_called_class());
     }
 
-    public static function relateToPortfolio($portfolioId) {
-        $model = static::find()->where(['portfolio_id'=>$portfolioId])->one();
-        if(!$model){
+    public static function relateToPortfolio($portfolioId)
+    {
+        $model = static::find()->where(['portfolio_id' => $portfolioId])->one();
+        if (!$model) {
             $model = new static();
             $model->uid = uniqid('sector-', true);
             $model->portfolio_id = $portfolioId;

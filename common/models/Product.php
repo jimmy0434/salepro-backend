@@ -21,6 +21,7 @@ use Yii;
  */
 class Product extends \cnd\core\components\ActiveRecord
 {
+
     /**
      * {@inheritdoc}
      */
@@ -34,7 +35,7 @@ class Product extends \cnd\core\components\ActiveRecord
      */
     public function rules()
     {
-        return array_merge(parent::rules(),[
+        return array_merge(parent::rules(), [
             [['portfolio_id'], 'integer'],
             [['uid'], 'string', 'max' => 255],
             [['uid'], 'unique'],
@@ -88,12 +89,22 @@ class Product extends \cnd\core\components\ActiveRecord
         return $this->hasMany(ProductBrand::className(), ['product_id' => 'id']);
     }
 
+    public function getBrands()
+    {
+        return $this->hasMany(Brand::className(), ['id' => 'brand_id'])->via('productBrands');
+    }
+
     /**
      * @return \yii\db\ActiveQuery
      */
     public function getProductSectors()
     {
         return $this->hasMany(ProductSector::className(), ['product_id' => 'id']);
+    }
+
+    public function getSectors()
+    {
+        return $this->hasMany(Sector::className(), ['id' => 'sector_id'])->via('productSectors');
     }
 
     /**
@@ -105,9 +116,10 @@ class Product extends \cnd\core\components\ActiveRecord
         return new ProductQuery(get_called_class());
     }
 
-    public static function relateToPortfolio($portfolioId) {
-        $model = static::find()->where(['portfolio_id'=>$portfolioId])->one();
-        if(!$model){
+    public static function relateToPortfolio($portfolioId)
+    {
+        $model = static::find()->where(['portfolio_id' => $portfolioId])->one();
+        if (!$model) {
             $model = new static();
             $model->uid = uniqid('product-', true);
             $model->portfolio_id = $portfolioId;

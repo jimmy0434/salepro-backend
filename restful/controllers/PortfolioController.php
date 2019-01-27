@@ -84,4 +84,14 @@ class PortfolioController extends SController
         $model = $query->one();
         return ['portfolio' => $model];
     }
+
+    public function actionSectorsProducts($uid)
+    {
+
+    }
+
+    public function actionBrandsProducts($uid)
+    {
+
+    }
 }
