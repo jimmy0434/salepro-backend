@@ -13,6 +13,7 @@ use cnd\grid\Attribute;
 use cnd\grid\DataView;
 use cnd\grid\DataViewLocator;
 use common\models\MarketResearch;
+use yii\helpers\ArrayHelper;
 use yii\helpers\Html;
 use yii\helpers\Url;
 use yii\web\View;
@@ -41,25 +42,34 @@ $dv = new DataView([
             },
             'filterBy' => Attribute::FILTER_NUMBER,
         ],
-        'country' => [
-            'label' => 'Country',
+        'name' => [
+            'label' => 'Name',
             'value' => function ($attribute, $data, $view) use ($dataLocator) {
                 assert($attribute instanceof Attribute);
                 assert($data instanceof MarketResearch);
                 assert($view instanceof DataViewLocator);
-                return $data->country;
+                return $data->name;
             },
-            'filterBy' => Attribute::FILTER_LIST,
-            'filterList' => Yii::$app->countries(),
         ],
-        'region' => [
-            'label' => 'Region',
+        'countries' => [
+            'label' => 'Countries',
             'value' => function ($attribute, $data, $view) use ($dataLocator) {
                 assert($attribute instanceof Attribute);
                 assert($data instanceof MarketResearch);
                 assert($view instanceof DataViewLocator);
-                return $data->region;
+                return implode('<span class="text-muted">,</span> ', ArrayHelper::map($data->countries, 'id', 'country'));
             },
+            'filterBy' => Attribute::FILTER_NONE,
+        ],
+        'regions' => [
+            'label' => 'Regions',
+            'value' => function ($attribute, $data, $view) use ($dataLocator) {
+                assert($attribute instanceof Attribute);
+                assert($data instanceof MarketResearch);
+                assert($view instanceof DataViewLocator);
+                return implode('<span class="text-muted">,</span> ', ArrayHelper::map($data->regions, 'id', 'region'));
+            },
+            'filterBy' => Attribute::FILTER_NONE,
         ],
         'year' => [
             'label' => 'Year',
@@ -79,17 +89,32 @@ $dv = new DataView([
                 return $data->source;
             },
         ],
-        'product_id' => [
-            'label' => 'Product',
+        'sector_id' => [
+            'label' => 'Sector',
             'value' => function ($attribute, $data, $view) use ($dataLocator) {
                 assert($attribute instanceof Attribute);
                 assert($data instanceof MarketResearch);
                 assert($view instanceof DataViewLocator);
-                if($data->product && $data->product->portfolio) {
-                    return $data->product->portfolio->name;
+                if ($data->sector && $data->sector->portfolio) {
+                    return $data->sector->portfolio->name;
                 }
                 return null;
             },
+        ],
+        'products' => [
+            'label' => 'Products',
+            'value' => function ($attribute, $data, $view) use ($dataLocator) {
+                assert($attribute instanceof Attribute);
+                assert($data instanceof MarketResearch);
+                assert($view instanceof DataViewLocator);
+                return implode('<span class="text-muted">,</span> ', array_filter(ArrayHelper::map($data->products, 'id', function ($row) {
+                    if ($row->portfolio) {
+                        return $row->portfolio->name;
+                    }
+                    return null;
+                })));
+            },
+            'filterBy' => Attribute::FILTER_NONE,
         ],
     ],
     'headerLinks' => [
@@ -119,14 +144,20 @@ $dv->addView('grid', [
                 'style' => 'text-align:center;white-space: nowrap;width:1%;'
             ],
         ],
-        'product_id' => [
+        'name' => [
             'sortable' => true,
         ],
-        'country' => [
+        'sector_id' => [
             'sortable' => true,
         ],
-        'region' => [
-            'sortable' => true,
+        'products' => [
+            'sortable' => false,
+        ],
+        'countries' => [
+            'sortable' => false,
+        ],
+        'regions' => [
+            'sortable' => false,
         ],
         'year' => [
             'sortable' => true,

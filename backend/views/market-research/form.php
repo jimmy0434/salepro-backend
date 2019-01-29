@@ -15,6 +15,7 @@ use cnd\form\ActiveForm;
 use common\models\MarketResearch;
 use common\models\Portfolio;
 use yii\helpers\Html;
+use yii\helpers\Json;
 use yii\web\View;
 
 $view = $this;
@@ -29,7 +30,6 @@ $isNew = $model->isNewRecord;
 $this->title = ($isNew ? 'Add New' : 'Update') . ' Market Research';
 
 $form = ActiveForm::begin(['id' => Yii::$app->controller->id . '-form']);
-
 ?>
     <div class="row">
         <div class="col-md-4">
@@ -37,11 +37,28 @@ $form = ActiveForm::begin(['id' => Yii::$app->controller->id . '-form']);
                 <div class="panel-heading">Information</div>
                 <div class="panel-body">
                     <?= $form->field($model, 'id')->hiddenInput()->label(false) ?>
-                    <?= $form->field($model, 'country')->dropDownList(Yii::$app->countries()) ?>
-                    <?= $form->field($model, 'region')->textInput() ?>
+                    <?= $form->field($model, 'sector_id')->dropDownList(Portfolio::listData(Portfolio::TARGET_SECTOR)) ?>
+                    <?= $form->field($model, 'name')->textInput() ?>
                     <?= $form->field($model, 'year')->textInput() ?>
                     <?= $form->field($model, 'source')->textInput() ?>
-                    <?= $form->field($model, 'product_id')->dropDownList(Portfolio::listData(Portfolio::TARGET_PRODUCT)) ?>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="panel panel-default">
+                <div class="panel-heading">Products</div>
+                <div class="panel-body">
+                    <?= AutoCompleteInput::widget([
+                        'model' => $model,
+                        'form' => $form,
+                        'property' => 'productsIds',
+                        'findUrl' => ['/portfolio/find-products'],
+                        'addUrl' => ['/portfolio/add-product'],
+                        'title' => 'Products',
+                        'data' => $model->products,
+                    ]) ?>
+                    <?= $form->field($model, 'countriesNames')->dropDownListAdvanced(Yii::$app->countries(), ['multiple' => true],'{plugins: [\'remove_button\']}') ?>
+                    <?= $form->field($model, 'regionsNames')->dropDownListAdvanced(Yii::$app->regions(), ['multiple' => true],'{plugins: [\'remove_button\']}') ?>
                 </div>
             </div>
         </div>
@@ -58,8 +75,6 @@ $form = ActiveForm::begin(['id' => Yii::$app->controller->id . '-form']);
                     ]) ?>
                 </div>
             </div>
-        </div>
-        <div class="col-md-4">
             <div class="panel panel-default">
                 <div class="panel-heading">Search Tags</div>
                 <div class="panel-body">

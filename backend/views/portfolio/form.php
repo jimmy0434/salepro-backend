@@ -85,7 +85,7 @@ $form = ActiveForm::begin(['id' => Yii::$app->controller->id . '-form']);
                 <div class="panel-heading"><?= 'Relations' ?></div>
                 <div class="panel-body">
                     <?php
-                    if (in_array($context->target, [Portfolio::TARGET_CORPORATE,Portfolio::TARGET_BRAND,Portfolio::TARGET_SECTOR])) {
+                    if (in_array($context->target, [Portfolio::TARGET_CORPORATE, Portfolio::TARGET_BRAND, Portfolio::TARGET_SECTOR])) {
                         echo AutoCompleteInput::widget([
                             'model' => $model,
                             'form' => $form,
@@ -93,7 +93,7 @@ $form = ActiveForm::begin(['id' => Yii::$app->controller->id . '-form']);
                             'findUrl' => ['/portfolio/find-business-unit'],
                             'addUrl' => ['/portfolio/add-business-unit'],
                             'title' => 'Business Units',
-                            'data' => $model->item->businessUnits,
+                            'data' => $model->item ? $model->item->businessUnits : [],
                         ]);
                     }
                     if (in_array($context->target, [Portfolio::TARGET_BRAND, Portfolio::TARGET_PRODUCT, Portfolio::TARGET_CORPORATE])) {
@@ -104,7 +104,7 @@ $form = ActiveForm::begin(['id' => Yii::$app->controller->id . '-form']);
                             'findUrl' => ['/portfolio/find-sectors'],
                             'addUrl' => ['/portfolio/add-sector'],
                             'title' => 'Sectors',
-                            'data' => $model->item->sectors,
+                            'data' => $model->item ? $model->item->sectors : [],
                         ]);
                     }
                     if (in_array($context->target, [Portfolio::TARGET_SECTOR, Portfolio::TARGET_PRODUCT])) {
@@ -115,7 +115,7 @@ $form = ActiveForm::begin(['id' => Yii::$app->controller->id . '-form']);
                             'findUrl' => ['/portfolio/find-brands'],
                             'addUrl' => ['/portfolio/add-brand'],
                             'title' => 'Brands',
-                            'data' => $model->item->brands,
+                            'data' => $model->item ? $model->item->brands : [],
                         ]);
                     }
                     if (in_array($context->target, [Portfolio::TARGET_SECTOR, Portfolio::TARGET_BRAND])) {
@@ -126,7 +126,7 @@ $form = ActiveForm::begin(['id' => Yii::$app->controller->id . '-form']);
                             'findUrl' => ['/portfolio/find-products'],
                             'addUrl' => ['/portfolio/add-product'],
                             'title' => 'Products',
-                            'data' => $model->item->products,
+                            'data' => $model->item ? $model->item->products : [],
                         ]);
                     }
                     echo AutoCompleteInput::widget([
@@ -136,7 +136,7 @@ $form = ActiveForm::begin(['id' => Yii::$app->controller->id . '-form']);
                         'findUrl' => ['/search/find-tags'],
                         'addUrl' => ['/search/add-tag'],
                         'title' => 'Tags',
-                        'data' => $model->search->tags,
+                        'data' => $model->search ? $model->search->tags : [],
                     ]);
                     ?>
                 </div>

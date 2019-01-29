@@ -8,11 +8,10 @@ use Yii;
  * This is the model class for table "{{%market_research}}".
  *
  * @property int $id
- * @property string $country
- * @property string $region
+ * @property string $name
  * @property string $year
  * @property string $source
- * @property int $product_id
+ * @property int $sector_id
  * @property int $file_id
  * @property int $search_id
  * @property int $created_at
@@ -20,12 +19,18 @@ use Yii;
  *
  * @property Search $search
  * @property File $file
- * @property Product $product
+ * @property Product[] $products
+ * @property MarketResearchProduct[] $marketResearchProducts
+ * @property MarketResearchCountry[] $countries
+ * @property MarketResearchRegion[] $regions
  */
 class MarketResearch extends \cnd\core\components\ActiveRecord
 {
 
     public $tags = [];
+    public $productsIds = [];
+    public $countriesNames = [];
+    public $regionsNames = [];
 
     /**
      * {@inheritdoc}
@@ -41,12 +46,11 @@ class MarketResearch extends \cnd\core\components\ActiveRecord
     public function rules()
     {
         return array_merge(parent::rules(), [
-            [['product_id', 'file_id', 'search_id'], 'integer'],
-            [['country', 'region', 'year', 'source'], 'string', 'max' => 255],
-            //[['search_id'], 'exist', 'skipOnError' => true, 'targetClass' => Search::className(), 'targetAttribute' => ['search_id' => 'id']],
+            [['sector_id', 'file_id', 'search_id'], 'integer'],
+            [['name', 'year', 'source'], 'string', 'max' => 255],
             [['file_id'], 'exist', 'skipOnError' => true, 'targetClass' => File::className(), 'targetAttribute' => ['file_id' => 'id']],
-            [['product_id'], 'exist', 'skipOnError' => true, 'targetClass' => Product::className(), 'targetAttribute' => ['product_id' => 'id']],
-            [['tags'], 'safe'],
+            [['sector_id'], 'exist', 'skipOnError' => true, 'targetClass' => Sector::className(), 'targetAttribute' => ['sector_id' => 'id']],
+            [['tags', 'productsIds', 'countriesNames', 'regionsNames'], 'safe'],
         ]);
     }
 
@@ -61,11 +65,13 @@ class MarketResearch extends \cnd\core\components\ActiveRecord
             'region' => 'Region',
             'year' => 'Year',
             'source' => 'Source',
-            'product_id' => 'Product ID',
-            'file_id' => 'File ID',
-            'search_id' => 'Search ID',
+            'sector_id' => 'Sector',
+            'file_id' => 'Attachment File',
+            'search_id' => 'Search',
             'created_at' => 'Created At',
             'updated_at' => 'Updated At',
+            'countriesNames' => 'Countries',
+            'regionsNames' => 'Regions',
         ];
     }
 
@@ -88,9 +94,35 @@ class MarketResearch extends \cnd\core\components\ActiveRecord
     /**
      * @return \yii\db\ActiveQuery
      */
-    public function getProduct()
+    public function getSector()
     {
-        return $this->hasOne(Product::className(), ['id' => 'product_id']);
+        return $this->hasOne(Sector::className(), ['id' => 'sector_id']);
+    }
+
+    /**
+     * @return \yii\db\ActiveQuery
+     */
+    public function getMarketResearchProducts()
+    {
+        return $this->hasMany(MarketResearchProduct::className(), ['market_research_id' => 'id']);
+    }
+
+    /**
+     * @return \yii\db\ActiveQuery
+     */
+    public function getProducts()
+    {
+        return $this->hasMany(Product::className(), ['id' => 'product_id'])->via('marketResearchProducts');
+    }
+
+    public function getCountries()
+    {
+        return $this->hasMany(MarketResearchCountry::className(), ['market_research_id' => 'id']);
+    }
+
+    public function getRegions()
+    {
+        return $this->hasMany(MarketResearchRegion::className(), ['market_research_id' => 'id']);
     }
 
     /**
@@ -102,10 +134,30 @@ class MarketResearch extends \cnd\core\components\ActiveRecord
         return new MarketResearchQuery(get_called_class());
     }
 
+    public function afterFind()
+    {
+        parent::afterFind();
+        $countries = $this->countries;
+        if(!empty($countries) && is_array($countries)){
+            foreach($countries as $model){
+                $this->countriesNames[] = $model->country;
+            }
+        }
+        $regions = $this->regions;
+        if(!empty($regions) && is_array($regions)){
+            foreach($regions as $model){
+                $this->regionsNames[] = $model->region;
+            }
+        }
+    }
+
     public function afterSave($insert, $changedAttributes)
     {
-        if($this->product && $this->product->portfolio) {
-            $search = Search::updateRecord($this->tags, 'market-' . $this->id, $this->product->portfolio->name, $this->product->portfolio->description);
+        $this->assignItems($this->productsIds, '\common\models\MarketResearchProduct', 'product_id', 'market_research_id', $this->id);
+        $this->assignItems($this->countriesNames, '\common\models\MarketResearchCountry', 'country', 'market_research_id', $this->id);
+        $this->assignItems($this->regionsNames, '\common\models\MarketResearchRegion', 'region', 'market_research_id', $this->id);
+        if ($this->sector && $this->sector->portfolio) {
+            $search = Search::updateRecord($this->tags, 'market-' . $this->id, $this->name);
             if (!$this->search_id) {
                 try {
                     Yii::$app->db->createCommand()->update(static::tableName(), ['search_id' => $search->id], ['id' => $this->id])->execute();
@@ -116,4 +168,24 @@ class MarketResearch extends \cnd\core\components\ActiveRecord
         }
         parent::afterSave($insert, $changedAttributes);
     }
+
+    protected function assignItems($items, $targetModel, $relationId, $byId, $byValue)
+    {
+        $old = $targetModel::find()->where([$byId => $byValue])->all();
+        if (!empty($old) && is_array($old)) {
+            foreach ($old as $m) {
+                $m->delete();
+            }
+        }
+        if (!empty($items) && is_array($items)) {
+            foreach ($items as $itemId) {
+                $m = new $targetModel();
+                $m->$byId = $byValue;
+                $m->$relationId = $itemId;
+                $m->save();
+            }
+        }
+    }
+
+
 }

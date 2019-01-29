@@ -266,4 +266,20 @@ class Application extends \yii\web\Application
         $list["Zimbabwe"] = "Zimbabwe";
         return $list;
     }
+
+    static private $regionsList = null;
+    public function regions()
+    {
+        if(!static::$regionsList) {
+            $default = 'Middle East,Asia,Europe,Africa,North America,South Americ';
+            $regions = explode(',',\cnd\admin\models\activerecords\Setting::get('regions', $default));
+            static::$regionsList = [];
+            if(!empty($regions) && is_array($regions)){
+                foreach($regions as $region){
+                    static::$regionsList[$region] = $region;
+                }
+            }
+        }
+        return static::$regionsList;
+    }
 }

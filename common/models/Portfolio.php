@@ -192,53 +192,53 @@ class Portfolio extends \cnd\core\components\ActiveRecord
     }
 
     public function afterSave($insert, $changedAttributes)
-    {
-        switch ($this->target) {
-            case static::TARGET_CORPORATE:
-                Corporate::relateToPortfolio($this->id);
-                $item = $this->item;
-                if ($item) {
-                    $this->assignItems($this->sectorsIds, '\common\models\CorporateSector', 'sector_id', 'corporate_id', $item->id);
-                    $this->assignItems($this->businessUnitIds, '\common\models\CorporateBusinessUnit', 'business_unit_id', 'corporate_id', $item->id);
-                }
-                break;
-            case static::TARGET_BRAND:
-                Brand::relateToPortfolio($this->id);
-                $item = $this->item;
-                if ($item) {
-                    $this->assignItems($this->sectorsIds, '\common\models\SectorBrand', 'sector_id', 'brand_id', $item->id);
-                    $this->assignItems($this->productsIds, '\common\models\ProductBrand', 'product_id', 'brand_id', $item->id);
-                    $this->assignItems($this->businessUnitIds, '\common\models\BrandBusinessUnit', 'business_unit_id', 'brand_id', $item->id);
-                }
-                break;
-            case static::TARGET_SECTOR:
-                Sector::relateToPortfolio($this->id);
-                $item = $this->item;
-                if ($item) {
-                    $this->assignItems($this->brandsIds, '\common\models\SectorBrand', 'brand_id', 'sector_id', $item->id);
-                    $this->assignItems($this->productsIds, '\common\models\ProductSector', 'product_id', 'sector_id', $item->id);
-                    $this->assignItems($this->businessUnitIds, '\common\models\SectorBusinessUnit', 'business_unit_id', 'sector_id', $item->id);
-                }
-                break;
-            case static::TARGET_PRODUCT:
-                Product::relateToPortfolio($this->id);
-                $item = $this->item;
-                if ($item) {
-                    $this->assignItems($this->brandsIds, '\common\models\ProductBrand', 'brand_id', 'product_id', $item->id);
-                    $this->assignItems($this->sectorsIds, '\common\models\ProductSector', 'sector_id', 'product_id', $item->id);
-                }
-                break;
-        }
-        $search = Search::updateRecord($this->tags, $this->uid, $this->name, $this->description);
-        if (!$this->search_id) {
-            try {
-                Yii::$app->db->createCommand()->update(static::tableName(), ['search_id' => $search->id], ['id' => $this->id])->execute();
-            } catch (\Throwable $t) {
-            } catch (\Exception $e) {
+{
+    switch ($this->target) {
+        case static::TARGET_CORPORATE:
+            Corporate::relateToPortfolio($this->id);
+            $item = $this->item;
+            if ($item) {
+                $this->assignItems($this->sectorsIds, '\common\models\CorporateSector', 'sector_id', 'corporate_id', $item->id);
+                $this->assignItems($this->businessUnitIds, '\common\models\CorporateBusinessUnit', 'business_unit_id', 'corporate_id', $item->id);
             }
-        }
-        parent::afterSave($insert, $changedAttributes);
+            break;
+        case static::TARGET_BRAND:
+            Brand::relateToPortfolio($this->id);
+            $item = $this->item;
+            if ($item) {
+                $this->assignItems($this->sectorsIds, '\common\models\SectorBrand', 'sector_id', 'brand_id', $item->id);
+                $this->assignItems($this->productsIds, '\common\models\ProductBrand', 'product_id', 'brand_id', $item->id);
+                $this->assignItems($this->businessUnitIds, '\common\models\BrandBusinessUnit', 'business_unit_id', 'brand_id', $item->id);
+            }
+            break;
+        case static::TARGET_SECTOR:
+            Sector::relateToPortfolio($this->id);
+            $item = $this->item;
+            if ($item) {
+                $this->assignItems($this->brandsIds, '\common\models\SectorBrand', 'brand_id', 'sector_id', $item->id);
+                $this->assignItems($this->productsIds, '\common\models\ProductSector', 'product_id', 'sector_id', $item->id);
+                $this->assignItems($this->businessUnitIds, '\common\models\SectorBusinessUnit', 'business_unit_id', 'sector_id', $item->id);
+            }
+            break;
+        case static::TARGET_PRODUCT:
+            Product::relateToPortfolio($this->id);
+            $item = $this->item;
+            if ($item) {
+                $this->assignItems($this->brandsIds, '\common\models\ProductBrand', 'brand_id', 'product_id', $item->id);
+                $this->assignItems($this->sectorsIds, '\common\models\ProductSector', 'sector_id', 'product_id', $item->id);
+            }
+            break;
     }
+    $search = Search::updateRecord($this->tags, $this->uid, $this->name, $this->description);
+    if (!$this->search_id) {
+        try {
+            Yii::$app->db->createCommand()->update(static::tableName(), ['search_id' => $search->id], ['id' => $this->id])->execute();
+        } catch (\Throwable $t) {
+        } catch (\Exception $e) {
+        }
+    }
+    parent::afterSave($insert, $changedAttributes);
+}
 
     public function afterFind()
     {
