@@ -18,24 +18,27 @@ use yii\web\Request;
 
 class Bootstrap implements BootstrapInterface
 {
-    public function bootstrap($app) {
+    public function bootstrap($app)
+    {
         /**
          * @var $app Application
          */
 
         $baseUrl = str_replace('/restful/web', '/api', (new Request)->getBaseUrl());
 
-        UrlRule::register('get','/ping','/public/ping');
-        UrlRule::register('get','/swagger/docs','/swagger/docs');
-        UrlRule::register('get','/portfolios','/portfolio/list');
-        UrlRule::register('get','/portfolios/<uid:.+>','/portfolio/one');
-        UrlRule::register('get','/sectors/<uid:.+>/products','/portfolio/sectors-products');
-        UrlRule::register('get','/brands/<uid:.+>/products','/portfolio/brands-products');
-        UrlRule::register('get','/search','/search/find');
-        UrlRule::register('get','/files/<id:\d+>/download/<version:\d+>/<order:\d+>','/file/download');
-        UrlRule::register('get','/forms/<id:\d+>','/form/one');
-        UrlRule::register('get','/forms/<id:\d+>/crud','/form/crud');
-        UrlRule::register('post,put','/forms/<id:\d+>','/form/save');
+        UrlRule::register('get', '/ping', '/public/ping');
+        UrlRule::register('get', '/swagger/docs', '/swagger/docs');
+        UrlRule::register('get', '/portfolios', '/portfolio/list');
+        UrlRule::register('get', '/portfolios/<uid:.+>', '/portfolio/one');
+        UrlRule::register('get', '/sectors/<uid:.+>/products', '/portfolio/sectors-products');
+        UrlRule::register('get', '/sectors/<sectorUid:.+>/market-research', '/market-research/list');
+        UrlRule::register('get', '/brands/<uid:.+>/products', '/portfolio/brands-products');
+        UrlRule::register('get', '/search', '/search/find');
+        UrlRule::register('get', '/files/<id:\d+>/download/<version:\d+>/<order:\d+>', '/file/download');
+        UrlRule::register('get', '/forms/<id:\d+>', '/form/one');
+        UrlRule::register('get', '/forms/<id:\d+>/crud', '/form/crud');
+        UrlRule::register('post,put', '/forms/<id:\d+>', '/form/save');
+        UrlRule::register('get', '/market-research', '/market-research/list');
 
         Yii::$app->setComponents(
             [
@@ -91,103 +94,104 @@ class Bootstrap implements BootstrapInterface
             ]
         );
 
-        $app->user->on(\yii\web\User::EVENT_BEFORE_LOGIN,['common\models\User', 'beforeLogin']);
+        $app->user->on(\yii\web\User::EVENT_BEFORE_LOGIN, ['common\models\User', 'beforeLogin']);
 
     }
 
-    public function filterResponseData($data){
-        if(isset($data['articles']) && !empty($data['articles']) && is_array($data['articles'])){
-            foreach($data['articles'] as &$article){
-                if(array_key_exists('privilege', $article)){
+    public function filterResponseData($data)
+    {
+        if (isset($data['articles']) && !empty($data['articles']) && is_array($data['articles'])) {
+            foreach ($data['articles'] as &$article) {
+                if (array_key_exists('privilege', $article)) {
                     unset($article['privilege']);
                 }
-                if(array_key_exists('original_id', $article)){
+                if (array_key_exists('original_id', $article)) {
                     unset($article['original_id']);
                 }
-                if(array_key_exists('language', $article)){
+                if (array_key_exists('language', $article)) {
                     unset($article['language']);
                 }
-                if(array_key_exists('config', $article)){
+                if (array_key_exists('config', $article)) {
                     unset($article['config']);
                 }
-                if(array_key_exists('setting', $article)){
+                if (array_key_exists('setting', $article)) {
                     unset($article['setting']);
                 }
-                if(array_key_exists('section', $article) && $article['section']){
-                    list($targetName, $targetId) = explode('-',$article['section']);
-                    if($targetName){
+                if (array_key_exists('section', $article) && $article['section']) {
+                    list($targetName, $targetId) = explode('-', $article['section']);
+                    if ($targetName) {
                         $article['section'] = $targetName;
                     }
                 }
-                if(array_key_exists('gallery', $article)){
+                if (array_key_exists('gallery', $article)) {
                     unset($article['gallery']);
                 }
-                if(array_key_exists('owner', $article)){
+                if (array_key_exists('owner', $article)) {
                     unset($article['owner']);
                 }
-                if(array_key_exists('cover', $article)){
+                if (array_key_exists('cover', $article)) {
                     $article['cover'] .= '?t=' . $article['updated_at'];
                 }
             }
         }
-        if(isset($data['categories']) && !empty($data['categories']) && is_array($data['categories'])){
-            foreach($data['categories'] as &$category){
-                if(is_object($category)){
+        if (isset($data['categories']) && !empty($data['categories']) && is_array($data['categories'])) {
+            foreach ($data['categories'] as &$category) {
+                if (is_object($category)) {
                     $category = $category->toArray();
                 }
-                if(array_key_exists('original_id', $category)){
+                if (array_key_exists('original_id', $category)) {
                     unset($category['original_id']);
                 }
-                if(array_key_exists('parent_id', $category)){
+                if (array_key_exists('parent_id', $category)) {
                     unset($category['parent_id']);
                 }
-                if(array_key_exists('language', $category)){
+                if (array_key_exists('language', $category)) {
                     unset($category['language']);
                 }
-                if(array_key_exists('extra', $category)){
+                if (array_key_exists('extra', $category)) {
                     unset($category['extra']);
                 }
-                if(array_key_exists('path', $category)){
+                if (array_key_exists('path', $category)) {
                     unset($category['path']);
                 }
-                if(array_key_exists('config', $category)){
+                if (array_key_exists('config', $category)) {
                     unset($category['config']);
                 }
-                if(array_key_exists('setting', $category)){
+                if (array_key_exists('setting', $category)) {
                     unset($category['setting']);
                 }
             }
         }
-        if(isset($data['user'])){
-            if(is_object($data['user'])){
+        if (isset($data['user'])) {
+            if (is_object($data['user'])) {
                 $data['user'] = $data['user']->toArray();
             }
             $user = &$data['user'];
-            if(array_key_exists('username', $data['user'])){
+            if (array_key_exists('username', $data['user'])) {
                 unset($data['user']['username']);
             }
-            if(array_key_exists('password_reset_token', $user)){
+            if (array_key_exists('password_reset_token', $user)) {
                 unset($user['password_reset_token']);
             }
-            if(array_key_exists('email', $data['user'])){
+            if (array_key_exists('email', $data['user'])) {
                 unset($data['user']['email']);
             }
-            if(array_key_exists('role_id', $data['user'])){
+            if (array_key_exists('role_id', $data['user'])) {
                 unset($data['user']['role_id']);
             }
-            if(array_key_exists('register', $data['user'])){
+            if (array_key_exists('register', $data['user'])) {
                 unset($data['user']['register']);
             }
-            if(array_key_exists('socialid', $data['user'])){
+            if (array_key_exists('socialid', $data['user'])) {
                 unset($data['user']['socialid']);
             }
-            if(array_key_exists('phone', $data['user'])){
+            if (array_key_exists('phone', $data['user'])) {
                 unset($data['user']['phone']);
             }
-            if(array_key_exists('firebase_id', $data['user'])){
+            if (array_key_exists('firebase_id', $data['user'])) {
                 unset($data['user']['firebase_id']);
             }
-            if(array_key_exists('social_data', $data['user'])){
+            if (array_key_exists('social_data', $data['user'])) {
                 unset($data['user']['social_data']);
             }
         }
