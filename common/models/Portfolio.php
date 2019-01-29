@@ -3,6 +3,7 @@
 namespace common\models;
 
 use Yii;
+use yii\helpers\ArrayHelper;
 use yii\helpers\Json;
 
 /**
@@ -291,5 +292,12 @@ class Portfolio extends \cnd\core\components\ActiveRecord
                 $m->save();
             }
         }
+    }
+
+    public static function listData($target)
+    {
+        return ArrayHelper::map(static::find()->where(['target' => $target])->orderBy(['name' => SORT_ASC])->all(), function($row){
+            return $row->item->id;
+        }, 'name');
     }
 }

@@ -24,6 +24,9 @@ use Yii;
  */
 class MarketResearch extends \cnd\core\components\ActiveRecord
 {
+
+    public $tags = [];
+
     /**
      * {@inheritdoc}
      */
@@ -37,13 +40,14 @@ class MarketResearch extends \cnd\core\components\ActiveRecord
      */
     public function rules()
     {
-        return [
+        return array_merge(parent::rules(), [
             [['product_id', 'file_id', 'search_id'], 'integer'],
             [['country', 'region', 'year', 'source'], 'string', 'max' => 255],
-            [['search_id'], 'exist', 'skipOnError' => true, 'targetClass' => Search::className(), 'targetAttribute' => ['search_id' => 'id']],
+            //[['search_id'], 'exist', 'skipOnError' => true, 'targetClass' => Search::className(), 'targetAttribute' => ['search_id' => 'id']],
             [['file_id'], 'exist', 'skipOnError' => true, 'targetClass' => File::className(), 'targetAttribute' => ['file_id' => 'id']],
             [['product_id'], 'exist', 'skipOnError' => true, 'targetClass' => Product::className(), 'targetAttribute' => ['product_id' => 'id']],
-        ];
+            [['tags'], 'safe'],
+        ]);
     }
 
     /**
@@ -96,5 +100,20 @@ class MarketResearch extends \cnd\core\components\ActiveRecord
     public static function find()
     {
         return new MarketResearchQuery(get_called_class());
+    }
+
+    public function afterSave($insert, $changedAttributes)
+    {
+        if($this->product && $this->product->portfolio) {
+            $search = Search::updateRecord($this->tags, 'market-' . $this->id, $this->product->portfolio->name, $this->product->portfolio->description);
+            if (!$this->search_id) {
+                try {
+                    Yii::$app->db->createCommand()->update(static::tableName(), ['search_id' => $search->id], ['id' => $this->id])->execute();
+                } catch (\Throwable $t) {
+                } catch (\Exception $e) {
+                }
+            }
+        }
+        parent::afterSave($insert, $changedAttributes);
     }
 }
