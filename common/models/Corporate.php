@@ -15,6 +15,7 @@ use Yii;
  *
  * @property Portfolio $portfolio
  * @property CorporateBusinessUnit[] $corporateBusinessUnits
+ * @property BusinessUnit[] $businessUnits
  * @property CorporateFile[] $corporateFiles
  * @property CorporateSector[] $corporateSectors
  */
@@ -69,6 +70,11 @@ class Corporate extends \cnd\core\components\ActiveRecord
     public function getCorporateBusinessUnits()
     {
         return $this->hasMany(CorporateBusinessUnit::className(), ['corporate_id' => 'id']);
+    }
+
+    public function getBusinessUnits()
+    {
+        return $this->hasMany(BusinessUnit::className(), ['id' => 'business_unit_id'])->via('corporateBusinessUnits');
     }
 
     /**

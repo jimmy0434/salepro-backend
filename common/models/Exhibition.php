@@ -57,7 +57,7 @@ class Exhibition extends \cnd\core\components\ActiveRecord
             'region' => 'Region',
             'year' => 'Year',
             'file_id' => 'File ID',
-            'business_unit_id' => 'Business Unit ID',
+            'business_unit_id' => 'Business Unit',
             'created_at' => 'Created At',
             'updated_at' => 'Updated At',
         ];

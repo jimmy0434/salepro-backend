@@ -12,6 +12,7 @@ namespace backend\controllers;
 
 use cnd\admin\models\activerecords\Log;
 use cnd\grid\DataLocator;
+use common\models\BusinessUnit;
 use common\models\Portfolio;
 use common\models\PortfolioQuery;
 use Yii;
@@ -152,5 +153,41 @@ class PortfolioController extends SController
     public function actionAddProduct()
     {
         return $this->addItem(Portfolio::TARGET_PRODUCT);
+    }
+
+    public function actionFindBusinessUnit($q, $page = 1)
+    {
+        Yii::$app->response->format = 'json';
+        $response = [];
+        $total = BusinessUnit::find()->count();
+
+        $query = BusinessUnit::find();
+        $query->andWhere('name like "%' . $q . '%"');
+        $query->limit(30);
+        $query->offset(($page - 1) * 30);
+        $list = $query->all();
+
+        if (!empty($list) && is_array($list)) {
+            foreach ($list as $model) {
+                $response[] = [
+                    'id' => $model->id,
+                    'text' => $model->name,
+                ];
+            }
+        }
+        return ['items' => $response, 'total_count' => $total];
+    }
+
+    public function actionAddBusinessUnit()
+    {
+        Yii::$app->response->format = 'json';
+        $name = Yii::$app->request->post('name');
+        $model = new BusinessUnit();
+        $model->name = $name;
+        $model->type = BusinessUnit::TYPE_MANUFACTURING_PLANT;
+        if ($model->save()) {
+            return ['id' => $model->id];
+        }
+        return null;
     }
 }

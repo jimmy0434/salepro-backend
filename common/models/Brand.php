@@ -15,6 +15,7 @@ use Yii;
  *
  * @property Portfolio $portfolio
  * @property BrandBusinessUnit[] $brandBusinessUnits
+ * @property BusinessUnit[] $businessUnits
  * @property ProductBrand[] $productBrands
  * @property SectorBrand[] $sectorBrands
  */
@@ -69,6 +70,11 @@ class Brand extends \cnd\core\components\ActiveRecord
     public function getBrandBusinessUnits()
     {
         return $this->hasMany(BrandBusinessUnit::className(), ['brand_id' => 'id']);
+    }
+
+    public function getBusinessUnits()
+    {
+        return $this->hasMany(BusinessUnit::className(), ['id' => 'business_unit_id'])->via('brandBusinessUnits');
     }
 
     /**

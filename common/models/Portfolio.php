@@ -49,6 +49,7 @@ class Portfolio extends \cnd\core\components\ActiveRecord
     public $brandsIds = [];
     public $sectorsIds = [];
     public $productsIds = [];
+    public $businessUnitIds = [];
 
     public $imageFactory;
 
@@ -68,7 +69,7 @@ class Portfolio extends \cnd\core\components\ActiveRecord
         return array_merge(parent::rules(), [
             [['name', 'description'], 'string'],
             [['uid'], 'unique'],
-            [['tags', 'brandsIds', 'sectorsIds', 'productsIds'], 'safe'],
+            [['tags', 'brandsIds', 'sectorsIds', 'productsIds', 'businessUnitIds'], 'safe'],
         ]);
     }
 
@@ -197,6 +198,7 @@ class Portfolio extends \cnd\core\components\ActiveRecord
                 $item = $this->item;
                 if ($item) {
                     $this->assignItems($this->sectorsIds, '\common\models\CorporateSector', 'sector_id', 'corporate_id', $item->id);
+                    $this->assignItems($this->businessUnitIds, '\common\models\CorporateBusinessUnit', 'business_unit_id', 'corporate_id', $item->id);
                 }
                 break;
             case static::TARGET_BRAND:
@@ -205,6 +207,7 @@ class Portfolio extends \cnd\core\components\ActiveRecord
                 if ($item) {
                     $this->assignItems($this->sectorsIds, '\common\models\SectorBrand', 'sector_id', 'brand_id', $item->id);
                     $this->assignItems($this->productsIds, '\common\models\ProductBrand', 'product_id', 'brand_id', $item->id);
+                    $this->assignItems($this->businessUnitIds, '\common\models\BrandBusinessUnit', 'business_unit_id', 'brand_id', $item->id);
                 }
                 break;
             case static::TARGET_SECTOR:
@@ -213,6 +216,7 @@ class Portfolio extends \cnd\core\components\ActiveRecord
                 if ($item) {
                     $this->assignItems($this->brandsIds, '\common\models\SectorBrand', 'brand_id', 'sector_id', $item->id);
                     $this->assignItems($this->productsIds, '\common\models\ProductSector', 'product_id', 'sector_id', $item->id);
+                    $this->assignItems($this->businessUnitIds, '\common\models\SectorBusinessUnit', 'business_unit_id', 'sector_id', $item->id);
                 }
                 break;
             case static::TARGET_PRODUCT:

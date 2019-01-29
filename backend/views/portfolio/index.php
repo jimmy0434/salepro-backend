@@ -16,6 +16,7 @@ use backend\controllers\PortfolioController;
 use cnd\grid\Attribute;
 use cnd\grid\DataLocator;
 use cnd\grid\DataView;
+use cnd\grid\DataViewLocator;
 use common\models\Portfolio;
 use yii\helpers\Html;
 use yii\helpers\Url;
@@ -54,9 +55,12 @@ $dv = new DataView([
         'image' => [
             'label' => 'Image',
             'value' => function ($attribute, $data, $view) use ($dataLocator) {
+                assert($attribute instanceof Attribute);
+                assert($data instanceof Portfolio);
+                assert($view instanceof DataViewLocator);
                 if ($dataLocator->export) {
-                    if ($data->profile !== null && $data->profile->imageFactory !== null) {
-                        $url = $data->profile->imageFactory->url;
+                    if ($data->imageFactory !== null) {
+                        $url = $data->imageFactory->url;
                         if ($url) {
                             return \yii\bootstrap\Html::a('Show Image', $url, ['target' => '_blank']);
                         }
@@ -64,18 +68,17 @@ $dv = new DataView([
                     return '';
                 } else {
                     if (get_class($view) == \cnd\grid\Card::className()) {
-                        if ($data->profile !== null && $data->profile->imageFactory !== null) {
-                            return '<div style="position:relative;">' . $data->profile->imageFactory->displayImage(['100%', 'auto'], 'User Image', '', 'user-image') . '</div>';
+                        if ($data->imageFactory !== null) {
+                            return '<div style="position:relative;">' . $data->imageFactory->displayImage(['100%', 'auto'], 'User Image', '', 'user-image') . '</div>';
                         }
                     } else {
-                        if ($data->profile !== null && $data->profile->imageFactory !== null) {
-                            return '<div style="position:relative;">' . $data->profile->imageFactory->displayImage('icon', 'User Image', '', 'user-image') . '</div>';
+                        if ($data->imageFactory !== null) {
+                            return '<div style="position:relative;">' . $data->imageFactory->displayImage('icon', 'User Image', '', 'user-image') . '</div>';
                         }
                     }
                     return '';
                 }
             },
-            'filterBy' => Attribute::FILTER_NONE,
         ],
         'name' => [
             'label' => 'Name',
@@ -111,6 +114,12 @@ $dv->addView('grid', [
     'class' => '\cnd\grid\GridTable',
     'columns' => [
         'id' => [
+            'sortable' => true,
+            'contentOptions' => [
+                'style' => 'text-align:center;white-space: nowrap;width:1%;'
+            ],
+        ],
+        'image' => [
             'sortable' => true,
             'contentOptions' => [
                 'style' => 'text-align:center;white-space: nowrap;width:1%;'
