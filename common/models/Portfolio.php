@@ -56,6 +56,7 @@ class Portfolio extends \cnd\core\components\ActiveRecord
     public $productsIds = [];
     public $businessUnitIds = [];
     public $newsLinks = [];
+    public $links = [];
 
     public $imageFactory;
 
@@ -75,7 +76,7 @@ class Portfolio extends \cnd\core\components\ActiveRecord
         return array_merge(parent::rules(), [
             [['name', 'description'], 'string'],
             [['uid'], 'unique'],
-            [['tags', 'brandsIds', 'sectorsIds', 'productsIds', 'businessUnitIds', 'newsLinks'], 'safe'],
+            [['tags', 'brandsIds', 'sectorsIds', 'productsIds', 'businessUnitIds', 'newsLinks', 'links'], 'safe'],
         ]);
     }
 
@@ -251,6 +252,14 @@ class Portfolio extends \cnd\core\components\ActiveRecord
                 $this->assignItems($links, '\common\models\PortfolioNews', 'url', 'portfolio_id', $this->id);
             }
         }
+        if (!empty($this->links) && is_array($this->links)) {
+            $keys = array_keys($this->links);
+            $names = $this->links[$keys[0]];
+            $urls = $this->links[$keys[1]];
+            if (!empty($names) && is_array($names)) {
+                $this->assignItems($urls, '\common\models\PortfolioLink', 'url', 'portfolio_id', $this->id, ['name' => $names]);
+            }
+        }
         parent::afterSave($insert, $changedAttributes);
     }
 
@@ -278,6 +287,18 @@ class Portfolio extends \cnd\core\components\ActiveRecord
                 $this->newsLinks['Url'][] = $n->url;
             }
         }
+        // load links
+        $this->links = [
+            'Name' => [],
+            'Url' => [],
+        ];
+        $links = $this->portfolioLinks;
+        if (!empty($links) && is_array($links)) {
+            foreach ($links as $n) {
+                $this->links['Name'][] = $n->name;
+                $this->links['Url'][] = $n->url;
+            }
+        }
     }
 
     public function toArray(array $fields = [], array $expand = [], $recursive = true)
@@ -288,6 +309,12 @@ class Portfolio extends \cnd\core\components\ActiveRecord
         $data['presentation'] = $this->presentation;
         $data['video'] = $this->video;
         $data['news'] = isset($this->newsLinks['Url']) ? $this->newsLinks['Url'] : [];
+        $data['links'] = array_values(ArrayHelper::map($this->portfolioLinks, 'id', function($model){
+            return [
+                'name' => $model->name,
+                'url' => $model->url,
+            ];
+        }));
         unset($data['brochure_id'], $data['presentation_id'], $data['video_id'], $data['search_id'], $data['target']);
         return $data;
     }
@@ -301,7 +328,7 @@ class Portfolio extends \cnd\core\components\ActiveRecord
         return null;
     }
 
-    protected function assignItems($items, $targetModel, $relationId, $byId, $byValue)
+    protected function assignItems($items, $targetModel, $relationId, $byId, $byValue, $extraParams = [])
     {
         $old = $targetModel::find()->where([$byId => $byValue])->all();
         if (!empty($old) && is_array($old)) {
@@ -310,10 +337,17 @@ class Portfolio extends \cnd\core\components\ActiveRecord
             }
         }
         if (!empty($items) && is_array($items)) {
-            foreach ($items as $itemId) {
+            foreach ($items as $i => $itemId) {
                 $m = new $targetModel();
                 $m->$byId = $byValue;
                 $m->$relationId = $itemId;
+                if (!empty($extraParams) && is_array($extraParams)) {
+                    foreach ($extraParams as $paramName => $values) {
+                        if ($m->hasProperty($paramName) && isset($values[$i])) {
+                            $m->$paramName = $values[$i];
+                        }
+                    }
+                }
                 $m->save();
             }
         }

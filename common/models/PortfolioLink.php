@@ -9,7 +9,7 @@ use Yii;
  *
  * @property int $id
  * @property int $portfolio_id
- * @property string $image
+ * @property string $name
  * @property string $url
  * @property int $created_at
  * @property int $updated_at
@@ -33,7 +33,7 @@ class PortfolioLink extends \cnd\core\components\ActiveRecord
     {
         return [
             [['portfolio_id'], 'integer'],
-            [['image', 'url'], 'string'],
+            [['name', 'url'], 'string'],
             [['portfolio_id'], 'exist', 'skipOnError' => true, 'targetClass' => Portfolio::className(), 'targetAttribute' => ['portfolio_id' => 'id']],
         ];
     }
@@ -46,7 +46,7 @@ class PortfolioLink extends \cnd\core\components\ActiveRecord
         return [
             'id' => 'ID',
             'portfolio_id' => 'Portfolio ID',
-            'image' => 'Image',
+            'name' => 'Name',
             'url' => 'Url',
             'created_at' => 'Created At',
             'updated_at' => 'Updated At',
