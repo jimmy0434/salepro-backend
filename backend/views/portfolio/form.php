@@ -143,6 +143,14 @@ $form = ActiveForm::begin(['id' => Yii::$app->controller->id . '-form']);
             </div>
         </div>
     </div>
+    <div class="panel panel-default">
+        <div class="panel-heading"><?= 'News' ?></div>
+        <div class="panel-body">
+            <?= $form->field($model, 'newsLinks')->jsonInput([
+                'Url' => 'text',
+            ])->label(false) ?>
+        </div>
+    </div>
     <div class="form-group text-center">
         <?= Html::submitButton('Save', ['class' => 'btn btn-primary btn-lg']) ?>
     </div>

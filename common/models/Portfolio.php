@@ -55,6 +55,7 @@ class Portfolio extends \cnd\core\components\ActiveRecord
     public $sectorsIds = [];
     public $productsIds = [];
     public $businessUnitIds = [];
+    public $newsLinks = [];
 
     public $imageFactory;
 
@@ -74,7 +75,7 @@ class Portfolio extends \cnd\core\components\ActiveRecord
         return array_merge(parent::rules(), [
             [['name', 'description'], 'string'],
             [['uid'], 'unique'],
-            [['tags', 'brandsIds', 'sectorsIds', 'productsIds', 'businessUnitIds'], 'safe'],
+            [['tags', 'brandsIds', 'sectorsIds', 'productsIds', 'businessUnitIds', 'newsLinks'], 'safe'],
         ]);
     }
 
@@ -241,6 +242,15 @@ class Portfolio extends \cnd\core\components\ActiveRecord
             } catch (\Exception $e) {
             }
         }
+        if (!empty($this->newsLinks) && is_array($this->newsLinks)) {
+            reset($this->newsLinks);
+            $k = key($this->newsLinks);
+            $links = $this->newsLinks[$k];
+            if (!empty($links) && is_array($links)) {
+                $links = array_filter($links);
+                $this->assignItems($links, '\common\models\PortfolioNews', 'url', 'portfolio_id', $this->id);
+            }
+        }
         parent::afterSave($insert, $changedAttributes);
     }
 
@@ -258,6 +268,16 @@ class Portfolio extends \cnd\core\components\ActiveRecord
                 'data' => Yii::$app->image->defaultUser,
             ]);
         }
+        // load news links
+        $this->newsLinks = [
+            'Url' => [],
+        ];
+        $news = $this->portfolioNews;
+        if (!empty($news) && is_array($news)) {
+            foreach ($news as $n) {
+                $this->newsLinks['Url'][] = $n->url;
+            }
+        }
     }
 
     public function toArray(array $fields = [], array $expand = [], $recursive = true)
@@ -267,6 +287,7 @@ class Portfolio extends \cnd\core\components\ActiveRecord
         $data['brochure'] = $this->brochure;
         $data['presentation'] = $this->presentation;
         $data['video'] = $this->video;
+        $data['news'] = isset($this->newsLinks['Url']) ? $this->newsLinks['Url'] : [];
         unset($data['brochure_id'], $data['presentation_id'], $data['video_id'], $data['search_id'], $data['target']);
         return $data;
     }
