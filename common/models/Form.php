@@ -2,7 +2,6 @@
 
 namespace common\models;
 
-use cnd\cms\models\activerecords\Content;
 use cnd\core\components\ActiveRecord;
 use cnd\grid\DataLocator;
 use MJS\TopSort\Implementations\StringSort;
@@ -18,7 +17,6 @@ use yii\helpers\Json;
  * This is the model class for table "{{%form}}".
  *
  * @property int $id
- * @property int $content_id
  * @property string $name
  * @property string $title
  * @property int $version
@@ -31,7 +29,6 @@ use yii\helpers\Json;
  * @property array $status_list
  * @property array $status_values
  *
- * @property Content $content
  */
 class Form extends ActiveRecord
 {
@@ -57,7 +54,6 @@ class Form extends ActiveRecord
             [['title'], 'string', 'max' => 255],
             [['name'], 'unique'],
             [['name'], 'uniqueAsTable','on'=>'create'],
-            [['content_id'], 'exist', 'skipOnError' => true, 'targetClass' => Content::className(), 'targetAttribute' => ['content_id' => 'id']],
         ]);
     }
 
@@ -76,7 +72,6 @@ class Form extends ActiveRecord
     {
         return [
             'id' => 'ID',
-            'content_id' => 'Content ID',
             'name' => 'Name',
             'title' => 'Title',
             'version' => 'Version',
@@ -85,14 +80,6 @@ class Form extends ActiveRecord
             'created_at' => 'Created At',
             'updated_at' => 'Updated At',
         ];
-    }
-
-    /**
-     * @return \yii\db\ActiveQuery
-     */
-    public function getContent()
-    {
-        return $this->hasOne(Content::className(), ['id' => 'content_id']);
     }
 
     /**
