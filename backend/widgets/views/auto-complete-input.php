@@ -33,25 +33,22 @@ $title = $context->title;
 
 $tagSearchUrl = Url::to($context->findUrl);
 $tagAddUrl = Url::to($context->addUrl);
-$tags = [];
-if ($model->search) {
-    $tags = ArrayHelper::map($context->data, 'id', function ($data) use ($model, $property) {
-        /**
-         * @var $data ActiveRecord
-         */
-        $model->$property[] = $data->id;
-        $name = null;
-        if($data->hasProperty('portfolio')){
-            $name = $data->portfolio->name;
-        }else if($data->hasProperty('name')){
-            $name = $data->name;
-        }
-        return [
-            'id' => $data->id,
-            'text' => $name,
-        ];
-    });
-}
+$tags = ArrayHelper::map($context->data, 'id', function ($data) use ($model, $property) {
+    /**
+     * @var $data ActiveRecord
+     */
+    $model->$property[] = $data->id;
+    $name = null;
+    if($data->hasProperty('portfolio')){
+        $name = $data->portfolio->name;
+    }else if($data->hasProperty('name')){
+        $name = $data->name;
+    }
+    return [
+        'id' => $data->id,
+        'text' => $name,
+    ];
+});
 $tags = array_values($tags);
 $tagsList = Json::encode($tags);
 $tagsOptions = <<< JS

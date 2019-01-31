@@ -21,9 +21,13 @@ use Yii;
  * @property File $file
  * @property ExhibitionItem[] $exhibitionItems
  * @property ExhibitionItemProduct[] $exhibitionItemProducts
+ * @property Product[] $products
  */
 class Exhibition extends \cnd\core\components\ActiveRecord
 {
+
+    public $productsIds = [];
+
     /**
      * {@inheritdoc}
      */
@@ -37,12 +41,13 @@ class Exhibition extends \cnd\core\components\ActiveRecord
      */
     public function rules()
     {
-        return [
+        return array_merge(parent::rules(), [
             [['file_id', 'business_unit_id'], 'integer'],
             [['name', 'country', 'region', 'year'], 'string', 'max' => 255],
             [['business_unit_id'], 'exist', 'skipOnError' => true, 'targetClass' => BusinessUnit::className(), 'targetAttribute' => ['business_unit_id' => 'id']],
             [['file_id'], 'exist', 'skipOnError' => true, 'targetClass' => File::className(), 'targetAttribute' => ['file_id' => 'id']],
-        ];
+            [['productsIds'], 'safe'],
+        ]);
     }
 
     /**
@@ -95,6 +100,10 @@ class Exhibition extends \cnd\core\components\ActiveRecord
         return $this->hasMany(ExhibitionItemProduct::className(), ['exhibition_id' => 'id']);
     }
 
+    public function getProducts(){
+        return $this->hasMany(Product::className(), ['id' => 'product_id'])->via('exhibitionItemProducts');
+    }
+
     /**
      * {@inheritdoc}
      * @return ExhibitionQuery the active query used by this AR class.
@@ -102,5 +111,36 @@ class Exhibition extends \cnd\core\components\ActiveRecord
     public static function find()
     {
         return new ExhibitionQuery(get_called_class());
+    }
+
+    protected function assignItems($items, $targetModel, $relationId, $byId, $byValue, $extraParams = [])
+    {
+        $old = $targetModel::find()->where([$byId => $byValue])->all();
+        if (!empty($old) && is_array($old)) {
+            foreach ($old as $m) {
+                $m->delete();
+            }
+        }
+        if (!empty($items) && is_array($items)) {
+            foreach ($items as $i => $itemId) {
+                $m = new $targetModel();
+                $m->$byId = $byValue;
+                $m->$relationId = $itemId;
+                if (!empty($extraParams) && is_array($extraParams)) {
+                    foreach ($extraParams as $paramName => $values) {
+                        if ($m->hasProperty($paramName) && isset($values[$i])) {
+                            $m->$paramName = $values[$i];
+                        }
+                    }
+                }
+                $m->save();
+            }
+        }
+    }
+
+    public function afterSave($insert, $changedAttributes)
+    {
+        $this->assignItems($this->productsIds, '\common\models\ExhibitionItemProduct', 'product_id', 'exhibition_id', $this->id);
+        parent::afterSave($insert, $changedAttributes);
     }
 }

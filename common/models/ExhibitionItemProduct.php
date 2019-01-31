@@ -33,12 +33,12 @@ class ExhibitionItemProduct extends \cnd\core\components\ActiveRecord
      */
     public function rules()
     {
-        return [
+        return array_merge(parent::rules(), [
             [['exhibition_id', 'exhibition_item_id', 'product_id'], 'integer'],
             [['exhibition_id'], 'exist', 'skipOnError' => true, 'targetClass' => Exhibition::className(), 'targetAttribute' => ['exhibition_id' => 'id']],
             [['product_id'], 'exist', 'skipOnError' => true, 'targetClass' => Product::className(), 'targetAttribute' => ['product_id' => 'id']],
             [['exhibition_item_id'], 'exist', 'skipOnError' => true, 'targetClass' => ExhibitionItem::className(), 'targetAttribute' => ['exhibition_item_id' => 'id']],
-        ];
+        ]);
     }
 
     /**

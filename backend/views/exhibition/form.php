@@ -9,6 +9,7 @@
  */
 
 use backend\controllers\ExhibitionController;
+use backend\widgets\AutoCompleteInput;
 use backend\widgets\FileSelector;
 use cnd\form\ActiveForm;
 use common\models\BusinessUnit;
@@ -54,6 +55,20 @@ $form = ActiveForm::begin(['id' => Yii::$app->controller->id.'-form']);
                         'title' => false,
                         'fileName' => uniqid('exhibition-excel-', true),
                         'ext' => 'xlsx',
+                    ]) ?>
+                </div>
+            </div>
+            <div class="panel panel-default">
+                <div class="panel-heading">Excel File</div>
+                <div class="panel-body">
+                    <?= AutoCompleteInput::widget([
+                        'model' => $model,
+                        'form' => $form,
+                        'property' => 'productsIds',
+                        'findUrl' => ['/portfolio/find-products'],
+                        'addUrl' => ['/portfolio/add-product'],
+                        'title' => 'Products',
+                        'data' => $model->products,
                     ]) ?>
                 </div>
             </div>
