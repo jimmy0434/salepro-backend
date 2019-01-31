@@ -35,7 +35,7 @@ class Bootstrap implements BootstrapInterface
         $navigator->item('Business Unit', ['/business-unit/index'], 'fa fa-building', 6);
         $navigator->item('Exhibitions', ['/exhibition/index'], 'fa fa-cubes', 7);
         $navigator->item('Market Research', ['/market-research/index'], 'fa fa-search', 8);
-        $navigator->item('Competitors', ['/competitor/index'], 'fa fa-id-card-o', 9);
+        //$navigator->item('Competitors', ['/competitor/index'], 'fa fa-id-card-o', 9);
         $navigator->item('Forms', ['/form/index'], 'fa fa-server', 10);
         $navigator->item('Form Approval', ['/form-approval/index'], 'fa fa-check', 11);
 
