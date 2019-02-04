@@ -59,7 +59,7 @@ $form = ActiveForm::begin(['id' => Yii::$app->controller->id.'-form']);
                 </div>
             </div>
             <div class="panel panel-default">
-                <div class="panel-heading">Excel File</div>
+                <div class="panel-heading">Products</div>
                 <div class="panel-body">
                     <?= AutoCompleteInput::widget([
                         'model' => $model,

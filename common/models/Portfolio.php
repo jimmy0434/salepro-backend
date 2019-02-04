@@ -33,6 +33,8 @@ use yii\helpers\Json;
  * @property PortfolioNews[] $portfolioNews
  * @property Product[] $products
  * @property Sector[] $sectors
+ * @property PortfolioSalesOffice[] $portfolioSalesOffices
+ * @property SalesOffice[] $salesOffices
  * @property File $brochure
  * @property File $presentation
  * @property File $video
@@ -57,6 +59,7 @@ class Portfolio extends \cnd\core\components\ActiveRecord
     public $businessUnitIds = [];
     public $newsLinks = [];
     public $links = [];
+    public $officesIds = [];
 
     public $imageFactory;
 
@@ -76,7 +79,7 @@ class Portfolio extends \cnd\core\components\ActiveRecord
         return array_merge(parent::rules(), [
             [['name', 'description'], 'string'],
             [['uid'], 'unique'],
-            [['tags', 'brandsIds', 'sectorsIds', 'productsIds', 'businessUnitIds', 'newsLinks', 'links'], 'safe'],
+            [['tags', 'brandsIds', 'sectorsIds', 'productsIds', 'businessUnitIds', 'newsLinks', 'links', 'officesIds'], 'safe'],
         ]);
     }
 
@@ -178,6 +181,22 @@ class Portfolio extends \cnd\core\components\ActiveRecord
     }
 
     /**
+     * @return \yii\db\ActiveQuery
+     */
+    public function getPortfolioSalesOffices()
+    {
+        return $this->hasMany(PortfolioSalesOffice::className(), ['portfolio_id' => 'id']);
+    }
+
+    /**
+     * @return \yii\db\ActiveQuery
+     */
+    public function getSalesOffices()
+    {
+        return $this->hasMany(SalesOffice::className(), ['id' => 'sales_office_id'])->via('portfolioSalesOffices');
+    }
+
+    /**
      * {@inheritdoc}
      * @return PortfolioQuery the active query used by this AR class.
      */
@@ -235,6 +254,8 @@ class Portfolio extends \cnd\core\components\ActiveRecord
                 }
                 break;
         }
+        $this->assignItems($this->officesIds, '\common\models\PortfolioSalesOffice', 'sales_office_id', 'portfolio_id', $this->id);
+
         $search = Search::updateRecord($this->tags, $this->uid, $this->name, $this->description);
         if (!$this->search_id) {
             try {
@@ -309,7 +330,7 @@ class Portfolio extends \cnd\core\components\ActiveRecord
         $data['presentation'] = $this->presentation;
         $data['video'] = $this->video;
         $data['news'] = isset($this->newsLinks['Url']) ? $this->newsLinks['Url'] : [];
-        $data['links'] = array_values(ArrayHelper::map($this->portfolioLinks, 'id', function($model){
+        $data['links'] = array_values(ArrayHelper::map($this->portfolioLinks, 'id', function ($model) {
             return [
                 'name' => $model->name,
                 'url' => $model->url,

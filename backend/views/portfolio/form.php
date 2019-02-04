@@ -132,6 +132,15 @@ $form = ActiveForm::begin(['id' => Yii::$app->controller->id . '-form']);
                     echo AutoCompleteInput::widget([
                         'model' => $model,
                         'form' => $form,
+                        'property' => 'officesIds',
+                        'findUrl' => ['/sales-office/find-offices'],
+                        'addUrl' => ['/sales-office/add-office'],
+                        'title' => 'Sales Offices',
+                        'data' => $model->salesOffices,
+                    ]);
+                    echo AutoCompleteInput::widget([
+                        'model' => $model,
+                        'form' => $form,
                         'property' => 'tags',
                         'findUrl' => ['/search/find-tags'],
                         'addUrl' => ['/search/add-tag'],

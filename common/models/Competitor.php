@@ -8,21 +8,53 @@ use Yii;
  * This is the model class for table "{{%competitor}}".
  *
  * @property int $id
+ * @property string $uid
+ * @property int $salesman_id
  * @property string $name
- * @property string $image
+ * @property int $business_unit_id
+ * @property string $company_profile
+ * @property string $headquarter_location
+ * @property string $other_locations
+ * @property string $website
+ * @property resource $logo
  * @property string $market_presence
- * @property string $year
- * @property string $product
- * @property string $business_unit
- * @property int $form_id
- * @property int $form_record_id
+ * @property string $established_year
+ * @property string $annual_sales_revenue
+ * @property string $employees_number
+ * @property string $certification
+ * @property string $certification_others
+ * @property string $marketing_strategy
+ * @property string $company_communication
+ * @property string $quality
+ * @property string $brand_equity
+ * @property string $problem_solving_response
+ * @property string $market_dominance
+ * @property string $comments
+ * @property resource $file
+ * @property string $mother_name
+ * @property string $mother_company_profile
+ * @property string $mother_headquarter_location
+ * @property string $mother_other_locations
+ * @property string $mother_website
  * @property int $search_id
  * @property int $created_at
  * @property int $updated_at
  *
+ * @property BusinessUnit $businessUnit
  * @property Search $search
- * @property Form $form
+ * @property CompetitorFlexible[] $competitorFlexibles
+ * @property CompetitorFlexibleCustomer[] $competitorFlexibleCustomers
+ * @property CompetitorManager[] $competitorManagers
+ * @property CompetitorMasterbatch[] $competitorMasterbatches
+ * @property CompetitorMasterbatchCustomer[] $competitorMasterbatchCustomers
+ * @property CompetitorNews[] $competitorNews
+ * @property CompetitorPackaging[] $competitorPackagings
+ * @property CompetitorPackagingCustomer[] $competitorPackagingCustomers
+ * @property CompetitorProductionLine[] $competitorProductionLines
+ * @property CompetitorSocial[] $competitorSocials
+ * @property CompetitorSupplier[] $competitorSuppliers
  * @property PortfolioCompetitor[] $portfolioCompetitors
+ * @property Salesman[] $salesman
  */
 class Competitor extends \cnd\core\components\ActiveRecord
 {
@@ -39,13 +71,13 @@ class Competitor extends \cnd\core\components\ActiveRecord
      */
     public function rules()
     {
-        return [
-            [['image'], 'string'],
-            [['form_id', 'form_record_id', 'search_id'], 'integer'],
-            [['name', 'market_presence', 'year', 'product', 'business_unit'], 'string', 'max' => 255],
-            [['search_id'], 'exist', 'skipOnError' => true, 'targetClass' => Search::className(), 'targetAttribute' => ['search_id' => 'id']],
-            [['form_id'], 'exist', 'skipOnError' => true, 'targetClass' => Form::className(), 'targetAttribute' => ['form_id' => 'id']],
-        ];
+        return array_merge(parent::rules(), [
+            [['salesman_id', 'business_unit_id', 'search_id'], 'integer'],
+            [['logo', 'file'], 'string'],
+            [['name', 'company_profile', 'headquarter_location', 'other_locations', 'website', 'market_presence', 'established_year', 'annual_sales_revenue', 'employees_number', 'certification', 'certification_others', 'marketing_strategy', 'company_communication', 'quality', 'brand_equity', 'problem_solving_response', 'market_dominance', 'comments', 'mother_name', 'mother_company_profile', 'mother_headquarter_location', 'mother_other_locations', 'mother_website'], 'string', 'max' => 255],
+            [['uid'], 'unique'],
+            [['business_unit_id'], 'exist', 'skipOnError' => true, 'targetClass' => BusinessUnit::className(), 'targetAttribute' => ['business_unit_id' => 'id']],
+        ]);
     }
 
     /**
@@ -55,18 +87,45 @@ class Competitor extends \cnd\core\components\ActiveRecord
     {
         return [
             'id' => 'ID',
+            'salesman_id' => 'Salesman ID',
             'name' => 'Name',
-            'image' => 'Image',
+            'business_unit_id' => 'Business Unit ID',
+            'company_profile' => 'Company Profile',
+            'headquarter_location' => 'Headquarter Location',
+            'other_locations' => 'Other Locations',
+            'website' => 'Website',
+            'logo' => 'Logo',
             'market_presence' => 'Market Presence',
-            'year' => 'Year',
-            'product' => 'Product',
-            'business_unit' => 'Business Unit',
-            'form_id' => 'Form ID',
-            'form_record_id' => 'Form Record ID',
+            'established_year' => 'Established Year',
+            'annual_sales_revenue' => 'Annual Sales Revenue',
+            'employees_number' => 'Employees Number',
+            'certification' => 'Certification',
+            'certification_others' => 'Certification Others',
+            'marketing_strategy' => 'Marketing Strategy',
+            'company_communication' => 'Company Communication',
+            'quality' => 'Quality',
+            'brand_equity' => 'Brand Equity',
+            'problem_solving_response' => 'Problem Solving Response',
+            'market_dominance' => 'Market Dominance',
+            'comments' => 'Comments',
+            'file' => 'File',
+            'mother_name' => 'Mother Name',
+            'mother_company_profile' => 'Mother Company Profile',
+            'mother_headquarter_location' => 'Mother Headquarter Location',
+            'mother_other_locations' => 'Mother Other Locations',
+            'mother_website' => 'Mother Website',
             'search_id' => 'Search ID',
             'created_at' => 'Created At',
             'updated_at' => 'Updated At',
         ];
+    }
+
+    /**
+     * @return \yii\db\ActiveQuery
+     */
+    public function getBusinessUnit()
+    {
+        return $this->hasOne(BusinessUnit::className(), ['id' => 'business_unit_id']);
     }
 
     /**
@@ -80,9 +139,89 @@ class Competitor extends \cnd\core\components\ActiveRecord
     /**
      * @return \yii\db\ActiveQuery
      */
-    public function getForm()
+    public function getCompetitorFlexibles()
     {
-        return $this->hasOne(Form::className(), ['id' => 'form_id']);
+        return $this->hasMany(CompetitorFlexible::className(), ['competitor_id' => 'id']);
+    }
+
+    /**
+     * @return \yii\db\ActiveQuery
+     */
+    public function getCompetitorFlexibleCustomers()
+    {
+        return $this->hasMany(CompetitorFlexibleCustomer::className(), ['competitor_id' => 'id']);
+    }
+
+    /**
+     * @return \yii\db\ActiveQuery
+     */
+    public function getCompetitorManagers()
+    {
+        return $this->hasMany(CompetitorManager::className(), ['competitor_id' => 'id']);
+    }
+
+    /**
+     * @return \yii\db\ActiveQuery
+     */
+    public function getCompetitorMasterbatches()
+    {
+        return $this->hasMany(CompetitorMasterbatch::className(), ['competitor_id' => 'id']);
+    }
+
+    /**
+     * @return \yii\db\ActiveQuery
+     */
+    public function getCompetitorMasterbatchCustomers()
+    {
+        return $this->hasMany(CompetitorMasterbatchCustomer::className(), ['competitor_id' => 'id']);
+    }
+
+    /**
+     * @return \yii\db\ActiveQuery
+     */
+    public function getCompetitorNews()
+    {
+        return $this->hasMany(CompetitorNews::className(), ['competitor_id' => 'id']);
+    }
+
+    /**
+     * @return \yii\db\ActiveQuery
+     */
+    public function getCompetitorPackagings()
+    {
+        return $this->hasMany(CompetitorPackaging::className(), ['competitor_id' => 'id']);
+    }
+
+    /**
+     * @return \yii\db\ActiveQuery
+     */
+    public function getCompetitorPackagingCustomers()
+    {
+        return $this->hasMany(CompetitorPackagingCustomer::className(), ['competitor_id' => 'id']);
+    }
+
+    /**
+     * @return \yii\db\ActiveQuery
+     */
+    public function getCompetitorProductionLines()
+    {
+        return $this->hasMany(CompetitorProductionLine::className(), ['competitor_id' => 'id']);
+    }
+
+    /**
+     * @return \yii\db\ActiveQuery
+     */
+    public function getCompetitorSocials()
+    {
+        return $this->hasMany(CompetitorSocial::className(), ['competitor_id' => 'id']);
+    }
+
+    /**
+     * @return \yii\db\ActiveQuery
+     */
+    public function getCompetitorSuppliers()
+    {
+        return $this->hasMany(CompetitorSupplier::className(), ['competitor_id' => 'id']);
     }
 
     /**
@@ -94,11 +233,43 @@ class Competitor extends \cnd\core\components\ActiveRecord
     }
 
     /**
+     * @return \yii\db\ActiveQuery
+     */
+    public function getSalesman()
+    {
+        return $this->hasOne(Salesman::className(), ['id' => 'salesman_id']);
+    }
+
+    /**
      * {@inheritdoc}
      * @return CompetitorQuery the active query used by this AR class.
      */
     public static function find()
     {
         return new CompetitorQuery(get_called_class());
+    }
+
+    public function beforeSave($insert)
+    {
+        if ($this->isNewRecord || !$this->uid) {
+            $this->uid = uniqid('competitor-', true);
+        }
+        if(!Yii::$app->user->isGuest && !$this->salesman_id && Yii::$app->user->identity->type == User::TYPE_SALESMAN){
+            $this->salesman_id = Yii::$app->user->identity->id;
+        }
+        return parent::beforeSave($insert); // TODO: Change the autogenerated stub
+    }
+
+    public function afterSave($insert, $changedAttributes)
+    {
+        $search = Search::updateRecord([], $this->uid, $this->name, "");
+        if (!$this->search_id) {
+            try {
+                Yii::$app->db->createCommand()->update(static::tableName(), ['search_id' => $search->id], ['id' => $this->id])->execute();
+            } catch (\Throwable $t) {
+            } catch (\Exception $e) {
+            }
+        }
+        parent::afterSave($insert, $changedAttributes); // TODO: Change the autogenerated stub
     }
 }

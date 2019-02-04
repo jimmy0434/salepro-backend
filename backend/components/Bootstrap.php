@@ -37,7 +37,9 @@ class Bootstrap implements BootstrapInterface
         $navigator->item('Market Research', ['/market-research/index'], 'fa fa-search', 8);
         //$navigator->item('Competitors', ['/competitor/index'], 'fa fa-id-card-o', 9);
         //$navigator->item('Forms', ['/form/index'], 'fa fa-server', 10);
-        $navigator->item('Form Approval', ['/form-approval/index'], 'fa fa-check', 11);
+        //$navigator->item('Form Approval', ['/form-approval/index'], 'fa fa-check', 11);
+        $navigator->item('Sustainability', ['/sustainability/index'], 'fa fa-angle-double-right', 12);
+        $navigator->item('Sales Offices', ['/sales-office/index'], 'fa fa-map-marker', 13);
 
         $developer = MenuManager::block('Developer');
         $developerSection = $developer->section('Documentation');
