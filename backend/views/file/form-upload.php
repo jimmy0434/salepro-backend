@@ -37,7 +37,10 @@ $uploadUrl = Url::to(['file/manage-upload', 'id' => $model->id]);
                     <form action="" method="post" enctype="multipart/form-data" id="js-upload-form">
                         <div class="form-inline">
                             <div class="form-group">
-                                <input type="file" name="files" id="js-upload-files">
+                                <input type="file" name="files" id="js-upload-files"
+                                       accept="<?= implode(',', array_map(function ($item) {
+                                           return '.' . $item;
+                                       }, $extensions)) ?>">
                             </div>
                             <button type="submit" class="btn btn-sm btn-primary" id="js-upload-submit">Start Upload
                             </button>
@@ -64,7 +67,8 @@ $uploadUrl = Url::to(['file/manage-upload', 'id' => $model->id]);
                     </div>
                 </div>
                 <div class="panel-footer">
-                    <span class="badge bg-blue"><?= implode('</span>&nbsp;<span class="badge bg-blue">', $extensions) ?></span>
+                    <span
+                        class="badge bg-blue"><?= implode('</span>&nbsp;<span class="badge bg-blue">', $extensions) ?></span>
                 </div>
             </div>
         </div>
@@ -79,7 +83,7 @@ $uploadUrl = Url::to(['file/manage-upload', 'id' => $model->id]);
                     </li>
                     <li class="list-group-item">
                         Current version <span
-                                class="badge bg-navy"><?= $model->version ? $model->version : 'no previous version' ?></span>
+                            class="badge bg-navy"><?= $model->version ? $model->version : 'no previous version' ?></span>
                     </li>
                     <li class="list-group-item">
                         Versions <span class="badge bg-teal"><?= $model->versionsCount ?></span>
@@ -236,7 +240,11 @@ function uploadChunk(index, chunks, version, extension){
         });
     }else{
         msg("File was successfully uploaded");
+        window.parent.popup.success("File was successfully uploaded");
         window.parent.postMessage(JSON.stringify({"id":"{$fileId}","name":"{$fileName}", "extension":"{$extension}"}), "*");
+        window.setTimeout(function(){
+            parent.$.fancybox.close();
+        }, 500);
     }
 }
 JS;

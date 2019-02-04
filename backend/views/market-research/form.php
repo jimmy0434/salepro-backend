@@ -11,6 +11,7 @@
 use backend\controllers\MarketResearchController;
 use backend\widgets\AutoCompleteInput;
 use backend\widgets\FileSelector;
+use cnd\admin\models\activerecords\Setting;
 use cnd\form\ActiveForm;
 use common\models\MarketResearch;
 use common\models\Portfolio;
@@ -57,8 +58,8 @@ $form = ActiveForm::begin(['id' => Yii::$app->controller->id . '-form']);
                         'title' => 'Products',
                         'data' => $model->products,
                     ]) ?>
-                    <?= $form->field($model, 'countriesNames')->dropDownListAdvanced(Yii::$app->countries(), ['multiple' => true],'{plugins: [\'remove_button\']}') ?>
-                    <?= $form->field($model, 'regionsNames')->dropDownListAdvanced(Yii::$app->regions(), ['multiple' => true],'{plugins: [\'remove_button\']}') ?>
+                    <?= $form->field($model, 'countriesNames')->dropDownListAdvanced(Yii::$app->countries(), ['multiple' => true], '{plugins: [\'remove_button\']}') ?>
+                    <?= $form->field($model, 'regionsNames')->dropDownListAdvanced(Yii::$app->regions(), ['multiple' => true], '{plugins: [\'remove_button\']}') ?>
                 </div>
             </div>
         </div>
@@ -71,7 +72,7 @@ $form = ActiveForm::begin(['id' => Yii::$app->controller->id . '-form']);
                         'property' => 'file_id',
                         'title' => false,
                         'fileName' => uniqid('market-research-file-', true),
-                        'ext' => 'xlsx,pdf,pptx',
+                        'ext' => Setting::get('market-research.attachment.extensions', 'xlsx,xls,pdf,pptx,ppt'),
                     ]) ?>
                 </div>
             </div>

@@ -17,6 +17,7 @@ use backend\controllers\PortfolioController;
 use backend\widgets\AutoCompleteInput;
 use backend\widgets\FileSelector;
 use backend\widgets\SearchTagInput;
+use cnd\admin\models\activerecords\Setting;
 use cnd\filemanager\widgets\MediaInput;
 use cnd\form\ActiveForm;
 use common\models\Portfolio;
@@ -59,7 +60,7 @@ $form = ActiveForm::begin(['id' => Yii::$app->controller->id . '-form']);
                         'property' => 'brochure_id',
                         'title' => 'Brochure',
                         'fileName' => uniqid('portfolio-brochure-', true),
-                        'ext' => 'pdf',
+                        'ext' => Setting::get('portfolio.brochure.extensions', 'pdf'),
                     ]) ?>
 
                     <?= FileSelector::widget([
@@ -67,7 +68,7 @@ $form = ActiveForm::begin(['id' => Yii::$app->controller->id . '-form']);
                         'property' => 'presentation_id',
                         'title' => 'Presentation',
                         'fileName' => uniqid('portfolio-presentation-', true),
-                        'ext' => 'pptx',
+                        'ext' => Setting::get('portfolio.presentation.extensions', 'pptx,ppt'),
                     ]) ?>
 
                     <?= FileSelector::widget([
@@ -75,7 +76,7 @@ $form = ActiveForm::begin(['id' => Yii::$app->controller->id . '-form']);
                         'property' => 'video_id',
                         'title' => 'Video',
                         'fileName' => uniqid('portfolio-video-', true),
-                        'ext' => 'mp4',
+                        'ext' => Setting::get('portfolio.video.extensions', 'mp4'),
                     ]) ?>
                 </div>
             </div>

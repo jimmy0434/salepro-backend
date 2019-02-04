@@ -11,6 +11,7 @@
 use backend\controllers\ExhibitionController;
 use backend\widgets\AutoCompleteInput;
 use backend\widgets\FileSelector;
+use cnd\admin\models\activerecords\Setting;
 use cnd\form\ActiveForm;
 use common\models\BusinessUnit;
 use common\models\Exhibition;
@@ -26,9 +27,9 @@ assert($context instanceof ExhibitionController);
 
 $isNew = $model->isNewRecord;
 
-$this->title = ($isNew?'Add New':'Update').' Exhibition';
+$this->title = ($isNew ? 'Add New' : 'Update') . ' Exhibition';
 
-$form = ActiveForm::begin(['id' => Yii::$app->controller->id.'-form']);
+$form = ActiveForm::begin(['id' => Yii::$app->controller->id . '-form']);
 
 ?>
     <div class="row">
@@ -54,7 +55,7 @@ $form = ActiveForm::begin(['id' => Yii::$app->controller->id.'-form']);
                         'property' => 'file_id',
                         'title' => false,
                         'fileName' => uniqid('exhibition-excel-', true),
-                        'ext' => 'xlsx',
+                        'ext' => Setting::get('exhibition.excel.extensions', 'xlsx,xls'),
                     ]) ?>
                 </div>
             </div>
@@ -76,7 +77,7 @@ $form = ActiveForm::begin(['id' => Yii::$app->controller->id.'-form']);
         <div class="col-md-4"></div>
     </div>
     <div class="form-group text-center">
-        <?= Html::submitButton($isNew?'Create':'Save', ['class' => 'btn btn-primary btn-lg']) ?>
+        <?= Html::submitButton($isNew ? 'Create' : 'Save', ['class' => 'btn btn-primary btn-lg']) ?>
     </div>
 
 <?php
