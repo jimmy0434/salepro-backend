@@ -39,6 +39,7 @@ class Bootstrap implements BootstrapInterface
         UrlRule::register('get', '/forms/<id:\d+>/crud', '/form/crud');
         UrlRule::register('post,put', '/forms/<id:\d+>', '/form/save');
         UrlRule::register('get', '/market-research', '/market-research/list');
+        UrlRule::register('get', '/sustainability', '/sustainability/list');
 
         Yii::$app->setComponents(
             [

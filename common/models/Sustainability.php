@@ -18,9 +18,9 @@ use yii\helpers\Json;
  * @property int $created_at
  * @property int $updated_at
  *
- * @property File $powerPoint
- * @property File $video0
- * @property File $brochure0
+ * @property File $powerPointFile
+ * @property File $videoFile
+ * @property File $brochureFile
  */
 class Sustainability extends \cnd\core\components\ActiveRecord
 {
@@ -70,7 +70,7 @@ class Sustainability extends \cnd\core\components\ActiveRecord
     /**
      * @return \yii\db\ActiveQuery
      */
-    public function getPowerPoint()
+    public function getPowerPointFile()
     {
         return $this->hasOne(File::className(), ['id' => 'power_point']);
     }
@@ -78,7 +78,7 @@ class Sustainability extends \cnd\core\components\ActiveRecord
     /**
      * @return \yii\db\ActiveQuery
      */
-    public function getVideo0()
+    public function getVideoFile()
     {
         return $this->hasOne(File::className(), ['id' => 'video']);
     }
@@ -86,7 +86,7 @@ class Sustainability extends \cnd\core\components\ActiveRecord
     /**
      * @return \yii\db\ActiveQuery
      */
-    public function getBrochure0()
+    public function getBrochureFile()
     {
         return $this->hasOne(File::className(), ['id' => 'brochure']);
     }
@@ -122,5 +122,16 @@ class Sustainability extends \cnd\core\components\ActiveRecord
                 'data' => Yii::$app->image->defaultUser,
             ]);
         }
+    }
+
+    public function toArray(array $fields = [], array $expand = [], $recursive = true)
+    {
+        $list = parent::toArray($fields, $expand, $recursive);
+        unset($list['power_point'],$list['brochure'], $list['video']);
+        $list['powerPoint'] = $this->powerPointFile;
+        $list['brochure'] = $this->brochureFile;
+        $list['video'] = $this->videoFile;
+        $list['image'] = $this->imageFactory->url;
+        return $list;
     }
 }
