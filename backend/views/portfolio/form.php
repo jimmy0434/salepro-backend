@@ -39,15 +39,6 @@ $form = ActiveForm::begin(['id' => Yii::$app->controller->id . '-form']);
                 <div class="panel-body">
                     <?= $form->field($model, 'id')->hiddenInput()->label(false) ?>
                     <?= $form->field($model, 'target')->hiddenInput()->label(false) ?>
-                    <?= $form->field($model, 'name')->textInput() ?>
-                    <?= $form->field($model, 'description')->editorInput() ?>
-                </div>
-            </div>
-        </div>
-        <div class="col-md-3">
-            <div class="panel panel-default">
-                <div class="panel-heading"><?= 'Files' ?></div>
-                <div class="panel-body">
                     <?=
                     MediaInput::widget([
                         'model' => $model,
@@ -56,6 +47,15 @@ $form = ActiveForm::begin(['id' => Yii::$app->controller->id . '-form']);
                         'count' => 1,
                     ])
                     ?>
+                    <?= $form->field($model, 'name')->textInput() ?>
+                    <?= $form->field($model, 'description')->editorInput() ?>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-6">
+            <div class="panel panel-default">
+                <div class="panel-heading"><?= 'Files' ?></div>
+                <div class="panel-body">
                     <?= FileSelector::widget([
                         'model' => $model,
                         'property' => 'brochure_id',
@@ -81,8 +81,6 @@ $form = ActiveForm::begin(['id' => Yii::$app->controller->id . '-form']);
                     ]) ?>
                 </div>
             </div>
-        </div>
-        <div class="col-md-3">
             <div class="panel panel-default">
                 <div class="panel-heading"><?= 'Relations' ?></div>
                 <div class="panel-body">
