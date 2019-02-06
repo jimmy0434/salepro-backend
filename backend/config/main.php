@@ -18,7 +18,7 @@ $params = array_merge(
 
 return [
     'id' => 'masterpak-backend',
-    'name' => 'Indevco MasterPak Administration',
+    'name' => 'Sale Pro Administration',
     'basePath' => dirname(__DIR__),
     'controllerNamespace' => 'backend\controllers',
     'defaultRoute' => 'admin/default/index',
@@ -36,8 +36,8 @@ return [
         ],
         'admin' => [
             'class' => 'cnd\admin\Module',
-            'name' => ['MASTER','Pak'],
-            'shortName' => ['M','PK'],
+            'name' => ['Sale','PRO'],
+            'shortName' => ['S','PR'],
             'roleFormExtraContent' => function($model, $form){
                 echo \yii\helpers\Html::a('Approval Process',['/approval/role','id'=>$model->id],['class'=>'btn btn-warning btn-block']);
             },
