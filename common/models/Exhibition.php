@@ -9,21 +9,20 @@ use Yii;
  *
  * @property int $id
  * @property string $name
- * @property string $country
- * @property string $region
  * @property string $year
  * @property int $file_id
  * @property int $business_unit_id
  * @property int $created_at
  * @property int $updated_at
- * @property int $sector_id
  *
  * @property BusinessUnit $businessUnit
  * @property File $file
- * @property Sector $sector
- * @property ExhibitionItem[] $exhibitionItems
- * @property ExhibitionItemProduct[] $exhibitionItemProducts
+ * @property ExhibitionProduct[] $exhibitionProducts
  * @property Product[] $products
+ * @property ExhibitionSector[] $exhibitionSectors
+ * @property Sector[] $sectors
+ * @property ExhibitionCountry] $exhibitionCountries
+ * @property ExhibitionRegion[] $exhibitionRegions
  */
 class Exhibition extends \cnd\core\components\ActiveRecord
 {
@@ -60,8 +59,6 @@ class Exhibition extends \cnd\core\components\ActiveRecord
         return [
             'id' => 'ID',
             'name' => 'Name',
-            'country' => 'Country',
-            'region' => 'Region',
             'year' => 'Year',
             'file_id' => 'File ID',
             'business_unit_id' => 'Business Unit',
@@ -97,22 +94,43 @@ class Exhibition extends \cnd\core\components\ActiveRecord
     /**
      * @return \yii\db\ActiveQuery
      */
-    public function getExhibitionItems()
+    public function getExhibitionProducts()
     {
-        return $this->hasMany(ExhibitionItem::className(), ['exhibition_id' => 'id']);
+        return $this->hasMany(ExhibitionProduct::className(), ['exhibition_id' => 'id']);
+    }
+
+    public function getProducts()
+    {
+        return $this->hasMany(Product::className(), ['id' => 'product_id'])->via('exhibitionProducts');
     }
 
     /**
      * @return \yii\db\ActiveQuery
      */
-    public function getExhibitionItemProducts()
+    public function getExhibitionSectors()
     {
-        return $this->hasMany(ExhibitionItemProduct::className(), ['exhibition_id' => 'id']);
+        return $this->hasMany(ExhibitionSector::className(), ['exhibition_id' => 'id']);
     }
 
-    public function getProducts()
+    public function getSectors()
     {
-        return $this->hasMany(Product::className(), ['id' => 'product_id'])->via('exhibitionItemProducts');
+        return $this->hasMany(Sector::className(), ['id' => 'sector_id'])->via('exhibitionSectors');
+    }
+
+    /**
+     * @return \yii\db\ActiveQuery
+     */
+    public function getExhibitionCountries()
+    {
+        return $this->hasMany(ExhibitionCountry::className(), ['exhibition_id' => 'id']);
+    }
+
+    /**
+     * @return \yii\db\ActiveQuery
+     */
+    public function getExhibitionRegions()
+    {
+        return $this->hasMany(ExhibitionRegion::className(), ['exhibition_id' => 'id']);
     }
 
     /**

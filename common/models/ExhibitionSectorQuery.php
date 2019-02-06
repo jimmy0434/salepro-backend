@@ -3,11 +3,11 @@
 namespace common\models;
 
 /**
- * This is the ActiveQuery class for [[ExhibitionItemProduct]].
+ * This is the ActiveQuery class for [[ExhibitionSector]].
  *
- * @see ExhibitionItemProduct
+ * @see ExhibitionSector
  */
-class ExhibitionItemProductQuery extends \yii\db\ActiveQuery
+class ExhibitionSectorQuery extends \yii\db\ActiveQuery
 {
     /*public function active()
     {
@@ -16,7 +16,7 @@ class ExhibitionItemProductQuery extends \yii\db\ActiveQuery
 
     /**
      * {@inheritdoc}
-     * @return ExhibitionItemProduct[]|array
+     * @return ExhibitionSector[]|array
      */
     public function all($db = null)
     {
@@ -25,7 +25,7 @@ class ExhibitionItemProductQuery extends \yii\db\ActiveQuery
 
     /**
      * {@inheritdoc}
-     * @return ExhibitionItemProduct|array|null
+     * @return ExhibitionSector|array|null
      */
     public function one($db = null)
     {
