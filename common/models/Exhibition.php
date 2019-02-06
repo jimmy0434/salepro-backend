@@ -21,13 +21,16 @@ use Yii;
  * @property Product[] $products
  * @property ExhibitionSector[] $exhibitionSectors
  * @property Sector[] $sectors
- * @property ExhibitionCountry] $exhibitionCountries
+ * @property ExhibitionCountry[] $exhibitionCountries
  * @property ExhibitionRegion[] $exhibitionRegions
  */
 class Exhibition extends \cnd\core\components\ActiveRecord
 {
 
     public $productsIds = [];
+    public $sectorsIds = [];
+    public $countriesNames = [];
+    public $regionsNames = [];
 
     /**
      * {@inheritdoc}
@@ -44,10 +47,10 @@ class Exhibition extends \cnd\core\components\ActiveRecord
     {
         return array_merge(parent::rules(), [
             [['file_id', 'business_unit_id'], 'integer'],
-            [['name', 'country', 'region', 'year'], 'string', 'max' => 255],
+            [['name', 'year'], 'string', 'max' => 255],
             [['business_unit_id'], 'exist', 'skipOnError' => true, 'targetClass' => BusinessUnit::className(), 'targetAttribute' => ['business_unit_id' => 'id']],
             [['file_id'], 'exist', 'skipOnError' => true, 'targetClass' => File::className(), 'targetAttribute' => ['file_id' => 'id']],
-            [['productsIds'], 'safe'],
+            [['productsIds', 'sectorsIds', 'countriesNames', 'regionsNames'], 'safe'],
         ]);
     }
 
@@ -64,6 +67,10 @@ class Exhibition extends \cnd\core\components\ActiveRecord
             'business_unit_id' => 'Business Unit',
             'created_at' => 'Created At',
             'updated_at' => 'Updated At',
+            'countriesNames' => 'Countries',
+            'regionsNames' => 'Regions',
+            'sectorsIds' => 'Sectors',
+            'productsIds' => 'Products',
         ];
     }
 
@@ -81,14 +88,6 @@ class Exhibition extends \cnd\core\components\ActiveRecord
     public function getFile()
     {
         return $this->hasOne(File::className(), ['id' => 'file_id']);
-    }
-
-    /**
-     * @return \yii\db\ActiveQuery
-     */
-    public function getSector()
-    {
-        return $this->hasOne(Sector::className(), ['id' => 'sector_id']);
     }
 
     /**
@@ -169,7 +168,27 @@ class Exhibition extends \cnd\core\components\ActiveRecord
 
     public function afterSave($insert, $changedAttributes)
     {
-        $this->assignItems($this->productsIds, '\common\models\ExhibitionItemProduct', 'product_id', 'exhibition_id', $this->id);
+        $this->assignItems($this->productsIds, '\common\models\ExhibitionProduct', 'product_id', 'exhibition_id', $this->id);
+        $this->assignItems($this->sectorsIds, '\common\models\ExhibitionSector', 'sector_id', 'exhibition_id', $this->id);
+        $this->assignItems($this->countriesNames, '\common\models\ExhibitionCountry', 'country', 'exhibition_id', $this->id);
+        $this->assignItems($this->regionsNames, '\common\models\ExhibitionRegion', 'region', 'exhibition_id', $this->id);
         parent::afterSave($insert, $changedAttributes);
+    }
+
+    public function afterFind()
+    {
+        parent::afterFind();
+        $countries = $this->exhibitionCountries;
+        if (!empty($countries) && is_array($countries)) {
+            foreach ($countries as $model) {
+                $this->countriesNames[] = $model->country;
+            }
+        }
+        $regions = $this->exhibitionRegions;
+        if (!empty($regions) && is_array($regions)) {
+            foreach ($regions as $model) {
+                $this->regionsNames[] = $model->region;
+            }
+        }
     }
 }

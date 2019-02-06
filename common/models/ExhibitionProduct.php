@@ -32,8 +32,7 @@ class ExhibitionProduct extends \cnd\core\components\ActiveRecord
     public function rules()
     {
         return array_merge(parent::rules(), [
-            [['exhibition_id', 'product_id', 'created_at', 'updated_at'], 'integer'],
-            [['created_at', 'updated_at'], 'required'],
+            [['exhibition_id', 'product_id'], 'integer'],
             [['product_id'], 'exist', 'skipOnError' => true, 'targetClass' => Product::className(), 'targetAttribute' => ['product_id' => 'id']],
             [['exhibition_id'], 'exist', 'skipOnError' => true, 'targetClass' => Exhibition::className(), 'targetAttribute' => ['exhibition_id' => 'id']],
         ]);

@@ -32,8 +32,7 @@ class ExhibitionSector extends \cnd\core\components\ActiveRecord
     public function rules()
     {
         return array_merge(parent::rules(), [
-            [['exhibition_id', 'sector_id', 'created_at', 'updated_at'], 'integer'],
-            [['created_at', 'updated_at'], 'required'],
+            [['exhibition_id', 'sector_id'], 'integer'],
             [['exhibition_id'], 'exist', 'skipOnError' => true, 'targetClass' => Exhibition::className(), 'targetAttribute' => ['exhibition_id' => 'id']],
             [['sector_id'], 'exist', 'skipOnError' => true, 'targetClass' => Sector::className(), 'targetAttribute' => ['sector_id' => 'id']],
         ]);

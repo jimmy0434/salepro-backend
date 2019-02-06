@@ -33,23 +33,14 @@ $form = ActiveForm::begin(['id' => Yii::$app->controller->id . '-form']);
 
 ?>
     <div class="row">
-        <div class="col-md-4">
+        <div class="col-md-6">
             <div class="panel panel-default">
                 <div class="panel-heading">Information</div>
                 <div class="panel-body">
                     <?= $form->field($model, 'id')->hiddenInput()->label(false) ?>
                     <?= $form->field($model, 'name')->textInput() ?>
-                    <?= $form->field($model, 'country')->dropDownList(Yii::$app->countries()) ?>
-                    <?= $form->field($model, 'region')->textInput() ?>
                     <?= $form->field($model, 'year')->textInput() ?>
                     <?= $form->field($model, 'business_unit_id')->dropDownList(BusinessUnit::listData()) ?>
-                </div>
-            </div>
-        </div>
-        <div class="col-md-4">
-            <div class="panel panel-default">
-                <div class="panel-heading">Excel File</div>
-                <div class="panel-body">
                     <?= FileSelector::widget([
                         'model' => $model,
                         'property' => 'file_id',
@@ -59,8 +50,10 @@ $form = ActiveForm::begin(['id' => Yii::$app->controller->id . '-form']);
                     ]) ?>
                 </div>
             </div>
+        </div>
+        <div class="col-md-6">
             <div class="panel panel-default">
-                <div class="panel-heading">Products</div>
+                <div class="panel-heading">Relations</div>
                 <div class="panel-body">
                     <?= AutoCompleteInput::widget([
                         'model' => $model,
@@ -71,6 +64,17 @@ $form = ActiveForm::begin(['id' => Yii::$app->controller->id . '-form']);
                         'title' => 'Products',
                         'data' => $model->products,
                     ]) ?>
+                    <?= AutoCompleteInput::widget([
+                        'model' => $model,
+                        'form' => $form,
+                        'property' => 'sectorsIds',
+                        'findUrl' => ['/portfolio/find-sectors'],
+                        'addUrl' => ['/portfolio/add-sector'],
+                        'title' => 'Sectors',
+                        'data' => $model->sectors,
+                    ]) ?>
+                    <?= $form->field($model, 'countriesNames')->dropDownListAdvanced(Yii::$app->countries(), ['multiple' => true], '{plugins: [\'remove_button\']}') ?>
+                    <?= $form->field($model, 'regionsNames')->dropDownListAdvanced(Yii::$app->regions(), ['multiple' => true], '{plugins: [\'remove_button\']}') ?>
                 </div>
             </div>
         </div>

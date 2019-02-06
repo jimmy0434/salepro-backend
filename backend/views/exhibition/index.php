@@ -57,10 +57,9 @@ $dv = new DataView([
                 assert($attribute instanceof Attribute);
                 assert($data instanceof Exhibition);
                 assert($view instanceof DataViewLocator);
-                return $data->country;
+                return implode(',',$data->countriesNames);
             },
-            'filterBy' => Attribute::FILTER_LIST,
-            'filterList' => Yii::$app->countries(),
+            'filterBy' => Attribute::FILTER_NONE,
         ],
         'region' => [
             'label' => 'Region',
@@ -68,8 +67,9 @@ $dv = new DataView([
                 assert($attribute instanceof Attribute);
                 assert($data instanceof Exhibition);
                 assert($view instanceof DataViewLocator);
-                return $data->region;
+                return implode(',',$data->regionsNames);
             },
+            'filterBy' => Attribute::FILTER_NONE,
         ],
         'year' => [
             'label' => 'Year',

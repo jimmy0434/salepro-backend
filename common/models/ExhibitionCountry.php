@@ -31,8 +31,7 @@ class ExhibitionCountry extends \cnd\core\components\ActiveRecord
     public function rules()
     {
         return array_merge(parent::rules(), [
-            [['exhibition_id', 'created_at', 'updated_at'], 'integer'],
-            [['created_at', 'updated_at'], 'required'],
+            [['exhibition_id'], 'integer'],
             [['country'], 'string', 'max' => 255],
             [['exhibition_id'], 'exist', 'skipOnError' => true, 'targetClass' => Exhibition::className(), 'targetAttribute' => ['exhibition_id' => 'id']],
         ]);
