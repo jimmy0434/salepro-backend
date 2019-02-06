@@ -23,7 +23,7 @@ class ExhibitionProduct extends \cnd\core\components\ActiveRecord
      */
     public static function tableName()
     {
-        return 'mpk_exhibition_product';
+        return '{{%exhibition_product}}';
     }
 
     /**

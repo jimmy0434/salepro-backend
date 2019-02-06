@@ -27,6 +27,7 @@ use yii\web\View;
             ])
             ?>
             <?= $form->field($model, 'name')->textInput(['autocomplete' => 'off']) ?>
+            <?= $form->field($model, 'job_title')->textInput(['autocomplete' => 'off']) ?>
             <?= $form->field($model, 'mac_address')->textInput(['autocomplete' => 'off']) ?>
         </div>
     </div>

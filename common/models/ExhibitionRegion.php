@@ -22,7 +22,7 @@ class ExhibitionRegion extends \cnd\core\components\ActiveRecord
      */
     public static function tableName()
     {
-        return 'mpk_exhibition_region';
+        return '{{%exhibition_region}}';
     }
 
     /**

@@ -23,7 +23,7 @@ class ExhibitionSector extends \cnd\core\components\ActiveRecord
      */
     public static function tableName()
     {
-        return 'mpk_exhibition_sector';
+        return '{{%exhibition_sector}}';
     }
 
     /**
