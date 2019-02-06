@@ -16,9 +16,11 @@ use Yii;
  * @property int $business_unit_id
  * @property int $created_at
  * @property int $updated_at
+ * @property int $sector_id
  *
  * @property BusinessUnit $businessUnit
  * @property File $file
+ * @property Sector $sector
  * @property ExhibitionItem[] $exhibitionItems
  * @property ExhibitionItemProduct[] $exhibitionItemProducts
  * @property Product[] $products
@@ -87,6 +89,14 @@ class Exhibition extends \cnd\core\components\ActiveRecord
     /**
      * @return \yii\db\ActiveQuery
      */
+    public function getSector()
+    {
+        return $this->hasOne(Sector::className(), ['id' => 'sector_id']);
+    }
+
+    /**
+     * @return \yii\db\ActiveQuery
+     */
     public function getExhibitionItems()
     {
         return $this->hasMany(ExhibitionItem::className(), ['exhibition_id' => 'id']);
@@ -100,7 +110,8 @@ class Exhibition extends \cnd\core\components\ActiveRecord
         return $this->hasMany(ExhibitionItemProduct::className(), ['exhibition_id' => 'id']);
     }
 
-    public function getProducts(){
+    public function getProducts()
+    {
         return $this->hasMany(Product::className(), ['id' => 'product_id'])->via('exhibitionItemProducts');
     }
 

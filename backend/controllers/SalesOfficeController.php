@@ -56,7 +56,7 @@ class SalesOfficeController extends SController
             }
             return $this->redirect(['index']);
         }
-        Log::trace("Open Sustainability form");
+        Log::trace("Open SalesOffice form");
         return $this->render('form', ['model' => $model]);
     }
 

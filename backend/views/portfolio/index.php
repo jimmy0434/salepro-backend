@@ -24,17 +24,26 @@ use yii\web\View;
 
 $context = $this->context;
 
-$this->title = "Portfolio Management | " . $context->targets[$context->target].'s';
+$this->title = "Portfolio Management | " . $context->targets[$context->target] . 's';
 ?>
     <div class="btn-group btn-group-justified" role="group" aria-label="targets">
         <?php
         foreach ($context->targets as $value => $label) {
-            echo Html::a($label.'s', ['index', 't' => $value], ['class' => 'btn btn-default ' . ($value == $context->target ? 'active' : '')]);
+            echo Html::a($label . 's', ['index', 't' => $value], ['class' => 'btn btn-default ' . ($value == $context->target ? 'active' : '')]);
         }
         ?>
     </div>
     <hr>
 <?php
+$extraLinks = [];
+if ($context->target == Portfolio::TARGET_PRODUCT) {
+    $extraLinks[] = function ($row) use ($context) {
+        if (Yii::$app->permission->can('/product-details/index')) {
+            return Html::a('Details', Url::to(['/product-details/index', 'p' => $row->item->id, 't' => $context->target]), ['class' => 'btn btn-warning']);
+        }
+        return null;
+    };
+}
 
 $dv = new DataView([
     'dataLocator' => $dataLocator,
@@ -95,7 +104,7 @@ $dv = new DataView([
     'headerLinks' => [
         Yii::$app->permission->can('/portfolio/manage') ? Html::a('Add New', Url::to(['manage', 't' => $context->target]), ['class' => 'btn btn-success']) : null,
     ],
-    'rowLinks' => [
+    'rowLinks' => array_merge($extraLinks, [
         function ($row) use ($context) {
             if (Yii::$app->permission->can('/portfolio/manage')) {
                 return Html::a('Edit', Url::to(['manage', 'id' => $row->id, 't' => $context->target]), ['class' => 'btn btn-primary']);
@@ -108,7 +117,7 @@ $dv = new DataView([
             }
             return null;
         },
-    ]
+    ]),
 ]);
 $dv->addView('grid', [
     'class' => '\cnd\grid\GridTable',
