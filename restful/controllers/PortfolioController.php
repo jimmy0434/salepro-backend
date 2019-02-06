@@ -40,12 +40,16 @@ class PortfolioController extends SController
 
     public function actionList()
     {
+        $motherCorporates = $this->list(Portfolio::TARGET_MOTHER_CORPORATE);
         $corporates = $this->list(Portfolio::TARGET_CORPORATE);
+        $businessUnit = $this->list(Portfolio::TARGET_BUSINESS_UNIT);
         $brands = $this->list(Portfolio::TARGET_BRAND);
         $sectors = $this->list(Portfolio::TARGET_SECTOR);
 
         return [
+            'motherCorporates' => $motherCorporates,
             'corporates' => $corporates,
+            'businessUnit' => $businessUnit,
             'brands' => $brands,
             'sectors' => $sectors,
         ];
@@ -131,7 +135,7 @@ class PortfolioController extends SController
             },
         ]);
         $products = $query->all();
-        return ['products' => $products, 'query' => \Yii::$app->helper->sql($query)];
+        return ['products' => $products];
     }
 
     /**

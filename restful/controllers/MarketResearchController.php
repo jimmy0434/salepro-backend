@@ -74,7 +74,6 @@ class MarketResearchController extends SController
         $query->orderBy($sortAttr . ' ' . $sortDir);
         $query->limit($pageSize)->offset(($page - 1) * $pageSize);
         $list = $query->all();
-        $this->debugSql($query);
         return ['marketResearch' => $list];
     }
 }

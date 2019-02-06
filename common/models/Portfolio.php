@@ -43,14 +43,17 @@ use yii\helpers\Json;
  * @property Sector $sector
  * @property Brand $brand
  * @property Product $product
+ * @property BusinessUnit $businessUnit
  */
 class Portfolio extends \cnd\core\components\ActiveRecord
 {
 
-    const TARGET_CORPORATE = 1;
-    const TARGET_BRAND = 2;
-    const TARGET_SECTOR = 3;
-    const TARGET_PRODUCT = 4;
+    const TARGET_MOTHER_CORPORATE = 1;
+    const TARGET_CORPORATE = 2;
+    const TARGET_BUSINESS_UNIT = 3;
+    const TARGET_BRAND = 4;
+    const TARGET_SECTOR = 5;
+    const TARGET_PRODUCT = 6;
 
     public $tags = [];
     public $brandsIds = [];
@@ -118,6 +121,14 @@ class Portfolio extends \cnd\core\components\ActiveRecord
     public function getCorporate()
     {
         return $this->hasOne(Corporate::className(), ['portfolio_id' => 'id']);
+    }
+
+    /**
+     * @return \yii\db\ActiveQuery
+     */
+    public function getBusinessUnit()
+    {
+        return $this->hasOne(BusinessUnit::className(), ['portfolio_id' => 'id']);
     }
 
     /**
@@ -220,6 +231,7 @@ class Portfolio extends \cnd\core\components\ActiveRecord
     {
         switch ($this->target) {
             case static::TARGET_CORPORATE:
+            case static::TARGET_MOTHER_CORPORATE:
                 Corporate::relateToPortfolio($this->id);
                 $item = $this->item;
                 if ($item) {
@@ -252,6 +264,9 @@ class Portfolio extends \cnd\core\components\ActiveRecord
                     $this->assignItems($this->brandsIds, '\common\models\ProductBrand', 'brand_id', 'product_id', $item->id);
                     $this->assignItems($this->sectorsIds, '\common\models\ProductSector', 'sector_id', 'product_id', $item->id);
                 }
+                break;
+            case static::TARGET_BUSINESS_UNIT:
+                BusinessUnit::relateToPortfolio($this->id);
                 break;
         }
         $this->assignItems($this->officesIds, '\common\models\PortfolioSalesOffice', 'sales_office_id', 'portfolio_id', $this->id);
@@ -336,6 +351,10 @@ class Portfolio extends \cnd\core\components\ActiveRecord
                 'url' => $model->url,
             ];
         }));
+        $data['offices'] = $this->salesOffices;
+        if($this->target == static::TARGET_PRODUCT){
+            $data['details'] = $this->product->details;
+        }
         unset($data['brochure_id'], $data['presentation_id'], $data['video_id'], $data['search_id'], $data['target']);
         return $data;
     }

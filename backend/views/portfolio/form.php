@@ -22,6 +22,7 @@ use cnd\filemanager\widgets\MediaInput;
 use cnd\form\ActiveForm;
 use common\models\Portfolio;
 use yii\helpers\Html;
+use yii\helpers\Inflector;
 use yii\web\JqueryAsset;
 use yii\web\View;
 
@@ -86,7 +87,7 @@ $form = ActiveForm::begin(['id' => Yii::$app->controller->id . '-form']);
                 <div class="panel-heading"><?= 'Relations' ?></div>
                 <div class="panel-body">
                     <?php
-                    if (in_array($context->target, [Portfolio::TARGET_CORPORATE, Portfolio::TARGET_BRAND, Portfolio::TARGET_SECTOR])) {
+                    if (in_array($context->target, [Portfolio::TARGET_CORPORATE, Portfolio::TARGET_MOTHER_CORPORATE, Portfolio::TARGET_BRAND, Portfolio::TARGET_SECTOR])) {
                         echo AutoCompleteInput::widget([
                             'model' => $model,
                             'form' => $form,
@@ -97,7 +98,7 @@ $form = ActiveForm::begin(['id' => Yii::$app->controller->id . '-form']);
                             'data' => $model->item ? $model->item->businessUnits : [],
                         ]);
                     }
-                    if (in_array($context->target, [Portfolio::TARGET_BRAND, Portfolio::TARGET_PRODUCT, Portfolio::TARGET_CORPORATE])) {
+                    if (in_array($context->target, [Portfolio::TARGET_BRAND, Portfolio::TARGET_PRODUCT, Portfolio::TARGET_CORPORATE, Portfolio::TARGET_MOTHER_CORPORATE])) {
                         echo AutoCompleteInput::widget([
                             'model' => $model,
                             'form' => $form,

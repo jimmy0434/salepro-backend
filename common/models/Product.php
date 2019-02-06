@@ -18,6 +18,7 @@ use Yii;
  * @property Portfolio $portfolio
  * @property ProductBrand[] $productBrands
  * @property ProductSector[] $productSectors
+ * @property ProductDetail[] $details
  */
 class Product extends \cnd\core\components\ActiveRecord
 {
@@ -105,6 +106,11 @@ class Product extends \cnd\core\components\ActiveRecord
     public function getSectors()
     {
         return $this->hasMany(Sector::className(), ['id' => 'sector_id'])->via('productSectors');
+    }
+
+    public function getDetails()
+    {
+        return $this->hasMany(ProductDetail::className(), ['product_id' => 'id']);
     }
 
     /**

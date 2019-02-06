@@ -17,6 +17,7 @@ use common\models\Portfolio;
 use common\models\PortfolioQuery;
 use Yii;
 use cnd\core\components\SController;
+use yii\helpers\Inflector;
 
 class PortfolioController extends SController
 {
@@ -26,7 +27,7 @@ class PortfolioController extends SController
     public function beforeAction($action)
     {
         $portfolio = new Portfolio();
-        $this->target = Portfolio::TARGET_CORPORATE;
+        $this->target = Portfolio::TARGET_MOTHER_CORPORATE;
         $this->targets = $portfolio->target_list;
         if (Yii::$app->request->get('t') && in_array(Yii::$app->request->get('t'), $portfolio->target_values)) {
             $this->target = Yii::$app->request->get('t');
@@ -117,7 +118,7 @@ class PortfolioController extends SController
         $model->name = $name;
         $model->target = $target;
         if ($model->save()) {
-            $item = strtolower($model->target_label);
+            $item = lcfirst(Inflector::id2camel($model->target_label, '_'));
             if ($model->hasProperty($item)) {
                 return ['id' => $model->$item->id];
             }
@@ -140,6 +141,11 @@ class PortfolioController extends SController
         return $this->findList(Portfolio::TARGET_PRODUCT, $q, $page);
     }
 
+    public function actionFindBusinessUnit($q, $page = 1)
+    {
+        return $this->findList(Portfolio::TARGET_BUSINESS_UNIT, $q, $page);
+    }
+
     public function actionAddSector()
     {
         return $this->addItem(Portfolio::TARGET_SECTOR);
@@ -155,39 +161,8 @@ class PortfolioController extends SController
         return $this->addItem(Portfolio::TARGET_PRODUCT);
     }
 
-    public function actionFindBusinessUnit($q, $page = 1)
-    {
-        Yii::$app->response->format = 'json';
-        $response = [];
-        $total = BusinessUnit::find()->count();
-
-        $query = BusinessUnit::find();
-        $query->andWhere('name like "%' . $q . '%"');
-        $query->limit(30);
-        $query->offset(($page - 1) * 30);
-        $list = $query->all();
-
-        if (!empty($list) && is_array($list)) {
-            foreach ($list as $model) {
-                $response[] = [
-                    'id' => $model->id,
-                    'text' => $model->name,
-                ];
-            }
-        }
-        return ['items' => $response, 'total_count' => $total];
-    }
-
     public function actionAddBusinessUnit()
     {
-        Yii::$app->response->format = 'json';
-        $name = Yii::$app->request->post('name');
-        $model = new BusinessUnit();
-        $model->name = $name;
-        $model->type = BusinessUnit::TYPE_MANUFACTURING_PLANT;
-        if ($model->save()) {
-            return ['id' => $model->id];
-        }
-        return null;
+        return $this->addItem(Portfolio::TARGET_BUSINESS_UNIT);
     }
 }
