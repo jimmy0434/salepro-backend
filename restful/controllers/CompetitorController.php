@@ -65,18 +65,79 @@ class CompetitorController extends SController
         $competitor = Competitor::find()->where(['uid' => $uid, 'salesman_id' => Yii::$app->user->identity->id])->one();
         return ['profile' => $competitor];
     }
+
+    /**
+     * @SWG\Get(
+     *     path="/competitions/{uid}/logo",
+     *     tags={"Competition"},
+     *     summary="Retrieves competition logo",
+     *     @SWG\Response(
+     *         response = 200,
+     *         description = "competition logo response"
+     *     ),
+     *     security = {{"Bearer": {}}},
+     *     @SWG\Parameter( name="Authorization", in="header", required=true, type="string", default="Bearer TOKEN", description="Authorization" ),
+     *     @SWG\Parameter(name="uid", required=true, in="path", type="string", description="The profile UID")
+     * )
+     */
     public function actionLogo()
     {
         $uid = Yii::$app->request->get('uid');
         $competitor = Competitor::find()->select('logo')->where(['uid' => $uid, 'salesman_id' => Yii::$app->user->identity->id])->one();
         return ['logo' => $competitor->logo];
     }
+
+    /**
+     * @SWG\Get(
+     *     path="/competitions/{uid}/file",
+     *     tags={"Competition"},
+     *     summary="Retrieves competition file",
+     *     @SWG\Response(
+     *         response = 200,
+     *         description = "competition file response"
+     *     ),
+     *     security = {{"Bearer": {}}},
+     *     @SWG\Parameter( name="Authorization", in="header", required=true, type="string", default="Bearer TOKEN", description="Authorization" ),
+     *     @SWG\Parameter(name="uid", required=true, in="path", type="string", description="The profile UID")
+     * )
+     */
     public function actionFile()
     {
         $uid = Yii::$app->request->get('uid');
         $competitor = Competitor::find()->select('file')->where(['uid' => $uid, 'salesman_id' => Yii::$app->user->identity->id])->one();
         return ['file' => $competitor->file];
     }
+
+    /**
+     * @SWG\POST(
+     *     path="/competitions",
+     *     tags={"Competition"},
+     *     summary="Add new competition",
+     *     @SWG\Response(
+     *          response = 200,
+     *          description = "competition response"
+     *     ),
+     *     security = {{"Bearer": {}}},
+     *     @SWG\Parameter( name="Authorization", in="header", required=true, type="string", default="Bearer TOKEN", description="Authorization" ),
+     *     @SWG\Parameter(name="data", required=true, in="body", @SWG\Schema(type="object"), description="The profile data")
+     * )
+     */
+
+    /**
+     * @SWG\PUT(
+     *     path="/competitions/{uid}",
+     *     tags={"Competition"},
+     *     summary="Edit competition",
+     *     @SWG\Response(
+     *         response = 200,
+     *         description = "competition response"
+     *     ),
+     *     security = {{"Bearer": {}}},
+     *     @SWG\Parameter( name="Authorization", in="header", required=true, type="string", default="Bearer TOKEN", description="Authorization" ),
+     *     @SWG\Parameter(name="uid", required=true, in="path", type="string", description="The profile UID"),
+     *     @SWG\Parameter(name="data", required=true, in="body", @SWG\Schema(type="object"), description="The profile data")
+     * )
+     */
     public function actionManage()
     {
         $competitor = null;
