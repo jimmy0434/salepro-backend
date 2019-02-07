@@ -109,17 +109,16 @@ class CompetitorController extends SController
     }
 
     /**
-     * @SWG\PUT(
-     *     path="/competitions/{uid}",
+     * @SWG\POST(
+     *     path="/competitions",
      *     tags={"Competition"},
-     *     summary="Edit competition",
+     *     summary="Add new competition",
      *     @SWG\Response(
-     *         response = 200,
-     *         description = "competition response"
+     *          response = 200,
+     *          description = "competition response"
      *     ),
      *     security = {{"Bearer": {}}},
      *     @SWG\Parameter( name="Authorization", in="header", required=true, type="string", default="Bearer TOKEN", description="Authorization" ),
-     *     @SWG\Parameter(name="uid", required=true, in="path", type="string", description="The profile UID"),
      *     @SWG\Parameter(name="data", required=true, in="body", @SWG\Schema(type="object"), description="The profile data")
      * )
      */
