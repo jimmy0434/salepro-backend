@@ -14,7 +14,6 @@ use Yii;
 use cnd\core\api\SController;
 use common\models\Competitor;
 use yii\helpers\Inflector;
-use Swagger\Annotations as SWG;
 
 class CompetitorController extends SController
 {
@@ -108,21 +107,6 @@ class CompetitorController extends SController
         $competitor = Competitor::find()->select('file')->where(['uid' => $uid, 'salesman_id' => Yii::$app->user->identity->id])->one();
         return ['file' => $competitor->file];
     }
-
-    /**
-     * @SWG\POST(
-     *     path="/competitions",
-     *     tags={"Competition"},
-     *     summary="Add new competition",
-     *     @SWG\Response(
-     *          response = 200,
-     *          description = "competition response"
-     *     ),
-     *     security = {{"Bearer": {}}},
-     *     @SWG\Parameter( name="Authorization", in="header", required=true, type="string", default="Bearer TOKEN", description="Authorization" ),
-     *     @SWG\Parameter(name="data", required=true, in="body", @SWG\Schema(type="object"), description="The profile data")
-     * )
-     */
 
     /**
      * @SWG\PUT(
