@@ -107,6 +107,22 @@ class CompetitorController extends SController
         $competitor = Competitor::find()->select('file')->where(['uid' => $uid, 'salesman_id' => Yii::$app->user->identity->id])->one();
         return ['file' => $competitor->file];
     }
+
+    /**
+     * @SWG\PUT(
+     *     path="/competitions/{uid}",
+     *     tags={"Competition"},
+     *     summary="Edit competition",
+     *     @SWG\Response(
+     *         response = 200,
+     *         description = "competition response"
+     *     ),
+     *     security = {{"Bearer": {}}},
+     *     @SWG\Parameter( name="Authorization", in="header", required=true, type="string", default="Bearer TOKEN", description="Authorization" ),
+     *     @SWG\Parameter(name="uid", required=true, in="path", type="string", description="The profile UID"),
+     *     @SWG\Parameter(name="data", required=true, in="body", @SWG\Schema(type="object"), description="The profile data")
+     * )
+     */
     public function actionManage()
     {
         $competitor = null;
