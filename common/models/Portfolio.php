@@ -356,7 +356,7 @@ class Portfolio extends \cnd\core\components\ActiveRecord
         if($this->target == static::TARGET_PRODUCT){
             $data['details'] = $this->product->details;
         }
-        $data['original'] = $this->item;
+        $data['primaryModel'] = $this->item;
         unset($data['brochure_id'], $data['presentation_id'], $data['video_id'], $data['search_id'], $data['target']);
         return $data;
     }

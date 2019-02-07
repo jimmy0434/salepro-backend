@@ -112,4 +112,11 @@ class CompetitorFlexible extends \cnd\core\components\ActiveRecord
     {
         return new CompetitorFlexibleQuery(get_called_class());
     }
+
+    public function toArray(array $fields = [], array $expand = [], $recursive = true)
+    {
+        $list = parent::toArray($fields, $expand, $recursive);
+        $list['competitorFlexibleCustomer'] = $this->getCompetitorFlexibleCustomer()->all();
+        return $list;
+    }
 }
