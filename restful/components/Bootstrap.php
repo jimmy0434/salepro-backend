@@ -27,6 +27,7 @@ class Bootstrap implements BootstrapInterface
         $baseUrl = str_replace('/restful/web', '/api', (new Request)->getBaseUrl());
 
         UrlRule::register('get', '/ping', '/public/ping');
+        UrlRule::register('get', '/data-list', '/public/data-list');
         UrlRule::register('get', '/swagger/docs', '/swagger/docs');
         UrlRule::register('get', '/portfolios', '/portfolio/list');
         UrlRule::register('get', '/portfolios/<uid:.+>', '/portfolio/one');

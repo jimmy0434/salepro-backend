@@ -44,7 +44,7 @@ class DataListController extends SController
         $dataLocator = DataLocator::create(DataList::className(), [
             'orderBy' => 'name ASC',
         ], function ($dl, $query) {
-            $query->andWhere(['type' => $this->type]);
+            $query->andWhere(['type' => $this->type, 'parent_id' => $this->up]);
         });
         Log::trace("Show data List (page:" . $dataLocator->page . ", count: " . $dataLocator->pageSize . ")");
         if (Yii::$app->request->isAjax) {

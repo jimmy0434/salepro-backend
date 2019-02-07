@@ -13,6 +13,9 @@ use Yii;
  * @property int $type
  * @property int $created_at
  * @property int $updated_at
+ *
+ * @property DataList $up
+ * @property DataList $down
  */
 class DataList extends \cnd\core\components\ActiveRecord
 {
@@ -22,7 +25,7 @@ class DataList extends \cnd\core\components\ActiveRecord
     const TYPE_PRODUCT_TYPE = 3;
     const TYPE_COMPANY_PROFILE = 4;
     const TYPE_POSITION = 5;
-    const TYPE_YEARS = 6;
+    const TYPE_YEAR = 6;
     const TYPE_ANNUAL_SALES_REVENUE = 7;
     const TYPE_NUMBER_OF_EMPLOYEES = 8;
     const TYPE_LINE_BRAND = 9;
@@ -34,11 +37,18 @@ class DataList extends \cnd\core\components\ActiveRecord
     const TYPE_COMPANY_COMMUNICATION = 15;
     const TYPE_SUPPLIER = 16;
     const TYPE_INCOTERMS = 17;
-    const TYPE_PAYMENT_FACILITIES = 18;
+    const TYPE_PAYMENT_FACILITY = 18;
     const TYPE_CURRENCY = 19;
     const TYPE_TERMS_OF_BUSINESS = 20;
     const TYPE_RAW_MATERIAL = 21;
     const TYPE_PRICE_UNIT = 22;
+
+    public static function listRelations()
+    {
+        return [
+            static::TYPE_LINE_BRAND => static::TYPE_PRODUCTION_LINE,
+        ];
+    }
 
     /**
      * {@inheritdoc}
@@ -72,6 +82,16 @@ class DataList extends \cnd\core\components\ActiveRecord
             'created_at' => 'Created At',
             'updated_at' => 'Updated At',
         ];
+    }
+
+    public function getUp()
+    {
+        return $this->hasOne(static::className(), ['id' => 'parent_id']);
+    }
+
+    public function getDown()
+    {
+        return $this->hasMany(static::className(), ['parent_id' => 'id']);
     }
 
     /**
