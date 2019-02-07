@@ -4,6 +4,7 @@ namespace common\models;
 
 use Yii;
 use yii\helpers\ArrayHelper;
+use yii\helpers\Inflector;
 use yii\helpers\Json;
 
 /**
@@ -361,7 +362,10 @@ class Portfolio extends \cnd\core\components\ActiveRecord
 
     public function getItem()
     {
-        $item = strtolower($this->target_label);
+        $item = lcfirst(Inflector::id2camel($this->target_label, '_'));
+        if($item == 'motherCorporate'){
+            $item = 'corporate';
+        }
         if ($this->hasProperty($item)) {
             return $this->$item;
         }

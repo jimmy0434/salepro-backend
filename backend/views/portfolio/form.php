@@ -22,8 +22,6 @@ use cnd\filemanager\widgets\MediaInput;
 use cnd\form\ActiveForm;
 use common\models\Portfolio;
 use yii\helpers\Html;
-use yii\helpers\Inflector;
-use yii\web\JqueryAsset;
 use yii\web\View;
 
 $context = $this->context;
