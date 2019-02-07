@@ -93,7 +93,7 @@ class SalesOfficeController extends SController
             foreach($list as $model){
                 $response[] = [
                     'id' => $model->id,
-                    'text' => $model->title,
+                    'text' => $model->name,
                 ];
             }
         }

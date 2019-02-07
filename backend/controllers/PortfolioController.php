@@ -98,7 +98,7 @@ class PortfolioController extends SController
 
         if (!empty($list) && is_array($list)) {
             foreach ($list as $model) {
-                $item = strtolower($model->target_label);
+                $item = lcfirst(Inflector::id2camel($model->target_label, '_'));
                 if ($model->hasProperty($item)) {
                     $response[] = [
                         'id' => $model->$item->id,
