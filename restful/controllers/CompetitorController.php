@@ -108,20 +108,6 @@ class CompetitorController extends SController
         return ['file' => $competitor->file];
     }
 
-    /**
-     * @SWG\POST(
-     *     path="/competitions",
-     *     tags={"Competition"},
-     *     summary="Add new competition",
-     *     @SWG\Response(
-     *          response = 200,
-     *          description = "competition response"
-     *     ),
-     *     security = {{"Bearer": {}}},
-     *     @SWG\Parameter( name="Authorization", in="header", required=true, type="string", default="Bearer TOKEN", description="Authorization" ),
-     *     @SWG\Parameter(name="data", required=true, in="body", @SWG\Schema(type="object"), description="The profile data")
-     * )
-     */
     public function actionManage()
     {
         $competitor = null;
