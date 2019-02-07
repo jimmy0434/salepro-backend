@@ -30,10 +30,25 @@ class CompetitorController extends SController
         return ['profiles' => $list];
     }
 
-    public function actionProfile(){
+    public function actionProfile()
+    {
         $uid = Yii::$app->request->get('uid');
         $competitor = Competitor::find()->where(['uid' => $uid, 'salesman_id' => Yii::$app->user->identity->id])->one();
         return ['profile' => $competitor];
+    }
+
+    public function actionLogo()
+    {
+        $uid = Yii::$app->request->get('uid');
+        $competitor = Competitor::find()->select('logo')->where(['uid' => $uid, 'salesman_id' => Yii::$app->user->identity->id])->one();
+        return ['logo' => $competitor->logo];
+    }
+
+    public function actionFile()
+    {
+        $uid = Yii::$app->request->get('uid');
+        $competitor = Competitor::find()->select('file')->where(['uid' => $uid, 'salesman_id' => Yii::$app->user->identity->id])->one();
+        return ['file' => $competitor->file];
     }
 
     public function actionManage()
