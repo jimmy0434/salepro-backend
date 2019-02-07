@@ -17,6 +17,22 @@ use yii\helpers\Inflector;
 
 class CompetitorController extends SController
 {
+
+    /**
+     * @SWG\Get(
+     *     path="/competitions",
+     *     tags={"Competition"},
+     *     summary="Retrieves all competitions",
+     *     @SWG\Response(
+     *         response = 200,
+     *         description = "competitions response"
+     *     ),
+     *     security = {{"Bearer": {}}},
+     *     @SWG\Parameter( name="Authorization", in="header", required=true, type="string", default="Bearer TOKEN", description="Authorization" ),
+     *     @SWG\Parameter(name="page", required=true, in="query", type="integer", description="Page start from 1", default=1),
+     *     @SWG\Parameter(name="pageSize", required=true, in="query", type="integer", description="Page Size default 25", default=25)
+     * )
+     */
     public function actionList()
     {
         $page = Yii::$app->request->get('page', 1);
