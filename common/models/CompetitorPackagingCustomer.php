@@ -39,7 +39,7 @@ class CompetitorPackagingCustomer extends \cnd\core\components\ActiveRecord
             [['competitor_id', 'competitor_packaging_id'], 'integer'],
             [['name', 'country', 'share_percentage'], 'string', 'max' => 255],
             [['competitor_id'], 'exist', 'skipOnError' => true, 'targetClass' => Competitor::className(), 'targetAttribute' => ['competitor_id' => 'id']],
-            [['competitor_packaging_id'], 'exist', 'skipOnError' => true, 'targetClass' => CompetitorPackagingCustomer::className(), 'targetAttribute' => ['competitor_packaging_id' => 'id']],
+            [['competitor_packaging_id'], 'exist', 'skipOnError' => true, 'targetClass' => CompetitorPackaging::className(), 'targetAttribute' => ['competitor_packaging_id' => 'id']],
         ]);
     }
 
@@ -73,15 +73,7 @@ class CompetitorPackagingCustomer extends \cnd\core\components\ActiveRecord
      */
     public function getCompetitorPackaging()
     {
-        return $this->hasOne(CompetitorPackagingCustomer::className(), ['id' => 'competitor_packaging_id']);
-    }
-
-    /**
-     * @return \yii\db\ActiveQuery
-     */
-    public function getCompetitorPackagingCustomers()
-    {
-        return $this->hasMany(CompetitorPackagingCustomer::className(), ['competitor_packaging_id' => 'id']);
+        return $this->hasOne(CompetitorPackaging::className(), ['id' => 'competitor_packaging_id']);
     }
 
     /**

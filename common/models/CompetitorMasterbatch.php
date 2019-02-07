@@ -98,6 +98,14 @@ class CompetitorMasterbatch extends \cnd\core\components\ActiveRecord
     }
 
     /**
+     * @return \yii\db\ActiveQuery
+     */
+    public function getCompetitorMasterbatchCustomer()
+    {
+        return $this->hasMany(CompetitorMasterbatchCustomer::className(), ['competitor_masterbatch_id' => 'id']);
+    }
+
+    /**
      * {@inheritdoc}
      * @return CompetitorMasterbatchQuery the active query used by this AR class.
      */

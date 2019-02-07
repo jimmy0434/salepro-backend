@@ -42,17 +42,17 @@ use Yii;
  *
  * @property BusinessUnit $businessUnit
  * @property Search $search
- * @property CompetitorFlexible[] $competitorFlexibles
- * @property CompetitorFlexibleCustomer[] $competitorFlexibleCustomers
- * @property CompetitorManager[] $competitorManagers
- * @property CompetitorMasterbatch[] $competitorMasterbatches
- * @property CompetitorMasterbatchCustomer[] $competitorMasterbatchCustomers
+ * @property CompetitorFlexible[] $competitorFlexible
+ * @property CompetitorFlexibleCustomer[] $competitorFlexibleCustomer
+ * @property CompetitorManager[] $competitorManager
+ * @property CompetitorMasterbatch[] $competitorMasterbatche
+ * @property CompetitorMasterbatchCustomer[] $competitorMasterbatchCustomer
  * @property CompetitorNews[] $competitorNews
- * @property CompetitorPackaging[] $competitorPackagings
- * @property CompetitorPackagingCustomer[] $competitorPackagingCustomers
- * @property CompetitorProductionLine[] $competitorProductionLines
- * @property CompetitorSocial[] $competitorSocials
- * @property CompetitorSupplier[] $competitorSuppliers
+ * @property CompetitorPackaging[] $competitorPackaging
+ * @property CompetitorPackagingCustomer[] $competitorPackagingCustomer
+ * @property CompetitorProductionLine[] $competitorProductionLine
+ * @property CompetitorSocial[] $competitorSocial
+ * @property CompetitorSupplier[] $competitorSupplier
  * @property PortfolioCompetitor[] $portfolioCompetitors
  * @property Salesman[] $salesman
  */
@@ -139,7 +139,7 @@ class Competitor extends \cnd\core\components\ActiveRecord
     /**
      * @return \yii\db\ActiveQuery
      */
-    public function getCompetitorFlexibles()
+    public function getCompetitorFlexible()
     {
         return $this->hasMany(CompetitorFlexible::className(), ['competitor_id' => 'id']);
     }
@@ -147,7 +147,7 @@ class Competitor extends \cnd\core\components\ActiveRecord
     /**
      * @return \yii\db\ActiveQuery
      */
-    public function getCompetitorFlexibleCustomers()
+    public function getCompetitorFlexibleCustomer()
     {
         return $this->hasMany(CompetitorFlexibleCustomer::className(), ['competitor_id' => 'id']);
     }
@@ -155,7 +155,7 @@ class Competitor extends \cnd\core\components\ActiveRecord
     /**
      * @return \yii\db\ActiveQuery
      */
-    public function getCompetitorManagers()
+    public function getCompetitorManager()
     {
         return $this->hasMany(CompetitorManager::className(), ['competitor_id' => 'id']);
     }
@@ -163,7 +163,7 @@ class Competitor extends \cnd\core\components\ActiveRecord
     /**
      * @return \yii\db\ActiveQuery
      */
-    public function getCompetitorMasterbatches()
+    public function getCompetitorMasterbatch()
     {
         return $this->hasMany(CompetitorMasterbatch::className(), ['competitor_id' => 'id']);
     }
@@ -171,7 +171,7 @@ class Competitor extends \cnd\core\components\ActiveRecord
     /**
      * @return \yii\db\ActiveQuery
      */
-    public function getCompetitorMasterbatchCustomers()
+    public function getCompetitorMasterbatchCustomer()
     {
         return $this->hasMany(CompetitorMasterbatchCustomer::className(), ['competitor_id' => 'id']);
     }
@@ -187,7 +187,7 @@ class Competitor extends \cnd\core\components\ActiveRecord
     /**
      * @return \yii\db\ActiveQuery
      */
-    public function getCompetitorPackagings()
+    public function getCompetitorPackaging()
     {
         return $this->hasMany(CompetitorPackaging::className(), ['competitor_id' => 'id']);
     }
@@ -195,7 +195,7 @@ class Competitor extends \cnd\core\components\ActiveRecord
     /**
      * @return \yii\db\ActiveQuery
      */
-    public function getCompetitorPackagingCustomers()
+    public function getCompetitorPackagingCustomer()
     {
         return $this->hasMany(CompetitorPackagingCustomer::className(), ['competitor_id' => 'id']);
     }
@@ -203,7 +203,7 @@ class Competitor extends \cnd\core\components\ActiveRecord
     /**
      * @return \yii\db\ActiveQuery
      */
-    public function getCompetitorProductionLines()
+    public function getCompetitorProductionLine()
     {
         return $this->hasMany(CompetitorProductionLine::className(), ['competitor_id' => 'id']);
     }
@@ -211,7 +211,7 @@ class Competitor extends \cnd\core\components\ActiveRecord
     /**
      * @return \yii\db\ActiveQuery
      */
-    public function getCompetitorSocials()
+    public function getCompetitorSocial()
     {
         return $this->hasMany(CompetitorSocial::className(), ['competitor_id' => 'id']);
     }
@@ -219,7 +219,7 @@ class Competitor extends \cnd\core\components\ActiveRecord
     /**
      * @return \yii\db\ActiveQuery
      */
-    public function getCompetitorSuppliers()
+    public function getCompetitorSupplier()
     {
         return $this->hasMany(CompetitorSupplier::className(), ['competitor_id' => 'id']);
     }
@@ -257,7 +257,7 @@ class Competitor extends \cnd\core\components\ActiveRecord
         if(!Yii::$app->user->isGuest && !$this->salesman_id && Yii::$app->user->identity->type == User::TYPE_SALESMAN){
             $this->salesman_id = Yii::$app->user->identity->id;
         }
-        return parent::beforeSave($insert); // TODO: Change the autogenerated stub
+        return parent::beforeSave($insert);
     }
 
     public function afterSave($insert, $changedAttributes)

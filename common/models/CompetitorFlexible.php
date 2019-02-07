@@ -91,6 +91,11 @@ class CompetitorFlexible extends \cnd\core\components\ActiveRecord
         return $this->hasOne(Competitor::className(), ['id' => 'competitor_id']);
     }
 
+    public function getCompetitorFlexibleCustomer()
+    {
+        return $this->hasMany(CompetitorFlexibleCustomer::className(), ['competitor_flexible_id' => 'id']);
+    }
+
     /**
      * @return \yii\db\ActiveQuery
      */

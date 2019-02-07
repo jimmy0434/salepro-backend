@@ -100,6 +100,14 @@ class CompetitorPackaging extends \cnd\core\components\ActiveRecord
     }
 
     /**
+     * @return \yii\db\ActiveQuery
+     */
+    public function getCompetitorPackagingCustomer()
+    {
+        return $this->hasMany(CompetitorPackagingCustomer::className(), ['competitor_packaging_id' => 'id']);
+    }
+
+    /**
      * {@inheritdoc}
      * @return CompetitorPackagingQuery the active query used by this AR class.
      */

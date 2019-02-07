@@ -39,7 +39,7 @@ class CompetitorMasterbatchCustomer extends \cnd\core\components\ActiveRecord
             [['competitor_id', 'competitor_masterbatch_id'], 'integer'],
             [['name', 'country', 'share_percentage'], 'string', 'max' => 255],
             [['competitor_id'], 'exist', 'skipOnError' => true, 'targetClass' => Competitor::className(), 'targetAttribute' => ['competitor_id' => 'id']],
-            [['competitor_masterbatch_id'], 'exist', 'skipOnError' => true, 'targetClass' => CompetitorMasterbatchCustomer::className(), 'targetAttribute' => ['competitor_masterbatch_id' => 'id']],
+            [['competitor_masterbatch_id'], 'exist', 'skipOnError' => true, 'targetClass' => CompetitorMasterbatch::className(), 'targetAttribute' => ['competitor_masterbatch_id' => 'id']],
         ]);
     }
 
@@ -73,15 +73,7 @@ class CompetitorMasterbatchCustomer extends \cnd\core\components\ActiveRecord
      */
     public function getCompetitorMasterbatch()
     {
-        return $this->hasOne(CompetitorMasterbatchCustomer::className(), ['id' => 'competitor_masterbatch_id']);
-    }
-
-    /**
-     * @return \yii\db\ActiveQuery
-     */
-    public function getCompetitorMasterbatchCustomers()
-    {
-        return $this->hasMany(CompetitorMasterbatchCustomer::className(), ['competitor_masterbatch_id' => 'id']);
+        return $this->hasOne(CompetitorMasterbatch::className(), ['id' => 'competitor_masterbatch_id']);
     }
 
     /**
