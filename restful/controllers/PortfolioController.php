@@ -17,9 +17,7 @@ use common\models\Portfolio;
 use common\models\PortfolioQuery;
 use common\models\Product;
 use common\models\ProductQuery;
-use common\models\ProductSector;
 use common\models\ProductSectorQuery;
-use common\models\Sector;
 use common\models\SectorQuery;
 
 class PortfolioController extends SController

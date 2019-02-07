@@ -27,7 +27,6 @@ class Bootstrap implements BootstrapInterface
         $baseUrl = str_replace('/restful/web', '/api', (new Request)->getBaseUrl());
 
         UrlRule::register('get', '/ping', '/public/ping');
-        UrlRule::register('get', '/data-list', '/public/data-list');
         UrlRule::register('get', '/swagger/docs', '/swagger/docs');
         UrlRule::register('get', '/portfolios', '/portfolio/list');
         UrlRule::register('get', '/portfolios/<uid:.+>', '/portfolio/one');
@@ -41,6 +40,8 @@ class Bootstrap implements BootstrapInterface
         UrlRule::register('post,put', '/forms/<id:\d+>', '/form/save');
         UrlRule::register('get', '/market-research', '/market-research/list');
         UrlRule::register('get', '/sustainability', '/sustainability/list');
+        UrlRule::register('get', '/statistic-numbers', '/data/statistic-numbers');
+        UrlRule::register('get', '/data-list', '/data/data-list');
 
         Yii::$app->setComponents(
             [

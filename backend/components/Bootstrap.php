@@ -43,6 +43,7 @@ class Bootstrap implements BootstrapInterface
         //$navigator->item('Sustainability', ['/sustainability/index'], 'fa fa-angle-double-right', 11);
         $navigator->item('Sales Offices', ['/sales-office/index'], 'fa fa-map-marker', 12);
         $navigator->item('Data List', ['/data-list/index'], 'fa fa-table', 13);
+        $navigator->item('Statistic Numbers', ['/statistic-number/index'], 'fa fa-bar-chart', 14);
 
         $developer = MenuManager::block('Developer');
         $developerSection = $developer->section('Documentation');

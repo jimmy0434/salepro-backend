@@ -12,4 +12,4 @@
 $this->title = "Competitions";
 
 ?>
-<div class="alert alert-danger">Not implemented yet</div>
+<div class="text-muted">Not Data Found</div>
