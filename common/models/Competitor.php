@@ -45,7 +45,7 @@ use Yii;
  * @property CompetitorFlexible[] $competitorFlexible
  * @property CompetitorFlexibleCustomer[] $competitorFlexibleCustomer
  * @property CompetitorManager[] $competitorManager
- * @property CompetitorMasterbatch[] $competitorMasterbatche
+ * @property CompetitorMasterbatch[] $competitorMasterbatch
  * @property CompetitorMasterbatchCustomer[] $competitorMasterbatchCustomer
  * @property CompetitorNews[] $competitorNews
  * @property CompetitorPackaging[] $competitorPackaging
