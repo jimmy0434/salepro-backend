@@ -19,7 +19,7 @@ class FileController extends SController
     /**
      * @SWG\Get(
      *     path="/files/{id}/download/{version}/{order}",
-     *     tags={"Cms"},
+     *     tags={"File"},
      *     summary="Download file partition",
      *     @SWG\Response(
      *         response = 200,

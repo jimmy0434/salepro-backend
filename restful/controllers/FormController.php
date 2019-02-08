@@ -22,7 +22,7 @@ class FormController extends SController
     /**
      * @SWG\Get(
      *     path="/forms/{id}",
-     *     tags={"Cms"},
+     *     tags={"Form"},
      *     summary="Find Form Meta Data",
      *     @SWG\Response(
      *         response = 200,
@@ -50,7 +50,7 @@ class FormController extends SController
     /**
      * @SWG\Post(
      *     path="/forms/{id}",
-     *     tags={"Cms"},
+     *     tags={"Form"},
      *     summary="Add Form Structure Data",
      *     @SWG\Response(
      *         response = 200,
@@ -68,7 +68,7 @@ class FormController extends SController
     /**
      * @SWG\Put(
      *     path="/forms/{id}",
-     *     tags={"Cms"},
+     *     tags={"Form"},
      *     summary="Edit Form Structure Data",
      *     @SWG\Response(
      *         response = 200,
@@ -176,7 +176,7 @@ class FormController extends SController
     /**
      * @SWG\Get(
      *     path="/forms/{id}/crud",
-     *     tags={"Cms"},
+     *     tags={"Form"},
      *     summary="Find Form Meta Data",
      *     @SWG\Response(
      *         response = 200,

@@ -63,21 +63,6 @@ class _Controller
 
     /**
      * @SWG\Get(
-     *     path="/cms/categories",
-     *     tags={"Cms"},
-     *     summary="Categories List",
-     *     @SWG\Response(
-     *          response = 200,
-     *          description = "Categories List Response",
-     *     ),
-     *     @SWG\Parameter(name="page", required=true, in="query", type="integer", description="Page start from 1", default=1),
-     *     @SWG\Parameter(name="pageSize", required=true, in="query", type="integer", description="Page Size default 25", default=25),
-     *     @SWG\Parameter(name="parent", required=false, in="query", type="integer", description="Category Parent ID"),
-     * )
-     */
-
-    /**
-     * @SWG\Get(
      *     path="/notifications",
      *     tags={"Notification"},
      *     summary="Notifications List",
