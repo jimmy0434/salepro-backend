@@ -109,7 +109,7 @@ class CompetitorController extends SController
     }
 
     /**
-     * @SWG\POST(
+     * @SWG\Post(
      *     path="/competitions",
      *     tags={"Competition"},
      *     summary="Add new competition",
@@ -124,7 +124,7 @@ class CompetitorController extends SController
      */
 
     /**
-     * @SWG\PUT(
+     * @SWG\Put(
      *     path="/competitions/{uid}",
      *     tags={"Competition"},
      *     summary="Edit competition",
