@@ -25,7 +25,13 @@ class CompetitionController extends SController
          */
         $dataLocator = DataLocator::create(Competitor::className(), [
             'orderBy' => 'updated_at DESC, created_at DESC, id DESC',
-        ]);
+        ], function ($dl, $query) {
+            $m = new Competitor();
+            $attrs = $m->attributes;
+            unset($attrs['logo'], $attrs['file']);
+            $attrs = array_keys($attrs);
+            $query->select($attrs);
+        });
         Log::trace("Show Competitions List (page:" . $dataLocator->page . ", count: " . $dataLocator->pageSize . ")");
         if (Yii::$app->request->isAjax) {
             return $this->renderAjax('index', ['dataLocator' => $dataLocator]);

@@ -34,6 +34,28 @@ $na = "N/A";
             </div>
             <table class="table" style="table-layout:fixed;">
                 <tbody>
+                <?php
+                if($model->logo || $model->file) {
+                    ?>
+                    <tr>
+                        <td>
+                            <?php
+                            if ($model->logo) {
+                                echo Html::img($model->logo, ['class' => 'img-responsive', 'style' => 'max-width:100%;']);
+                            }
+                            ?>
+                        </td>
+                        <td>
+                            <?php
+                            if ($model->file) {
+                                echo Html::a('Click To Download File', $model->file, ['target' => '_blank', 'class' => 'text-navy']);
+                            }
+                            ?>
+                        </td>
+                    </tr>
+                    <?php
+                }
+                ?>
                 <tr>
                     <th>Name</th>
                     <td><?= $model->name ?></td>
@@ -123,7 +145,7 @@ $na = "N/A";
                     <td><?= $model->problem_solving_response ?? $na ?></td>
                 </tr>
                 <tr>
-                    <th>Market Presence</th>
+                    <th>Market Dominance</th>
                     <td><?= $model->market_dominance ?? $na ?></td>
                 </tr>
                 <tr>
