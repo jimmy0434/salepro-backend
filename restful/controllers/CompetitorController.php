@@ -109,7 +109,7 @@ class CompetitorController extends SController
     }
 
     /**
-     * @SWG\POST(
+     * @SWG\Post(
      *     path="/competitions",
      *     tags={"Competition"},
      *     summary="Add new competition",
@@ -118,12 +118,13 @@ class CompetitorController extends SController
      *          description = "competition response"
      *     ),
      *     security = {{"Bearer": {}}},
-     *     @SWG\Parameter(name="Authorization", in="header", required=true, type="string", default="Bearer TOKEN", description="Authorization")
+     *     @SWG\Parameter(name="Authorization", in="header", required=true, type="string", default="Bearer TOKEN", description="Authorization"),
+     *     @SWG\Parameter(name="data", required=true, in="body", @SWG\Schema(type="object"), description="The profile data")
      * )
      */
 
     /**
-     * @SWG\PUT(
+     * @SWG\Put(
      *     path="/competitions/{uid}",
      *     tags={"Competition"},
      *     summary="Edit competition",
@@ -132,7 +133,9 @@ class CompetitorController extends SController
      *         description = "competition response"
      *     ),
      *     security = {{"Bearer": {}}},
-     *     @SWG\Parameter(name="Authorization", in="header", required=true, type="string", default="Bearer TOKEN", description="Authorization")
+     *     @SWG\Parameter(name="Authorization", in="header", required=true, type="string", default="Bearer TOKEN", description="Authorization"),
+     *     @SWG\Parameter(name="uid", required=true, in="path", type="string", description="The profile UID"),
+     *     @SWG\Parameter(name="data", required=true, in="body", @SWG\Schema(type="object"), description="The profile data")
      * )
      */
     public function actionManage()
