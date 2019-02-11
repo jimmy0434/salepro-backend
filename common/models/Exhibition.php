@@ -10,13 +10,17 @@ use Yii;
  * @property int $id
  * @property string $name
  * @property string $year
- * @property int $file_id
  * @property int $business_unit_id
+ * @property string $city
+ * @property string $venue
+ * @property string $edition
+ * @property string $frequency
+ * @property string $url
+ * @property string $description
  * @property int $created_at
  * @property int $updated_at
  *
  * @property BusinessUnit $businessUnit
- * @property File $file
  * @property ExhibitionProduct[] $exhibitionProducts
  * @property Product[] $products
  * @property ExhibitionSector[] $exhibitionSectors
@@ -27,7 +31,6 @@ use Yii;
 class Exhibition extends \cnd\core\components\ActiveRecord
 {
 
-    public $productsIds = [];
     public $sectorsIds = [];
     public $countriesNames = [];
     public $regionsNames = [];
@@ -46,11 +49,10 @@ class Exhibition extends \cnd\core\components\ActiveRecord
     public function rules()
     {
         return array_merge(parent::rules(), [
-            [['file_id', 'business_unit_id'], 'integer'],
+            [['business_unit_id'], 'integer'],
             [['name', 'year'], 'string', 'max' => 255],
             [['business_unit_id'], 'exist', 'skipOnError' => true, 'targetClass' => BusinessUnit::className(), 'targetAttribute' => ['business_unit_id' => 'id']],
-            [['file_id'], 'exist', 'skipOnError' => true, 'targetClass' => File::className(), 'targetAttribute' => ['file_id' => 'id']],
-            [['productsIds', 'sectorsIds', 'countriesNames', 'regionsNames'], 'safe'],
+            [['sectorsIds', 'countriesNames', 'regionsNames'], 'safe'],
         ]);
     }
 
@@ -64,13 +66,12 @@ class Exhibition extends \cnd\core\components\ActiveRecord
             'name' => 'Name',
             'year' => 'Year',
             'file_id' => 'File ID',
-            'business_unit_id' => 'Business Unit',
+            'business_unit_id' => 'Manufacturing Plants',
             'created_at' => 'Created At',
             'updated_at' => 'Updated At',
             'countriesNames' => 'Countries',
             'regionsNames' => 'Regions',
             'sectorsIds' => 'Sectors',
-            'productsIds' => 'Products',
         ];
     }
 
@@ -80,14 +81,6 @@ class Exhibition extends \cnd\core\components\ActiveRecord
     public function getBusinessUnit()
     {
         return $this->hasOne(BusinessUnit::className(), ['id' => 'business_unit_id']);
-    }
-
-    /**
-     * @return \yii\db\ActiveQuery
-     */
-    public function getFile()
-    {
-        return $this->hasOne(File::className(), ['id' => 'file_id']);
     }
 
     /**
@@ -168,7 +161,6 @@ class Exhibition extends \cnd\core\components\ActiveRecord
 
     public function afterSave($insert, $changedAttributes)
     {
-        $this->assignItems($this->productsIds, '\common\models\ExhibitionProduct', 'product_id', 'exhibition_id', $this->id);
         $this->assignItems($this->sectorsIds, '\common\models\ExhibitionSector', 'sector_id', 'exhibition_id', $this->id);
         $this->assignItems($this->countriesNames, '\common\models\ExhibitionCountry', 'country', 'exhibition_id', $this->id);
         $this->assignItems($this->regionsNames, '\common\models\ExhibitionRegion', 'region', 'exhibition_id', $this->id);

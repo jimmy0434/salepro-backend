@@ -32,7 +32,7 @@ return [
         'system' => [
             'class' => 'cnd\core\modules\system\Module',
             'phoneAuthentication' => false,
-            'emailAuthentication' => false,
+            'emailAuthentication' => true,
         ],
         'admin' => [
             'class' => 'cnd\admin\Module',

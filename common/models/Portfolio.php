@@ -20,6 +20,7 @@ use yii\helpers\Json;
  * @property int $video_id
  * @property int $search_id
  * @property int $target
+ * @property string $linkedin
  * @property int $created_at
  * @property int $updated_at
  *
@@ -96,7 +97,7 @@ class Portfolio extends \cnd\core\components\ActiveRecord
             'id' => 'ID',
             'uid' => 'Uid',
             'name' => 'Name',
-            'description' => 'Description',
+            'description' => 'Infographics',
             'image' => 'Image',
             'brochure_id' => 'Brochure ID',
             'presentation_id' => 'Presentation ID',
@@ -358,7 +359,33 @@ class Portfolio extends \cnd\core\components\ActiveRecord
         }
         $data['primaryModel'] = $this->item;
         unset($data['brochure_id'], $data['presentation_id'], $data['video_id'], $data['search_id'], $data['target']);
+        switch($this->target){
+            case static::TARGET_MOTHER_CORPORATE:
+            case static::TARGET_CORPORATE:
+                $data['businessUnits'] = $this->manyToManyPortfolio($this->corporate->businessUnits);
+                $data['sectors'] = $this->manyToManyPortfolio($this->corporate->sectors);
+                break;
+            case static::TARGET_SECTOR:
+                $data['businessUnits'] = $this->manyToManyPortfolio($this->sector->businessUnits);
+                $data['brands'] = $this->manyToManyPortfolio($this->sector->brands);
+                $data['products'] = $this->manyToManyPortfolio($this->sector->products);
+                break;
+            case static::TARGET_BRAND:
+                $data['businessUnits'] = $this->manyToManyPortfolio($this->brand->businessUnits);
+                $data['sectors'] = $this->manyToManyPortfolio($this->brand->sectors);
+                $data['products'] = $this->manyToManyPortfolio($this->brand->products);
+                break;
+            case static::TARGET_PRODUCT:
+                $data['sectors'] = $this->manyToManyPortfolio($this->product->sectors);
+                $data['sectors'] = $this->manyToManyPortfolio($this->product->brands);
+                break;}
         return $data;
+    }
+
+    protected function manyToManyPortfolio($models){
+        return array_filter(array_values(ArrayHelper::map($models,'uid',function($model){
+            return $model->portfolio?$model->portfolio->uid:null;
+        })));
     }
 
     public function getItem()

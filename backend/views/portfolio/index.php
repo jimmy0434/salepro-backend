@@ -19,12 +19,13 @@ use cnd\grid\DataView;
 use cnd\grid\DataViewLocator;
 use common\models\Portfolio;
 use yii\helpers\Html;
+use yii\helpers\Inflector;
 use yii\helpers\Url;
 use yii\web\View;
 
 $context = $this->context;
 
-$this->title = "Portfolio Management | " . $context->targets[$context->target] . 's';
+$this->title = "Portfolio Management | " . $context->targets[$context->target];
 ?>
     <div class="btn-group btn-group-justified" role="group" aria-label="targets">
         <?php

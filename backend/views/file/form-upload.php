@@ -97,6 +97,7 @@ $exts = Json::encode($extensions);
 $fileId = $model->id;
 $fileName = $model->title;
 $extension = $model->extension;
+$filePartitionSize = Setting::get('file.upload.partition.size',1024 * 1024 * 1);
 $ready = <<< JS
     let dropZone = document.getElementById('drop-zone');
     let uploadForm = document.getElementById('js-upload-form');
@@ -128,7 +129,7 @@ function startUpload(files){
         let ext = extension(file);
         if($.inArray(ext,extensions) > -1){
             msg("File Extension Valid");
-            let step = 1024 * 1024 * 5;
+            let step = {$filePartitionSize};
             toChunks(file,step, function(chunks){
                uploadChunk(0, chunks, (new Date()).getTime(),ext);
             });

@@ -10,8 +10,6 @@
 
 use backend\controllers\ExhibitionController;
 use backend\widgets\AutoCompleteInput;
-use backend\widgets\FileSelector;
-use cnd\admin\models\activerecords\Setting;
 use cnd\form\ActiveForm;
 use common\models\BusinessUnit;
 use common\models\Exhibition;
@@ -40,14 +38,11 @@ $form = ActiveForm::begin(['id' => Yii::$app->controller->id . '-form']);
                     <?= $form->field($model, 'id')->hiddenInput()->label(false) ?>
                     <?= $form->field($model, 'name')->textInput() ?>
                     <?= $form->field($model, 'year')->textInput() ?>
-                    <?= $form->field($model, 'business_unit_id')->dropDownList(BusinessUnit::listData()) ?>
-                    <?= FileSelector::widget([
-                        'model' => $model,
-                        'property' => 'file_id',
-                        'title' => false,
-                        'fileName' => uniqid('exhibition-excel-', true),
-                        'ext' => Setting::get('exhibition.excel.extensions', 'xlsx,xls'),
-                    ]) ?>
+                    <?= $form->field($model, 'city')->textInput() ?>
+                    <?= $form->field($model, 'venue')->textInput() ?>
+                    <?= $form->field($model, 'edition')->textInput() ?>
+                    <?= $form->field($model, 'frequency')->textInput() ?>
+                    <?= $form->field($model, 'url')->textInput() ?>
                 </div>
             </div>
         </div>
@@ -55,15 +50,7 @@ $form = ActiveForm::begin(['id' => Yii::$app->controller->id . '-form']);
             <div class="panel panel-default">
                 <div class="panel-heading">Relations</div>
                 <div class="panel-body">
-                    <?= AutoCompleteInput::widget([
-                        'model' => $model,
-                        'form' => $form,
-                        'property' => 'productsIds',
-                        'findUrl' => ['/portfolio/find-products'],
-                        'addUrl' => ['/portfolio/add-product'],
-                        'title' => 'Products',
-                        'data' => $model->products,
-                    ]) ?>
+                    <?= $form->field($model, 'business_unit_id')->dropDownList(BusinessUnit::listData()) ?>
                     <?= AutoCompleteInput::widget([
                         'model' => $model,
                         'form' => $form,
@@ -80,6 +67,7 @@ $form = ActiveForm::begin(['id' => Yii::$app->controller->id . '-form']);
         </div>
         <div class="col-md-4"></div>
     </div>
+    <?= $form->field($model, 'description')->editorInput() ?>
     <div class="form-group text-center">
         <?= Html::submitButton($isNew ? 'Create' : 'Save', ['class' => 'btn btn-primary btn-lg']) ?>
     </div>

@@ -71,6 +71,42 @@ $dv = new DataView([
             },
             'filterBy' => Attribute::FILTER_NONE,
         ],
+        'city' => [
+            'label' => 'City',
+            'value' => function ($attribute, $data, $view) use ($dataLocator) {
+                assert($attribute instanceof Attribute);
+                assert($data instanceof Exhibition);
+                assert($view instanceof DataViewLocator);
+                return $data->city;
+            },
+        ],
+        'venue' => [
+            'label' => 'Venue',
+            'value' => function ($attribute, $data, $view) use ($dataLocator) {
+                assert($attribute instanceof Attribute);
+                assert($data instanceof Exhibition);
+                assert($view instanceof DataViewLocator);
+                return $data->venue;
+            },
+        ],
+        'edition' => [
+            'label' => 'Edition',
+            'value' => function ($attribute, $data, $view) use ($dataLocator) {
+                assert($attribute instanceof Attribute);
+                assert($data instanceof Exhibition);
+                assert($view instanceof DataViewLocator);
+                return $data->edition;
+            },
+        ],
+        'frequency' => [
+            'label' => 'Frequency',
+            'value' => function ($attribute, $data, $view) use ($dataLocator) {
+                assert($attribute instanceof Attribute);
+                assert($data instanceof Exhibition);
+                assert($view instanceof DataViewLocator);
+                return $data->frequency;
+            },
+        ],
         'year' => [
             'label' => 'Year',
             'value' => function ($attribute, $data, $view) use ($dataLocator) {
@@ -115,6 +151,18 @@ $dv->addView('grid', [
             'sortable' => true,
         ],
         'region' => [
+            'sortable' => true,
+        ],
+        'city' => [
+            'sortable' => true,
+        ],
+        'venue' => [
+            'sortable' => true,
+        ],
+        'edition' => [
+            'sortable' => true,
+        ],
+        'frequency' => [
             'sortable' => true,
         ],
         'year' => [

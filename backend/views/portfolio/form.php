@@ -46,6 +46,7 @@ $form = ActiveForm::begin(['id' => Yii::$app->controller->id . '-form']);
                     ])
                     ?>
                     <?= $form->field($model, 'name')->textInput() ?>
+                    <?= $form->field($model, 'linkedin')->textInput() ?>
                     <?= $form->field($model, 'description')->editorInput() ?>
                 </div>
             </div>
@@ -90,7 +91,7 @@ $form = ActiveForm::begin(['id' => Yii::$app->controller->id . '-form']);
                             'property' => 'businessUnitIds',
                             'findUrl' => ['/portfolio/find-business-unit'],
                             'addUrl' => ['/portfolio/add-business-unit'],
-                            'title' => 'Business Units',
+                            'title' => 'Manufacturing Plants',
                             'data' => $model->item ? $model->item->businessUnits : [],
                         ]);
                     }

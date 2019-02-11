@@ -28,7 +28,7 @@ class PortfolioController extends SController
     {
         $portfolio = new Portfolio();
         $this->target = Portfolio::TARGET_MOTHER_CORPORATE;
-        $this->targets = $portfolio->target_list;
+        $this->targets = $portfolio->target_listtranslate;
         if (Yii::$app->request->get('t') && in_array(Yii::$app->request->get('t'), $portfolio->target_values)) {
             $this->target = Yii::$app->request->get('t');
         }
