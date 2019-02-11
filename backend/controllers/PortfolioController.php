@@ -84,6 +84,23 @@ class PortfolioController extends SController
         return $this->render('form', ['model' => $model, 'isNew' => $isNew]);
     }
 
+    public function actionDelete($id){
+        $model = Portfolio::find()->where(['id' => $id])->one();
+        if ($model !== null) {
+            if ($model->delete()) {
+                Log::trace("Portfolio deleted #" . $id);
+                \Yii::$app->session->setFlash('success', ucfirst($this->id) . ' deleted successfully');
+            } else {
+                Log::trace("Portfolio not deleted #" . $id);
+                \Yii::$app->session->setFlash('error', ucfirst($this->id) . ' not deleted');
+            }
+        } else {
+            Log::trace("Portfolio not found to delete #" . $id);
+            \Yii::$app->session->setFlash('error', ucfirst($this->id) . ' not found');
+        }
+        return $this->redirect(['index', 't' => $model->target]);
+    }
+
     protected function findList($target, $q, $page = 1)
     {
         Yii::$app->response->format = 'json';
