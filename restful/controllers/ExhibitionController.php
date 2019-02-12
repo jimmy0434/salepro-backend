@@ -10,7 +10,7 @@
 
 namespace restful\controllers;
 
-
+use Yii;
 use cnd\core\api\SController;
 use common\models\Exhibition;
 
