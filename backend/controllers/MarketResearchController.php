@@ -24,6 +24,7 @@ class MarketResearchController extends SController
          */
         $dataLocator = DataLocator::create(MarketResearch::className(), [
             'orderBy' => 'updated_at DESC, created_at DESC, id DESC',
+            'pageSize' => 20,
         ]);
         Log::trace("Show MarketResearch List (page:" . $dataLocator->page . ", count: " . $dataLocator->pageSize . ")");
         if (Yii::$app->request->isAjax) {

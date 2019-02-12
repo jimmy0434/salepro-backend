@@ -24,6 +24,7 @@ class ExhibitionController extends SController
          */
         $dataLocator = DataLocator::create(Exhibition::className(), [
             'orderBy' => 'updated_at DESC, created_at DESC, id DESC',
+            'pageSize' => 20,
         ]);
         Log::trace("Show Exhibitions List (page:" . $dataLocator->page . ", count: " . $dataLocator->pageSize . ")");
         if (Yii::$app->request->isAjax) {

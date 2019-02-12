@@ -25,6 +25,7 @@ class SustainabilityController extends SController
          */
         $dataLocator = DataLocator::create(Sustainability::className(), [
             'orderBy' => 'updated_at DESC, created_at DESC, id DESC',
+            'pageSize' => 20,
         ]);
         Log::trace("Show Sustainability List (page:" . $dataLocator->page . ", count: " . $dataLocator->pageSize . ")");
         if (Yii::$app->request->isAjax) {

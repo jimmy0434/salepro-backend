@@ -47,6 +47,7 @@ class DataListController extends SController
                 't' => $this->type,
                 'u' => $this->up,
             ],
+            'pageSize' => 20,
         ], function ($dl, $query) {
             $query->andWhere(['type' => $this->type, 'parent_id' => $this->up]);
         });

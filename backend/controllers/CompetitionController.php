@@ -25,6 +25,7 @@ class CompetitionController extends SController
          */
         $dataLocator = DataLocator::create(Competitor::className(), [
             'orderBy' => 'updated_at DESC, created_at DESC, id DESC',
+            'pageSize' => 20,
         ], function ($dl, $query) {
             $m = new Competitor();
             $attrs = $m->attributes;

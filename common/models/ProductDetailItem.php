@@ -121,4 +121,16 @@ class ProductDetailItem extends \cnd\core\components\ActiveRecord
             $this->image = $this->content->image;
         }
     }
+
+    public function toArray(array $fields = [], array $expand = [], $recursive = true)
+    {
+        $list = parent::toArray($fields, $expand, $recursive);
+        unset($list['file_id'], $list['content_id']);
+        if ($this->type == static::TYPE_CONTENT) {
+            $list['content'] = $this->content;
+        } else if ($this->type == static::TYPE_FILE) {
+            $list['file'] = $this->file;
+        }
+        return $list;
+    }
 }

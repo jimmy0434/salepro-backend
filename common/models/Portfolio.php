@@ -387,6 +387,7 @@ class Portfolio extends \cnd\core\components\ActiveRecord
             case static::TARGET_PRODUCT:
                 $data['sectors'] = $this->manyToManyPortfolio($this->product->sectors);
                 $data['brands'] = $this->manyToManyPortfolio($this->product->brands);
+                $data['details'] = $this->product ? $this->product->details : null;
                 break;
         }
         return $data;

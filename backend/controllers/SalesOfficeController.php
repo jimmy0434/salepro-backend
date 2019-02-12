@@ -25,6 +25,7 @@ class SalesOfficeController extends SController
          */
         $dataLocator = DataLocator::create(SalesOffice::className(), [
             'orderBy' => 'updated_at DESC, created_at DESC, id DESC',
+            'pageSize' => 20,
         ]);
         Log::trace("Show SalesOffice List (page:" . $dataLocator->page . ", count: " . $dataLocator->pageSize . ")");
         if (Yii::$app->request->isAjax) {

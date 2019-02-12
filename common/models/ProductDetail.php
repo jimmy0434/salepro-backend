@@ -82,4 +82,12 @@ class ProductDetail extends \cnd\core\components\ActiveRecord
     {
         return new ProductDetailQuery(get_called_class());
     }
+
+    public function toArray(array $fields = [], array $expand = [], $recursive = true)
+    {
+        $list = parent::toArray($fields, $expand, $recursive);
+        $list['section'] = $this->section_label;
+        $list['items'] = $this->productDetailItems;
+        return $list;
+    }
 }

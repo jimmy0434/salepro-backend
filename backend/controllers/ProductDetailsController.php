@@ -50,6 +50,7 @@ class ProductDetailsController extends SController
                 't' => $this->target,
                 'p' => $this->product->id,
             ],
+            'pageSize' => 20,
         ], function ($dl, $query) {
             $query->andWhere(['product_id' => $this->product->id]);
         });

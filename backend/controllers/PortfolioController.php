@@ -45,6 +45,7 @@ class PortfolioController extends SController
             'params' => [
                 't' => $this->target,
             ],
+            'pageSize' => 20,
         ], function ($dl, $query) {
             /**
              * @var DataLocator $dl
