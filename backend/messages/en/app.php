@@ -10,6 +10,6 @@
 
 return [
     "Mother Corporate" => "Principal",
-    "Corporate" => "Plastic & Paper Divisions",
+    "Corporate" => "Plastic & Paper Division",
     "Business Unit" => "Manufacturing Plant",
 ];

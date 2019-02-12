@@ -43,6 +43,10 @@ class DataListController extends SController
          */
         $dataLocator = DataLocator::create(DataList::className(), [
             'orderBy' => 'name ASC',
+            'params' => [
+                't' => $this->type,
+                'u' => $this->up,
+            ],
         ], function ($dl, $query) {
             $query->andWhere(['type' => $this->type, 'parent_id' => $this->up]);
         });

@@ -55,6 +55,11 @@ class ProductDetailsItemController extends SController
          */
         $dataLocator = DataLocator::create(ProductDetailItem::className(), [
             'orderBy' => 'updated_at DESC, created_at DESC, id DESC',
+            'params' => [
+                't' => $this->target,
+                'p' => $this->product,
+                'd' => $this->detail,
+            ],
         ], function ($dl, $query) {
             $query->andWhere(['product_detail_id' => $this->detail->id]);
         });

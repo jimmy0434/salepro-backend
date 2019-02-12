@@ -42,6 +42,9 @@ class PortfolioController extends SController
          */
         $dataLocator = DataLocator::create(Portfolio::className(), [
             'orderBy' => 'updated_at DESC, created_at DESC, id DESC',
+            'params' => [
+                't' => $this->target,
+            ],
         ], function ($dl, $query) {
             /**
              * @var DataLocator $dl
