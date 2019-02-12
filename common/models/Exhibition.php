@@ -3,6 +3,7 @@
 namespace common\models;
 
 use Yii;
+use yii\helpers\ArrayHelper;
 
 /**
  * This is the model class for table "{{%exhibition}}".
@@ -182,5 +183,16 @@ class Exhibition extends \cnd\core\components\ActiveRecord
                 $this->regionsNames[] = $model->region;
             }
         }
+    }
+
+    public function toArray(array $fields = [], array $expand = [], $recursive = true)
+    {
+        $list = parent::toArray($fields, $expand, $recursive);
+        $list['countries'] = $this->countriesNames;
+        $list['regions'] = $this->regionsNames;
+        $list['sectors'] = array_filter(array_values(ArrayHelper::map($this->sectors, 'sector_id', function ($model) {
+            return $model->portfolio ? $model->portfolio->uid : null;
+        })));
+        return $list;
     }
 }

@@ -18,6 +18,7 @@ use yii\helpers\Json;
  * @property int $brochure_id
  * @property int $presentation_id
  * @property int $video_id
+ * @property int $info_graphic_id
  * @property int $search_id
  * @property int $target
  * @property string $linkedin
@@ -40,6 +41,7 @@ use yii\helpers\Json;
  * @property File $brochure
  * @property File $presentation
  * @property File $video
+ * @property File $infoGraphic
  * @property Search $search
  * @property Corporate $corporate
  * @property Sector $sector
@@ -97,7 +99,8 @@ class Portfolio extends \cnd\core\components\ActiveRecord
             'id' => 'ID',
             'uid' => 'Uid',
             'name' => 'Name',
-            'description' => 'Infographics',
+            'description' => 'Description',
+            'info_graphic_id' => 'InfoGraphics',
             'image' => 'Image',
             'brochure_id' => 'Brochure ID',
             'presentation_id' => 'Presentation ID',
@@ -186,6 +189,11 @@ class Portfolio extends \cnd\core\components\ActiveRecord
     public function getVideo()
     {
         return $this->hasOne(File::className(), ['id' => 'video_id']);
+    }
+
+    public function getInfoGraphic()
+    {
+        return $this->hasOne(File::className(), ['id' => 'info_graphic_id']);
     }
 
     public function getSearch()
@@ -346,6 +354,7 @@ class Portfolio extends \cnd\core\components\ActiveRecord
         $data['brochure'] = $this->brochure;
         $data['presentation'] = $this->presentation;
         $data['video'] = $this->video;
+        $data['infoGraphics'] = $this->infoGraphic;
         $data['news'] = isset($this->newsLinks['Url']) ? $this->newsLinks['Url'] : [];
         $data['links'] = array_values(ArrayHelper::map($this->portfolioLinks, 'id', function ($model) {
             return [
@@ -354,12 +363,12 @@ class Portfolio extends \cnd\core\components\ActiveRecord
             ];
         }));
         $data['offices'] = $this->salesOffices;
-        if($this->target == static::TARGET_PRODUCT){
+        if ($this->target == static::TARGET_PRODUCT) {
             $data['details'] = $this->product->details;
         }
         $data['primaryModel'] = $this->item;
         unset($data['brochure_id'], $data['presentation_id'], $data['video_id'], $data['search_id'], $data['target']);
-        switch($this->target){
+        switch ($this->target) {
             case static::TARGET_MOTHER_CORPORATE:
             case static::TARGET_CORPORATE:
                 $data['businessUnits'] = $this->manyToManyPortfolio($this->corporate->businessUnits);
@@ -377,21 +386,23 @@ class Portfolio extends \cnd\core\components\ActiveRecord
                 break;
             case static::TARGET_PRODUCT:
                 $data['sectors'] = $this->manyToManyPortfolio($this->product->sectors);
-                $data['sectors'] = $this->manyToManyPortfolio($this->product->brands);
-                break;}
+                $data['brands'] = $this->manyToManyPortfolio($this->product->brands);
+                break;
+        }
         return $data;
     }
 
-    protected function manyToManyPortfolio($models){
-        return array_filter(array_values(ArrayHelper::map($models,'uid',function($model){
-            return $model->portfolio?$model->portfolio->uid:null;
+    protected function manyToManyPortfolio($models)
+    {
+        return array_filter(array_values(ArrayHelper::map($models, 'uid', function ($model) {
+            return $model->portfolio ? $model->portfolio->uid : null;
         })));
     }
 
     public function getItem()
     {
         $item = lcfirst(Inflector::id2camel($this->target_label, '_'));
-        if($item == 'motherCorporate'){
+        if ($item == 'motherCorporate') {
             $item = 'corporate';
         }
         if ($this->hasProperty($item)) {

@@ -78,6 +78,14 @@ $form = ActiveForm::begin(['id' => Yii::$app->controller->id . '-form']);
                         'fileName' => uniqid('portfolio-video-', true),
                         'ext' => Setting::get('portfolio.video.extensions', 'mp4'),
                     ]) ?>
+
+                    <?= FileSelector::widget([
+                        'model' => $model,
+                        'property' => 'info_graphic_id',
+                        'title' => 'InfoGraphics',
+                        'fileName' => uniqid('portfolio-infoGraphics-', true),
+                        'ext' => Setting::get('portfolio.infoGraphics.extensions', 'png,jpg,pdf,ppt,pptx'),
+                    ]) ?>
                 </div>
             </div>
             <div class="panel panel-default">
