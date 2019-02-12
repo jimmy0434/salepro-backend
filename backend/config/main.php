@@ -38,9 +38,9 @@ return [
             'class' => 'cnd\admin\Module',
             'name' => ['Sale','PRO'],
             'shortName' => ['S','PR'],
-            'roleFormExtraContent' => function($model, $form){
+            /*'roleFormExtraContent' => function($model, $form){
                 echo \yii\helpers\Html::a('Approval Process',['/approval/role','id'=>$model->id],['class'=>'btn btn-warning btn-block']);
-            },
+            },*/
         ],
         'filemanager' => [
             'class' => 'cnd\filemanager\Module',
@@ -101,12 +101,12 @@ return [
         'biMapSync' => [
             'class' => 'backend\components\BiMapSync',
             'list' => [
-                'base_admin' => Admin::className(),
+                /*'base_admin' => Admin::className(),
                 'base_role' => Role::className(),
                 'salesman' => Salesman::className(),
                 'cms_category' => Category::className(),
                 'cms_tag' => Tag::className(),
-                'cms_content' => Content::className(),
+                'cms_content' => Content::className(),*/
             ],
         ],
     ],

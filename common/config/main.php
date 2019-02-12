@@ -85,12 +85,6 @@ return [
                 'default' => function ($name, $data) {
                     return '<div class="text-muted">' . $data['message'] . '</div>';
                 },
-                'form-approval' => function ($name, $data) {
-                    return Html::tag('div', Html::a($data['message'], ['/form-approval/view', 'id' => $data['id']]), ['class' => 'text-muted', 'data' => ['id' => $data['id']]]);
-                },
-                'form-approval-response' => function ($name, $data) {
-                    return Html::tag('div', Html::a($data['message'], ['/form-approval/response', 'id' => $data['id']]), ['class' => 'text-muted', 'data' => ['id' => $data['id']]]);
-                },
                 'file-update' => function($name, $data){
                     return Html::tag('div', Html::a($data['message'], [
                         '/file/index',
@@ -104,9 +98,10 @@ return [
                         ],
                     ]), ['class' => 'text-muted', 'data' => ['id' => $data['id']]]);
                 },
-                'form-update' => function($name, $data){
+                'portfolio-update' => function($name, $data){
                     return Html::tag('div', Html::a($data['message'], [
-                        '/form/index',
+                        '/portfolio/index',
+                        't' => $data['target'],
                         '_page' => 1,
                         '_pageSize' => 10,
                         '_filter' => [
