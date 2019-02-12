@@ -208,7 +208,7 @@ class PortfolioController extends SController
                              * @var $query PortfolioQuery
                              */
                             $query->from(['portfolio_bu_' . $name => Portfolio::tableName()]);
-                            $query->andWhere(['portfolio_bu_' . $name . '.uid' => $uid]);
+                            //$query->andWhere(['portfolio_bu_' . $name . '.uid' => $uid]);
                         }
                     ]);
                 }
@@ -242,6 +242,9 @@ class PortfolioController extends SController
                 ]);
             }
         ]);
+        $query->andWhere('portfolio_bu_brand.uid = :uid OR portfolio_bu_sector.uid = :uid', [':uid' =>$uid]);
+        $query->groupBy('portfolioPrimary.id');
+        $query->orderBy('portfolioPrimary.name ASC');
         $products = $query->all();
         return ['products' => $products];
     }
