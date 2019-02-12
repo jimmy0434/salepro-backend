@@ -48,7 +48,7 @@ class ProductDetailsController extends SController
             'orderBy' => 'updated_at DESC, created_at DESC, id DESC',
             'params' => [
                 't' => $this->target,
-                'p' => $this->product,
+                'p' => $this->product->id,
             ],
         ], function ($dl, $query) {
             $query->andWhere(['product_id' => $this->product->id]);
