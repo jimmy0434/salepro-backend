@@ -190,9 +190,9 @@ class Exhibition extends \cnd\core\components\ActiveRecord
         $list = parent::toArray($fields, $expand, $recursive);
         $list['countries'] = $this->countriesNames;
         $list['regions'] = $this->regionsNames;
-        /*$list['sectors'] = array_filter(array_values(ArrayHelper::map($this->sectors, 'sector_id', function ($model) {
+        $list['sectors'] = array_filter(array_values(ArrayHelper::map($this->sectors, 'id', function ($model) {
             return $model->portfolio ? $model->portfolio->uid : null;
-        })));*/
+        })));
         return $list;
     }
 }
