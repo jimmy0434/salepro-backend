@@ -193,6 +193,8 @@ class Exhibition extends \cnd\core\components\ActiveRecord
         $list['sectors'] = array_filter(array_values(ArrayHelper::map($this->sectors, 'id', function ($model) {
             return $model->portfolio ? $model->portfolio->uid : null;
         })));
+        $list['businessUnit'] = $this->businessUnit && $this->businessUnit->portfolio ? $this->businessUnit->portfolio->uid : null;
+        unset($list['business_unit_id']);
         return $list;
     }
 }

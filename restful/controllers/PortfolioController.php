@@ -208,7 +208,6 @@ class PortfolioController extends SController
                              * @var $query PortfolioQuery
                              */
                             $query->from(['portfolio_bu_' . $name => Portfolio::tableName()]);
-                            //$query->andWhere(['portfolio_bu_' . $name . '.uid' => $uid]);
                         }
                     ]);
                 }
@@ -242,10 +241,79 @@ class PortfolioController extends SController
                 ]);
             }
         ]);
-        $query->andWhere('portfolio_bu_brand.uid = :uid OR portfolio_bu_sector.uid = :uid', [':uid' =>$uid]);
+        $query->andWhere('portfolio_bu_brand.uid = :uid OR portfolio_bu_sector.uid = :uid', [':uid' => $uid]);
         $query->groupBy('portfolioPrimary.id');
         $query->orderBy('portfolioPrimary.name ASC');
         $products = $query->all();
         return ['products' => $products];
+    }
+
+    /**
+     * @SWG\Get(
+     *     path="/products/{uid}/business-units",
+     *     tags={"Portfolio"},
+     *     summary="Retrieves all business units of product",
+     *     @SWG\Response(
+     *         response = 200,
+     *         description = "Portfolios response"
+     *     ),
+     *     security = {{"Bearer": {}}},
+     *     @SWG\Parameter( name="Authorization", in="header", required=true, type="string", default="Bearer TOKEN", description="Authorization" ),
+     *     @SWG\Parameter(name="uid", required=true, in="path", type="string", description="The Portfolio UID")
+     * )
+     */
+    public function actionProductBusinessUnits($uid)
+    {
+        $productJointure = function ($name) use ($uid) {
+            return [
+                'products' => function ($query) use ($name, $uid) {
+                    /**
+                     * @var $query ProductQuery
+                     */
+                    $query->from(['products_' . $name => Product::tableName()]);
+                    $query->joinWith([
+                        'portfolio' => function ($query) use ($name, $uid) {
+                            /**
+                             * @var $query PortfolioQuery
+                             */
+                            $query->from(['portfolio_product_' . $name => Portfolio::tableName()]);
+                        }
+                    ]);
+                }
+            ];
+        };
+
+        $query = Portfolio::find();
+        $query->from(['portfolioPrimary' => Portfolio::tableName()]);
+        $query->where(['portfolioPrimary.target' => Portfolio::TARGET_BUSINESS_UNIT]);
+        $query->joinWith([
+            'businessUnit' => function ($query) use ($productJointure) {
+                /**
+                 * @var $query BusinessUnitQuery
+                 */
+                $query->from(['businessUnit' => BusinessUnit::tableName()]);
+                $query->joinWith([
+                    'brands' => function ($query) use ($productJointure) {
+                        /**
+                         * @var $query BrandQuery
+                         */
+                        $query->from(['brands' => Brand::tableName()]);
+                        $query->joinWith($productJointure('brand'));
+                    },
+                    'sectors' => function ($query) use ($productJointure) {
+                        /**
+                         * @var $query SectorQuery
+                         */
+                        $query->from(['sectors' => Sector::tableName()]);
+                        $query->joinWith($productJointure('sector'));
+                    }
+                ]);
+            }
+        ]);
+        $query->andWhere('portfolio_product_brand.uid = :uid OR portfolio_product_sector.uid = :uid', [':uid' => $uid]);
+        $query->groupBy('portfolioPrimary.id');
+        $query->orderBy('portfolioPrimary.name ASC');
+        $businessUnits = $query->all();
+        return ['businessUnits' => $businessUnits];
     }
 }

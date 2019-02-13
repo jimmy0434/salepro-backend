@@ -24,6 +24,8 @@ use yii\helpers\Json;
  * @property Exhibition[] $exhibitions
  * @property SectorBusinessUnit[] $sectorBusinessUnits
  * @property Portfolio $portfolio
+ * @property Brand[] $brands
+ * @property Sector[] $sectors
  */
 class BusinessUnit extends \cnd\core\components\ActiveRecord
 {
@@ -70,6 +72,14 @@ class BusinessUnit extends \cnd\core\components\ActiveRecord
     /**
      * @return \yii\db\ActiveQuery
      */
+    public function getBrands()
+    {
+        return $this->hasMany(Brand::className(), ['id' => 'brand_id'])->via('brandBusinessUnits');
+    }
+
+    /**
+     * @return \yii\db\ActiveQuery
+     */
     public function getCorporateBusinessUnits()
     {
         return $this->hasMany(CorporateBusinessUnit::className(), ['business_unit_id' => 'id']);
@@ -89,6 +99,14 @@ class BusinessUnit extends \cnd\core\components\ActiveRecord
     public function getSectorBusinessUnits()
     {
         return $this->hasMany(SectorBusinessUnit::className(), ['business_unit_id' => 'id']);
+    }
+
+    /**
+     * @return \yii\db\ActiveQuery
+     */
+    public function getSectors()
+    {
+        return $this->hasMany(Sector::className(), ['id' => 'sector_id'])->via('sectorBusinessUnits');
     }
 
     /**
