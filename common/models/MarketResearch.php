@@ -206,17 +206,18 @@ class MarketResearch extends \cnd\core\components\ActiveRecord
         $list['file'] = $this->file;
         $list['countries'] = array_values(ArrayHelper::map($this->countries, 'id', 'country'));
         $list['regions'] = array_values(ArrayHelper::map($this->regions, 'id', 'region'));
-        $list['products'] = array_filter(ArrayHelper::map($this->products, function ($row) {
-            if ($row->portfolio) {
-                return $row->portfolio->uid;
+        $products = $this->products;
+        $list['products'] = [];
+        if(!empty($products) && is_array($products)){
+            foreach($products as $product){
+                if ($product->portfolio) {
+                    $list['products'][] = [
+                        'uid' => $product->portfolio->uid,
+                        'name' => $product->portfolio->name,
+                    ];
+                }
             }
-            return null;
-        }, function ($row) {
-            if ($row->portfolio) {
-                return $row->portfolio->name;
-            }
-            return null;
-        }));
+        }
         return $list;
     }
 
