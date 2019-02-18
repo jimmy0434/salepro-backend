@@ -74,6 +74,7 @@ class PortfolioController extends SController
                 $query->from(['video' => File::tableName()]);
             }
         ], false);
+        $query->orderBy('portfolio.name ASC');
         return $query->all();
     }
 
