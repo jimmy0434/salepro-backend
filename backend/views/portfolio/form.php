@@ -47,7 +47,7 @@ $form = ActiveForm::begin(['id' => Yii::$app->controller->id . '-form']);
                     ?>
                     <?= $form->field($model, 'name')->textInput() ?>
                     <?= $form->field($model, 'linkedin')->textInput() ?>
-                    <?= $form->field($model, 'description')->editorInput() ?>
+                    <?= $form->field($model, 'description')->textarea(['style'=>['min-height'=>'250px','resize' => 'none']]) ?>
                 </div>
             </div>
         </div>
