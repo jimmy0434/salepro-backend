@@ -50,7 +50,7 @@ $dv = new DataView([
                 assert($attribute instanceof Attribute);
                 assert($data instanceof ProductDetail);
                 assert($view instanceof DataViewLocator);
-                return $data->section_label;
+                return isset($data->section_listtranslate[$data->section]) ? $data->section_listtranslate[$data->section] : null;
             },
         ],
         'title' => [
