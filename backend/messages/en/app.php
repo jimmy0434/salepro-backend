@@ -12,4 +12,5 @@ return [
     "Mother Corporate" => "Principal",
     "Corporate" => "Plastic & Paper Division",
     "Business Unit" => "Manufacturing Plant",
+    "Company" => "Product Data",
 ];
