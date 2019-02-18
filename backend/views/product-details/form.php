@@ -37,7 +37,7 @@ $form = ActiveForm::begin(['id' => Yii::$app->controller->id . '-form']);
             <?= $form->field($model, 'id')->hiddenInput()->label(false) ?>
             <?= $form->field($model, 'product_id')->hiddenInput()->label(false) ?>
             <?= $form->field($model, 'title')->textInput() ?>
-            <?= $form->field($model, 'section')->dropDownList($model->section_list) ?>
+            <?= $form->field($model, 'section')->dropDownList($model->section_listtranslate) ?>
         </div>
     </div>
     <div class="form-group text-center">
