@@ -137,6 +137,7 @@ class PortfolioController extends SController
                 ]);
             },
         ]);
+        $query->orderBy('portfolioPrimary.name ASC');
         $products = $query->all();
         return ['products' => $products];
     }
