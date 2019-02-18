@@ -20,8 +20,8 @@ use Yii;
 class ProductDetail extends \cnd\core\components\ActiveRecord
 {
     const SECTION_COMPANY = 1;
-    const SECTION_PRE_ORDER = 2;
-    const SECTION_TECHNICAL = 3;
+    //const SECTION_PRE_ORDER = 2;
+    //const SECTION_TECHNICAL = 3;
 
     /**
      * {@inheritdoc}
