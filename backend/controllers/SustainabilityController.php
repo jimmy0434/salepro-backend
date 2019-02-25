@@ -42,6 +42,9 @@ class SustainabilityController extends SController
         $dataLocator = DataLocator::create(Sustainability::className(), [
             'orderBy' => 'position ASC, updated_at DESC, created_at DESC, id DESC',
             'pageSize' => 20,
+            'params' => [
+                't' => $this->type,
+            ],
         ], function($dl, $query){
             assert($dl instanceof DataLocator);
             assert($query instanceof SustainabilityQuery);

@@ -49,8 +49,8 @@ class Sustainability extends \cnd\core\components\ActiveRecord
             [['name','position','file_id'], 'required'],
             [['file_id'], 'integer'],
             [['name'], 'string'],
+            [['position'],'number','min'=>0, 'integerOnly' => true],
             [['file_id'], 'exist', 'skipOnError' => true, 'targetClass' => File::className(), 'targetAttribute' => ['file_id' => 'id']],
-            [['position'],'number','min'=>0],
         ]);
     }
 
