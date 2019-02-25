@@ -45,35 +45,22 @@ $form = ActiveForm::begin(['id' => Yii::$app->controller->id.'-form']);
                     ])
                     ?>
                     <?= $form->field($model, 'id')->hiddenInput()->label(false) ?>
+                    <?= $form->field($model, 'type')->hiddenInput()->label(false) ?>
                     <?= $form->field($model, 'name')->textInput() ?>
-                    <?= $form->field($model, 'url')->textInput() ?>
+                    <?= $form->field($model, 'position')->textInput(['type'=>'number','min'=>0]) ?>
                 </div>
             </div>
         </div>
         <div class="col-md-6">
             <div class="panel panel-default">
-                <div class="panel-heading">Files</div>
+                <div class="panel-heading">File</div>
                 <div class="panel-body">
                     <?= FileSelector::widget([
                         'model' => $model,
-                        'property' => 'power_point',
-                        'title' => "Power Point",
-                        'fileName' => uniqid('sustainability-ppt-', true),
-                        'ext' => Setting::get('sustainability.powerpoint.extensions','pptx,ppt'),
-                    ]) ?>
-                    <?= FileSelector::widget([
-                        'model' => $model,
-                        'property' => 'brochure',
-                        'title' => "Brochure",
-                        'fileName' => uniqid('sustainability-brochure-', true),
-                        'ext' => Setting::get('sustainability.brochure.extensions','pdf'),
-                    ]) ?>
-                    <?= FileSelector::widget([
-                        'model' => $model,
-                        'property' => 'video',
-                        'title' => "Video",
-                        'fileName' => uniqid('sustainability-video-', true),
-                        'ext' => Setting::get('sustainability.video.extensions','mp4'),
+                        'property' => 'file_id',
+                        'title' => "File",
+                        'fileName' => uniqid('sustainability-'.$this->context->type.'-', true),
+                        'ext' => Setting::get('sustainability.'.$this->context->type.'.extensions','pdf,pptx,ppt'),
                     ]) ?>
                 </div>
             </div>

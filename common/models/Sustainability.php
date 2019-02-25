@@ -11,19 +11,24 @@ use yii\helpers\Json;
  * @property int $id
  * @property string $name
  * @property string $image
- * @property int $power_point
- * @property int $brochure
- * @property int $video
- * @property string $url
+ * @property int $file_id
+ * @property int $position
+ * @property string $type
  * @property int $created_at
  * @property int $updated_at
  *
- * @property File $powerPointFile
- * @property File $videoFile
- * @property File $brochureFile
+ * @property array $type_list
+ * @property array $type_values
+ * @property string $type_label
+ *
+ * @property File $file
  */
 class Sustainability extends \cnd\core\components\ActiveRecord
 {
+
+    const TYPE_DOWNLOAD_FILE = 'download';
+    const TYPE_ENVIRONMENTAL_SUSTAINABILITY = 'environmental';
+    const TYPE_SOCIAL_RESPONSIBILITY = 'social_responsibility';
 
     public $imageFactory;
 
@@ -41,11 +46,11 @@ class Sustainability extends \cnd\core\components\ActiveRecord
     public function rules()
     {
         return array_merge(parent::rules(), [
-            [['power_point', 'brochure', 'video'], 'integer'],
-            [['url', 'name'], 'string'],
-            [['power_point'], 'exist', 'skipOnError' => true, 'targetClass' => File::className(), 'targetAttribute' => ['power_point' => 'id']],
-            [['video'], 'exist', 'skipOnError' => true, 'targetClass' => File::className(), 'targetAttribute' => ['video' => 'id']],
-            [['brochure'], 'exist', 'skipOnError' => true, 'targetClass' => File::className(), 'targetAttribute' => ['brochure' => 'id']],
+            [['name','position','file_id'], 'required'],
+            [['file_id'], 'integer'],
+            [['name'], 'string'],
+            [['file_id'], 'exist', 'skipOnError' => true, 'targetClass' => File::className(), 'targetAttribute' => ['file_id' => 'id']],
+            [['position'],'number','min'=>0],
         ]);
     }
 
@@ -58,10 +63,9 @@ class Sustainability extends \cnd\core\components\ActiveRecord
             'id' => 'ID',
             'name' => 'Name',
             'image' => 'Image',
-            'power_point' => 'Power Point',
-            'brochure' => 'Brochure',
-            'video' => 'Video',
-            'url' => 'Url',
+            'file_id' => 'File',
+            'position' => 'Position',
+            'type' => 'Type',
             'created_at' => 'Created At',
             'updated_at' => 'Updated At',
         ];
@@ -70,25 +74,9 @@ class Sustainability extends \cnd\core\components\ActiveRecord
     /**
      * @return \yii\db\ActiveQuery
      */
-    public function getPowerPointFile()
+    public function getFile()
     {
-        return $this->hasOne(File::className(), ['id' => 'power_point']);
-    }
-
-    /**
-     * @return \yii\db\ActiveQuery
-     */
-    public function getVideoFile()
-    {
-        return $this->hasOne(File::className(), ['id' => 'video']);
-    }
-
-    /**
-     * @return \yii\db\ActiveQuery
-     */
-    public function getBrochureFile()
-    {
-        return $this->hasOne(File::className(), ['id' => 'brochure']);
+        return $this->hasOne(File::className(), ['id' => 'file_id']);
     }
 
     /**
@@ -127,10 +115,8 @@ class Sustainability extends \cnd\core\components\ActiveRecord
     public function toArray(array $fields = [], array $expand = [], $recursive = true)
     {
         $list = parent::toArray($fields, $expand, $recursive);
-        unset($list['power_point'],$list['brochure'], $list['video']);
-        $list['powerPoint'] = $this->powerPointFile;
-        $list['brochure'] = $this->brochureFile;
-        $list['video'] = $this->videoFile;
+        unset($list['file_id']);
+        $list['file'] = $this->file;
         $list['image'] = $this->imageFactory->url;
         return $list;
     }

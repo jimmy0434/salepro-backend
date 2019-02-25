@@ -8,6 +8,7 @@
  * Time: 3:00 PM
  */
 
+use backend\widgets\CustomSetting;
 use cnd\grid\Attribute;
 use cnd\grid\DataView;
 use cnd\grid\DataViewLocator;
@@ -26,6 +27,17 @@ assert($dataLocator instanceof DataLocator);
 assert($context instanceof SustainabilityController);
 
 $this->title = "Sustainability Management";
+
+?>
+<div class="btn-group btn-group-justified" role="group" aria-label="targets">
+    <?php
+    foreach ($context->types as $value => $label) {
+        echo Html::a($label, ['index', 't' => $value], ['class' => 'btn btn-default ' . ($value == $context->type ? 'active' : '')]);
+    }
+    ?>
+</div>
+<hr>
+<?php
 
 $dv = new DataView([
     'dataLocator' => $dataLocator,
@@ -69,6 +81,16 @@ $dv = new DataView([
                 }
             },
         ],
+        'position' => [
+            'label' => 'Position',
+            'value' => function ($attribute, $data, $view) use ($dataLocator) {
+                assert($attribute instanceof Attribute);
+                assert($data instanceof Sustainability);
+                assert($view instanceof DataViewLocator);
+                return $data->position;
+            },
+            'filterBy' => Attribute::FILTER_NUMBER,
+        ],
         'name' => [
             'label' => 'Name',
             'value' => function ($attribute, $data, $view) use ($dataLocator) {
@@ -80,18 +102,18 @@ $dv = new DataView([
         ],
     ],
     'headerLinks' => [
-        Yii::$app->permission->can('/sustainability/manage') ? Html::a('Add New', Url::to(['manage']), ['class' => 'btn btn-success']) : null,
+        Yii::$app->permission->can('/sustainability/manage') ? Html::a('Add New', Url::to(['manage','t'=>$context->type]), ['class' => 'btn btn-success']) : null,
     ],
     'rowLinks' => [
-        function ($row) {
+        function ($row) use($context) {
             if (Yii::$app->permission->can('/sustainability/manage')) {
-                return Html::a('Edit', Url::to(['manage', 'id' => $row->id]), ['class' => 'btn btn-info']);
+                return Html::a('Edit', Url::to(['manage', 'id' => $row->id,'t'=>$context->type]), ['class' => 'btn btn-info']);
             }
             return null;
         },
-        function ($row) {
+        function ($row) use($context) {
             if (Yii::$app->permission->can('/sustainability/delete')) {
-                return Html::a('Delete', Url::to(['delete', 'id' => $row->id]), ['class' => 'btn btn-danger', 'data-confirm' => 'Are You Sure?']);
+                return Html::a('Delete', Url::to(['delete', 'id' => $row->id,'t'=>$context->type]), ['class' => 'btn btn-danger', 'data-confirm' => 'Are You Sure?']);
             }
             return null;
         },
@@ -115,6 +137,32 @@ $dv->addView('grid', [
         'name' => [
             'sortable' => true,
         ],
+        'position' => [
+            'sortable' => true,
+        ],
     ]
 ]);
 echo $dv->render();
+
+?>
+<div class="panel panel-default">
+    <div class="panel-heading">
+        <h2>Information</h2>
+    </div>
+    <div class="panel-body">
+        <?php
+        echo CustomSetting::widget([
+            'name' => 'sustainability.title',
+            'title' => 'Title',
+        ]);
+        echo '<hr>';
+        echo CustomSetting::widget([
+            'name' => 'sustainability.text',
+            'title' => 'Content',
+            'input' => function($form, $model, $attribute, $options){
+                return $form->field($model, $attribute)->editorInput($options);
+            }
+        ]);
+        ?>
+    </div>
+</div>

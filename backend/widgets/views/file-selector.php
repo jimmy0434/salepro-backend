@@ -43,6 +43,10 @@ if($file) {
             'fancybox' => true,
             'type' => 'iframe',
         ], 'id' => 'v-' . $hid]);
+        $error = Html::error($model, $property,['class'=>'text-red']);
+        if($error){
+            echo $error;
+        }
         ?>
     </div>
 <?php
