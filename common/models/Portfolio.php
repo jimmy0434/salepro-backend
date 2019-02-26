@@ -22,6 +22,7 @@ use yii\helpers\Json;
  * @property int $search_id
  * @property int $target
  * @property string $linkedin
+ * @property int $position
  * @property int $created_at
  * @property int $updated_at
  *
@@ -87,6 +88,7 @@ class Portfolio extends \cnd\core\components\ActiveRecord
         return array_merge(parent::rules(), [
             [['name', 'description'], 'string'],
             [['uid'], 'unique'],
+            [['position'],'number','min'=>0, 'integerOnly' => true],
             [['tags', 'brandsIds', 'sectorsIds', 'productsIds', 'businessUnitIds', 'newsLinks', 'links', 'officesIds'], 'safe'],
         ]);
     }

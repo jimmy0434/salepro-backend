@@ -71,7 +71,7 @@ class PortfolioController extends SController
                 $query->from(['video' => File::tableName()]);
             }
         ], false);
-        $query->orderBy('portfolio.name ASC');
+        $query->orderBy('portfolio.position ASC, portfolio.name ASC');
         return $query->all();
     }
 
@@ -135,7 +135,7 @@ class PortfolioController extends SController
                 ]);
             },
         ]);
-        $query->orderBy('portfolioPrimary.name ASC');
+        $query->orderBy('portfolioPrimary.position ASC, portfolioPrimary.name ASC');
         $products = $query->all();
         return ['products' => $products];
     }
@@ -249,7 +249,7 @@ class PortfolioController extends SController
                 ]);
             },
         ]);
-        $query->orderBy('portfolioPrimary.name ASC');
+        $query->orderBy('portfolioPrimary.position ASC, portfolioPrimary.name ASC');
         $businessUnits = $query->all();
         return ['businessUnits' => $businessUnits];
     }

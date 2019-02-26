@@ -101,6 +101,17 @@ $dv = new DataView([
                 return $data->name;
             },
         ],
+        'position' => [
+            'label' => 'Position',
+            'value' => function ($attribute, $data, $view) use ($dataLocator) {
+                /**
+                 * @var $attribute Attribute
+                 * @var $data Portfolio
+                 * @var $view DataView
+                 */
+                return $data->position;
+            },
+        ],
     ],
     'headerLinks' => [
         Yii::$app->permission->can('/portfolio/manage') ? Html::a('Add New', Url::to(['manage', 't' => $context->target]), ['class' => 'btn btn-success']) : null,
@@ -136,6 +147,9 @@ $dv->addView('grid', [
             ],
         ],
         'name' => [
+            'sortable' => true,
+        ],
+        'position' => [
             'sortable' => true,
         ],
     ]
