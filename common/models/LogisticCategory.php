@@ -39,7 +39,7 @@ class LogisticCategory extends ActiveRecord
         return array_merge(parent::rules(), [
             [['name'], 'required'],
             [['name'], 'string', 'max' => 255],
-            [['position'],'number','min'=>0, 'integerOnly' => true],
+            [['position'], 'number', 'min' => 0, 'integerOnly' => true],
         ]);
     }
 
@@ -61,7 +61,7 @@ class LogisticCategory extends ActiveRecord
      */
     public function getLogistics()
     {
-        return $this->hasMany(Logistic::className(), ['category_id' => 'id']);
+        return $this->hasMany(Logistic::className(), ['category_id' => 'id'])->orderBy(['position' => SORT_ASC, 'name' => SORT_ASC]);
     }
 
     /**
@@ -101,6 +101,7 @@ class LogisticCategory extends ActiveRecord
     {
         $list = parent::toArray($fields, $expand, $recursive);
         $list['image'] = $this->imageFactory->url;
+        $list['list'] = $this->logistics;
         return $list;
     }
 }

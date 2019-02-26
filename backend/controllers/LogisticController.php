@@ -10,14 +10,36 @@
 
 namespace backend\controllers;
 
+use common\models\LogisticCategory;
+use common\models\LogisticQuery;
 use Yii;
 use cnd\admin\models\activerecords\Log;
 use cnd\core\components\SController;
 use cnd\grid\DataLocator;
 use common\models\Logistic;
+use yii\helpers\ArrayHelper;
 
 class LogisticController extends SController
 {
+    public $category = null;
+    public $categories = [];
+
+    public function beforeAction($action)
+    {
+        $this->categories = ArrayHelper::map(LogisticCategory::find()->orderBy(['position' => SORT_ASC, 'name' => SORT_ASC])->all(), 'id', 'name');
+        if (Yii::$app->request->get('c') && array_key_exists(Yii::$app->request->get('c'), $this->categories)) {
+            $this->category = Yii::$app->request->get('c');
+        } else if (!empty($this->categories) && is_array($this->categories)) {
+            reset($this->categories);
+            $this->category = key($this->categories);
+        } else {
+            Yii::$app->session->setFlash('warning', 'Should define a category to create logistic');
+            $this->redirect(['/logistic-category/index']);
+            return null;
+        }
+        return parent::beforeAction($action);
+    }
+
     public function actionIndex()
     {
         /**
@@ -26,7 +48,15 @@ class LogisticController extends SController
         $dataLocator = DataLocator::create(Logistic::className(), [
             'orderBy' => 'name ASC',
             'pageSize' => 20,
-        ]);
+            'params' => [
+                'c' => $this->category,
+            ],
+        ], function ($dl, $query) {
+            assert($dl instanceof DataLocator);
+            assert($query instanceof LogisticQuery);
+
+            $query->andWhere(['category_id' => $this->category]);
+        });
         Log::trace("Show logistics List (page:" . $dataLocator->page . ", count: " . $dataLocator->pageSize . ")");
         if (Yii::$app->request->isAjax) {
             return $this->renderAjax('index', ['dataLocator' => $dataLocator]);
@@ -39,6 +69,7 @@ class LogisticController extends SController
         $model = Logistic::findOne($id);
         if (!$model) {
             $model = new Logistic();
+            $model->category_id = $this->category;
         }
         if ($model === null) {
             throw new \yii\web\HttpException(404, 'The requested logistic could not be found.');
@@ -52,10 +83,10 @@ class LogisticController extends SController
             }
             if ($isNew) {
                 Log::trace("Create new logistic #" . $model->id);
-            }else {
+            } else {
                 Log::trace("Update logistic #" . $id);
             }
-            return $this->redirect(['index']);
+            return $this->redirect(['index', 'c' => $this->category]);
         }
         Log::trace("Open logistic form");
         return $this->render('form', ['model' => $model]);
@@ -76,6 +107,6 @@ class LogisticController extends SController
             Log::trace("logistic not found to delete #" . $id);
             \Yii::$app->session->setFlash('error', ucfirst($this->id) . ' not found');
         }
-        return $this->redirect(['index']);
+        return $this->redirect(['index', 'c' => $this->category]);
     }
 }

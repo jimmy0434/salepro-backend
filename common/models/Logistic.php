@@ -41,7 +41,6 @@ class Logistic extends ActiveRecord
     {
         return array_merge(parent::rules(), [
             [['name'], 'required'],
-            [['image'], 'string'],
             [['category_id', 'file_id'], 'integer'],
             [['name'], 'string', 'max' => 255],
             [['position'],'number','min'=>0, 'integerOnly' => true],
@@ -59,8 +58,8 @@ class Logistic extends ActiveRecord
             'id' => 'ID',
             'name' => 'Name',
             'image' => 'Image',
-            'category_id' => 'Category ID',
-            'file_id' => 'File ID',
+            'category_id' => 'Category',
+            'file_id' => 'File',
             'created_at' => 'Created At',
             'updated_at' => 'Updated At',
         ];

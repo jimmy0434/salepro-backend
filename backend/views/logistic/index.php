@@ -12,8 +12,6 @@ use cnd\grid\Attribute;
 use cnd\grid\DataView;
 use cnd\grid\DataViewLocator;
 use common\models\Logistic;
-use common\models\LogisticCategory;
-use yii\helpers\ArrayHelper;
 use yii\helpers\Html;
 use yii\helpers\Url;
 use yii\web\View;
@@ -27,7 +25,18 @@ assert($view instanceof View);
 assert($dataLocator instanceof DataLocator);
 assert($context instanceof LogisticController);
 
-$this->title = "Logistics Management";
+$this->title = "Logistics Management :: " . $context->categories[$context->category];
+
+?>
+    <div class="btn-group btn-group-justified" role="group" aria-label="targets">
+        <?php
+        foreach ($context->categories as $value => $label) {
+            echo Html::a($label, ['index', 'c' => $value], ['class' => 'btn btn-default ' . ($value == $context->category ? 'active' : '')]);
+        }
+        ?>
+    </div>
+    <hr>
+<?php
 
 $dv = new DataView([
     'dataLocator' => $dataLocator,
@@ -99,22 +108,22 @@ $dv = new DataView([
                 return $data->category ? $data->category->name : '';
             },
             'filterBy' => Attribute::FILTER_LIST,
-            'filterList' => ArrayHelper::map(LogisticCategory::find()->orderBy(['name'=>SORT_ASC])->all(),'id','name'),
+            'filterList' => $context->categories,
         ],
     ],
     'headerLinks' => [
-        Yii::$app->permission->can('/logistic/manage') ? Html::a('Add New', Url::to(['manage']), ['class' => 'btn btn-success']) : null,
+        Yii::$app->permission->can('/logistic/manage') ? Html::a('Add New', Url::to(['manage', 'c' => $context->category]), ['class' => 'btn btn-success']) : null,
     ],
     'rowLinks' => [
-        function ($row) {
+        function ($row) use ($context) {
             if (Yii::$app->permission->can('/logistic/manage')) {
-                return Html::a('Edit', Url::to(['manage', 'id' => $row->id]), ['class' => 'btn btn-info']);
+                return Html::a('Edit', Url::to(['manage', 'id' => $row->id, 'c' => $context->category]), ['class' => 'btn btn-info']);
             }
             return null;
         },
-        function ($row) {
+        function ($row) use ($context) {
             if (Yii::$app->permission->can('/logistic/delete')) {
-                return Html::a('Delete', Url::to(['delete', 'id' => $row->id]), ['class' => 'btn btn-danger', 'data-confirm' => 'Are You Sure?']);
+                return Html::a('Delete', Url::to(['delete', 'id' => $row->id, 'c' => $context->category]), ['class' => 'btn btn-danger', 'data-confirm' => 'Are You Sure?']);
             }
             return null;
         },
