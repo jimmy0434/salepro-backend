@@ -50,6 +50,15 @@ $dv = new DataView([
                 return $data->name;
             },
         ],
+        'region' => [
+            'label' => 'Region',
+            'value' => function ($attribute, $data, $view) use ($dataLocator) {
+                assert($attribute instanceof Attribute);
+                assert($data instanceof SalesOffice);
+                assert($view instanceof DataViewLocator);
+                return $data->region;
+            },
+        ],
     ],
     'headerLinks' => [
         Yii::$app->permission->can('/sales-office/manage') ? Html::a('Add New', Url::to(['manage']), ['class' => 'btn btn-success']) : null,
@@ -79,6 +88,9 @@ $dv->addView('grid', [
             ],
         ],
         'name' => [
+            'sortable' => true,
+        ],
+        'region' => [
             'sortable' => true,
         ],
     ]

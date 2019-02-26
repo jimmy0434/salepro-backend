@@ -3,6 +3,7 @@
 namespace common\models;
 
 use Yii;
+use yii\helpers\ArrayHelper;
 
 /**
  * This is the model class for table "mpk_data_list".
@@ -101,5 +102,10 @@ class DataList extends \cnd\core\components\ActiveRecord
     public static function find()
     {
         return new DataListQuery(get_called_class());
+    }
+
+    public static function dropDownList($type)
+    {
+        return ArrayHelper::map(static::find()->orderBy(['name' => SORT_ASC])->where(['type' => $type])->all(), 'name', 'name');
     }
 }

@@ -37,7 +37,7 @@ $this->title = "Portfolio Management | " . $context->targets[$context->target];
     <hr>
 <?php
 $extraLinks = [];
-if ($context->target == Portfolio::TARGET_PRODUCT) {
+if ($context->target == Portfolio::TARGET_PRODUCT || $context->target == Portfolio::TARGET_BUNDLING_AND_PACKING) {
     $extraLinks[] = function ($row) use ($context) {
         if (Yii::$app->permission->can('/product-details/index')) {
             return Html::a('Details', Url::to(['/product-details/index', 'p' => $row->item->id, 't' => $context->target]), ['class' => 'btn btn-warning']);
