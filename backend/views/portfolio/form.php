@@ -47,8 +47,8 @@ $form = ActiveForm::begin(['id' => Yii::$app->controller->id . '-form']);
                     ?>
                     <?= $form->field($model, 'name')->textInput() ?>
                     <?= $form->field($model, 'linkedin')->textInput() ?>
-                    <?= $form->field($model, 'position')->textInput(['type'=>'number','min'=>0]) ?>
-                    <?= $form->field($model, 'description')->textarea(['style'=>['min-height'=>'250px','resize' => 'none']]) ?>
+                    <?= $form->field($model, 'position')->textInput(['type' => 'number', 'min' => 0]) ?>
+                    <?= $form->field($model, 'description')->textarea(['style' => ['min-height' => '250px', 'resize' => 'none']]) ?>
                 </div>
             </div>
         </div>
@@ -93,7 +93,7 @@ $form = ActiveForm::begin(['id' => Yii::$app->controller->id . '-form']);
                 <div class="panel-heading"><?= 'Relations' ?></div>
                 <div class="panel-body">
                     <?php
-                    if (in_array($context->target, [Portfolio::TARGET_CORPORATE, Portfolio::TARGET_MOTHER_CORPORATE, Portfolio::TARGET_BRAND, Portfolio::TARGET_SECTOR, Portfolio::TARGET_PRODUCT , Portfolio::TARGET_BUNDLING_AND_PACKING])) {
+                    if (in_array($context->target, [Portfolio::TARGET_CORPORATE, Portfolio::TARGET_MOTHER_CORPORATE, Portfolio::TARGET_BRAND, Portfolio::TARGET_SECTOR, Portfolio::TARGET_PRODUCT, Portfolio::TARGET_BUNDLING_AND_PACKING])) {
                         echo AutoCompleteInput::widget([
                             'model' => $model,
                             'form' => $form,
@@ -126,7 +126,7 @@ $form = ActiveForm::begin(['id' => Yii::$app->controller->id . '-form']);
                             'data' => $model->item ? $model->item->brands : [],
                         ]);
                     }
-                    if (in_array($context->target, [Portfolio::TARGET_SECTOR, Portfolio::TARGET_BRAND])) {
+                    if (in_array($context->target, [Portfolio::TARGET_SECTOR, Portfolio::TARGET_BRAND, Portfolio::TARGET_BUSINESS_UNIT])) {
                         echo AutoCompleteInput::widget([
                             'model' => $model,
                             'form' => $form,
