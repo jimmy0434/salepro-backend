@@ -35,8 +35,8 @@ $isNew = $model->isNewRecord;
 $this->title = ($isNew ? 'Add New' : 'Update') . ' Product Details Content';
 
 $this->params['breadcrumbs'][] = ['label' => "Products", 'url' => ['/portfolio/index', 't' => $context->target]];
-$this->params['breadcrumbs'][] = ['label' => $product->portfolio->name, 'url' => ['/product-details/index', 't' => $context->target, 'p' => $product->id]];
-$this->params['breadcrumbs'][] = ['label' => $detail->section_label . ' / ' . $detail->title, 'url' => ['/product-details-item/index', 't' => $context->target, 'p' => $product->id, 'd' => $detail->id]];
+//$this->params['breadcrumbs'][] = ['label' => $product->portfolio->name, 'url' => ['/product-details/index', 't' => $context->target, 'p' => $product->id]];
+$this->params['breadcrumbs'][] = ['label' => $detail->title, 'url' => ['/product-details-item/index', 't' => $context->target, 'p' => $product->id, 'd' => $detail->id]];
 
 $form = ActiveForm::begin(['id' => Yii::$app->controller->id . '-form']);
 

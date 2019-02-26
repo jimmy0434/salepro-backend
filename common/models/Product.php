@@ -77,6 +77,19 @@ class Product extends \cnd\core\components\ActiveRecord
     /**
      * @return \yii\db\ActiveQuery
      */
+    public function getProductBusinessUnits()
+    {
+        return $this->hasMany(ProductBusinessUnit::className(), ['product_id' => 'id']);
+    }
+
+    public function getBusinessUnits()
+    {
+        return $this->hasMany(BusinessUnit::className(), ['id' => 'business_unit_id'])->via('productBusinessUnits');
+    }
+
+    /**
+     * @return \yii\db\ActiveQuery
+     */
     public function getPortfolio()
     {
         return $this->hasOne(Portfolio::className(), ['id' => 'portfolio_id']);

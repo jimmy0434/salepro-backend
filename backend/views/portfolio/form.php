@@ -92,7 +92,7 @@ $form = ActiveForm::begin(['id' => Yii::$app->controller->id . '-form']);
                 <div class="panel-heading"><?= 'Relations' ?></div>
                 <div class="panel-body">
                     <?php
-                    if (in_array($context->target, [Portfolio::TARGET_CORPORATE, Portfolio::TARGET_MOTHER_CORPORATE, Portfolio::TARGET_BRAND, Portfolio::TARGET_SECTOR])) {
+                    if (in_array($context->target, [Portfolio::TARGET_CORPORATE, Portfolio::TARGET_MOTHER_CORPORATE, Portfolio::TARGET_BRAND, Portfolio::TARGET_SECTOR, Portfolio::TARGET_PRODUCT , Portfolio::TARGET_BUNDLING_AND_PACKING])) {
                         echo AutoCompleteInput::widget([
                             'model' => $model,
                             'form' => $form,
@@ -103,7 +103,7 @@ $form = ActiveForm::begin(['id' => Yii::$app->controller->id . '-form']);
                             'data' => $model->item ? $model->item->businessUnits : [],
                         ]);
                     }
-                    if (in_array($context->target, [Portfolio::TARGET_BRAND, Portfolio::TARGET_PRODUCT, Portfolio::TARGET_CORPORATE, Portfolio::TARGET_MOTHER_CORPORATE])) {
+                    if (in_array($context->target, [Portfolio::TARGET_BRAND, Portfolio::TARGET_PRODUCT, Portfolio::TARGET_BUNDLING_AND_PACKING, Portfolio::TARGET_CORPORATE, Portfolio::TARGET_MOTHER_CORPORATE])) {
                         echo AutoCompleteInput::widget([
                             'model' => $model,
                             'form' => $form,
@@ -114,7 +114,7 @@ $form = ActiveForm::begin(['id' => Yii::$app->controller->id . '-form']);
                             'data' => $model->item ? $model->item->sectors : [],
                         ]);
                     }
-                    if (in_array($context->target, [Portfolio::TARGET_SECTOR, Portfolio::TARGET_PRODUCT])) {
+                    if (in_array($context->target, [Portfolio::TARGET_SECTOR, Portfolio::TARGET_PRODUCT, Portfolio::TARGET_BUNDLING_AND_PACKING])) {
                         echo AutoCompleteInput::widget([
                             'model' => $model,
                             'form' => $form,

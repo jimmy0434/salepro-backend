@@ -38,7 +38,7 @@ class ProductDetail extends \cnd\core\components\ActiveRecord
     {
         return array_merge(parent::rules(), [
             [['product_id'], 'integer'],
-            [['section', 'title'], 'string', 'max' => 255],
+            [[ 'title'], 'string', 'max' => 255],
             [['product_id'], 'exist', 'skipOnError' => true, 'targetClass' => Product::className(), 'targetAttribute' => ['product_id' => 'id']],
         ]);
     }

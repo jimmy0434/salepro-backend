@@ -34,8 +34,8 @@ assert($detail instanceof ProductDetail);
 $this->title = "Product Details Contents Management";
 
 $this->params['breadcrumbs'][] = ['label' =>  "Products", 'url' => ['/portfolio/index', 't' => $context->target]];
-$this->params['breadcrumbs'][] = ['label' =>  $product->portfolio->name, 'url' => ['/product-details/index', 't' => $context->target, 'p' => $product->id]];
-$this->params['breadcrumbs'][] = $detail->section_label.' / '.$detail->title;
+//$this->params['breadcrumbs'][] = ['label' =>  $product->portfolio->name, 'url' => ['/product-details/index', 't' => $context->target, 'p' => $product->id]];
+$this->params['breadcrumbs'][] = $detail->title;
 
 $dv = new DataView([
     'dataLocator' => $dataLocator,

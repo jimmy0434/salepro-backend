@@ -58,6 +58,7 @@ class Portfolio extends \cnd\core\components\ActiveRecord
     const TARGET_BRAND = 4;
     const TARGET_SECTOR = 5;
     const TARGET_PRODUCT = 6;
+    const TARGET_BUNDLING_AND_PACKING = 7;
 
     public $tags = [];
     public $brandsIds = [];
@@ -268,11 +269,13 @@ class Portfolio extends \cnd\core\components\ActiveRecord
                 }
                 break;
             case static::TARGET_PRODUCT:
+            case static::TARGET_BUNDLING_AND_PACKING:
                 Product::relateToPortfolio($this->id);
                 $item = $this->item;
                 if ($item) {
                     $this->assignItems($this->brandsIds, '\common\models\ProductBrand', 'brand_id', 'product_id', $item->id);
                     $this->assignItems($this->sectorsIds, '\common\models\ProductSector', 'sector_id', 'product_id', $item->id);
+                    $this->assignItems($this->businessUnitIds, '\common\models\ProductBusinessUnit', 'business_unit_id', 'product_id', $item->id);
                 }
                 break;
             case static::TARGET_BUSINESS_UNIT:
@@ -363,11 +366,11 @@ class Portfolio extends \cnd\core\components\ActiveRecord
             ];
         }));
         $data['offices'] = $this->salesOffices;
-        if ($this->target == static::TARGET_PRODUCT) {
+        if ($this->target == static::TARGET_PRODUCT || $this->target == static::TARGET_BUNDLING_AND_PACKING) {
             $data['details'] = $this->product->details;
         }
         $data['primaryModel'] = $this->item;
-        unset($data['brochure_id'], $data['presentation_id'], $data['video_id'], $data['search_id'], $data['target']);
+        unset($data['brochure_id'], $data['presentation_id'], $data['video_id'], $data['search_id'], $data['target'], $data['info_graphic_id']);
         switch ($this->target) {
             case static::TARGET_MOTHER_CORPORATE:
             case static::TARGET_CORPORATE:
@@ -385,6 +388,7 @@ class Portfolio extends \cnd\core\components\ActiveRecord
                 $data['products'] = $this->manyToManyPortfolio($this->brand->products);
                 break;
             case static::TARGET_PRODUCT:
+            case static::TARGET_BUNDLING_AND_PACKING:
                 $data['sectors'] = $this->manyToManyPortfolio($this->product->sectors);
                 $data['brands'] = $this->manyToManyPortfolio($this->product->brands);
                 $data['details'] = $this->product ? $this->product->details : null;
@@ -405,6 +409,8 @@ class Portfolio extends \cnd\core\components\ActiveRecord
         $item = lcfirst(Inflector::id2camel($this->target_label, '_'));
         if ($item == 'motherCorporate') {
             $item = 'corporate';
+        }else if ($item == 'bundlingAndPacking') {
+            $item = 'product';
         }
         if ($this->hasProperty($item)) {
             return $this->$item;

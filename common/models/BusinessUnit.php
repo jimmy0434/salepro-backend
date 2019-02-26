@@ -112,6 +112,19 @@ class BusinessUnit extends \cnd\core\components\ActiveRecord
     /**
      * @return \yii\db\ActiveQuery
      */
+    public function getBusinessUnitProducts()
+    {
+        return $this->hasMany(ProductBusinessUnit::className(), ['business_unit_id' => 'id']);
+    }
+
+    public function getProducts()
+    {
+        return $this->hasMany(Product::className(), ['id' => 'product_id'])->via('businessUnitProducts');
+    }
+
+    /**
+     * @return \yii\db\ActiveQuery
+     */
     public function getPortfolio()
     {
         return $this->hasOne(Portfolio::className(), ['id' => 'portfolio_id']);
