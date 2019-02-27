@@ -126,7 +126,7 @@ $form = ActiveForm::begin(['id' => Yii::$app->controller->id . '-form']);
                             'data' => $model->item ? $model->item->brands : [],
                         ]);
                     }
-                    if (in_array($context->target, [Portfolio::TARGET_SECTOR, Portfolio::TARGET_BRAND, Portfolio::TARGET_BUSINESS_UNIT])) {
+                    if (in_array($context->target, [Portfolio::TARGET_SECTOR, Portfolio::TARGET_BRAND])) {
                         echo AutoCompleteInput::widget([
                             'model' => $model,
                             'form' => $form,

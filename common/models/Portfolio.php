@@ -282,10 +282,6 @@ class Portfolio extends \cnd\core\components\ActiveRecord
                 break;
             case static::TARGET_BUSINESS_UNIT:
                 BusinessUnit::relateToPortfolio($this->id);
-                $item = $this->item;
-                if ($item) {
-                    $this->assignItems($this->productsIds, '\common\models\ProductBusinessUnit', 'product_id', 'business_unit_id', $item->id);
-                }
                 break;
         }
         $this->assignItems($this->officesIds, '\common\models\PortfolioSalesOffice', 'sales_office_id', 'portfolio_id', $this->id);
