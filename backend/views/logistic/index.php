@@ -79,6 +79,7 @@ $dv = new DataView([
                     return '';
                 }
             },
+            'filterBy' => Attribute::FILTER_NONE,
         ],
         'position' => [
             'label' => 'Position',

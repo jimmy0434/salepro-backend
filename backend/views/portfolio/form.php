@@ -137,6 +137,17 @@ $form = ActiveForm::begin(['id' => Yii::$app->controller->id . '-form']);
                             'data' => $model->item ? $model->item->products : [],
                         ]);
                     }
+                    if (in_array($context->target, [Portfolio::TARGET_BUSINESS_UNIT, Portfolio::TARGET_PRODUCT, Portfolio::TARGET_BUNDLING_AND_PACKING])) {
+                        echo AutoCompleteInput::widget([
+                            'model' => $model,
+                            'form' => $form,
+                            'property' => 'certificationsIds',
+                            'findUrl' => ['/certification/find-certifications'],
+                            'addUrl' => ['/certification/add-certification'],
+                            'title' => 'Certifications',
+                            'data' => $model->item ? $model->item->certifications : [],
+                        ]);
+                    }
                     echo AutoCompleteInput::widget([
                         'model' => $model,
                         'form' => $form,

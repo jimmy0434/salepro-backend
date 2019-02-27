@@ -176,4 +176,17 @@ class BusinessUnit extends \cnd\core\components\ActiveRecord
             $model->save();
         }
     }
+
+    /**
+     * @return \yii\db\ActiveQuery
+     */
+    public function getBusinessUnitCertifications()
+    {
+        return $this->hasMany(BusinessUnitCertification::className(), ['business_unit_id' => 'id']);
+    }
+
+    public function getCertifications()
+    {
+        return $this->hasMany(Certification::className(), ['id' => 'certification_id'])->via('businessUnitCertifications');
+    }
 }

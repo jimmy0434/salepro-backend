@@ -46,9 +46,11 @@ class Bootstrap implements BootstrapInterface
         $logistic->item('Files', ['/logistic/index']);
         $logistic->item('Categories ', ['/logistic-category/index']);
 
-        $navigator->item('Sales Offices', ['/sales-office/index'], 'fa fa-map-marker', 13);
-        $navigator->item('Data List', ['/data-list/index'], 'fa fa-table', 14);
-        $navigator->item('Statistic Numbers', ['/statistic-number/index'], 'fa fa-bar-chart', 15);
+        $navigator->item('Certifications', ['/certification/index'], 'fa fa-certificate', 13);
+
+        $navigator->item('Sales Offices', ['/sales-office/index'], 'fa fa-map-marker', 14);
+        $navigator->item('Data List', ['/data-list/index'], 'fa fa-table', 15);
+        $navigator->item('Statistic Numbers', ['/statistic-number/index'], 'fa fa-bar-chart', 16);
 
         $developer = MenuManager::block('Developer');
         $developerSection = $developer->section('Documentation');

@@ -145,4 +145,17 @@ class Product extends \cnd\core\components\ActiveRecord
             $model->save();
         }
     }
+
+    /**
+     * @return \yii\db\ActiveQuery
+     */
+    public function getProductCertifications()
+    {
+        return $this->hasMany(ProductCertification::className(), ['product_id' => 'id']);
+    }
+
+    public function getCertifications()
+    {
+        return $this->hasMany(Certification::className(), ['id' => 'certification_id'])->via('productCertifications');
+    }
 }

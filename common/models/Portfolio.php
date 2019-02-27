@@ -69,6 +69,7 @@ class Portfolio extends \cnd\core\components\ActiveRecord
     public $newsLinks = [];
     public $links = [];
     public $officesIds = [];
+    public $certificationsIds = [];
 
     public $imageFactory;
 
@@ -88,8 +89,8 @@ class Portfolio extends \cnd\core\components\ActiveRecord
         return array_merge(parent::rules(), [
             [['name', 'description'], 'string'],
             [['uid'], 'unique'],
-            [['position'],'number','min'=>0, 'integerOnly' => true],
-            [['tags', 'brandsIds', 'sectorsIds', 'productsIds', 'businessUnitIds', 'newsLinks', 'links', 'officesIds'], 'safe'],
+            [['position'], 'number', 'min' => 0, 'integerOnly' => true],
+            [['tags', 'brandsIds', 'sectorsIds', 'productsIds', 'businessUnitIds', 'newsLinks', 'links', 'officesIds', 'certificationsIds'], 'safe'],
         ]);
     }
 
@@ -278,10 +279,15 @@ class Portfolio extends \cnd\core\components\ActiveRecord
                     $this->assignItems($this->brandsIds, '\common\models\ProductBrand', 'brand_id', 'product_id', $item->id);
                     $this->assignItems($this->sectorsIds, '\common\models\ProductSector', 'sector_id', 'product_id', $item->id);
                     $this->assignItems($this->businessUnitIds, '\common\models\ProductBusinessUnit', 'business_unit_id', 'product_id', $item->id);
+                    $this->assignItems($this->certificationsIds, '\common\models\ProductCertification', 'certification_id', 'product_id', $item->id);
                 }
                 break;
             case static::TARGET_BUSINESS_UNIT:
                 BusinessUnit::relateToPortfolio($this->id);
+                $item = $this->item;
+                if ($item) {
+                    $this->assignItems($this->certificationsIds, '\common\models\BusinessUnitCertification', 'certification_id', 'business_unit_id', $item->id);
+                }
                 break;
         }
         $this->assignItems($this->officesIds, '\common\models\PortfolioSalesOffice', 'sales_office_id', 'portfolio_id', $this->id);
@@ -393,7 +399,11 @@ class Portfolio extends \cnd\core\components\ActiveRecord
             case static::TARGET_BUNDLING_AND_PACKING:
                 $data['sectors'] = $this->manyToManyPortfolio($this->product->sectors);
                 $data['brands'] = $this->manyToManyPortfolio($this->product->brands);
+                $data['certifications'] = $this->product ? $this->product->certifications : null;
                 $data['details'] = $this->product ? $this->product->details : null;
+                break;
+            case static::TARGET_BUSINESS_UNIT:
+                $data['certifications'] = $this->product ? $this->product->certifications : null;
                 break;
         }
         return $data;
@@ -411,7 +421,7 @@ class Portfolio extends \cnd\core\components\ActiveRecord
         $item = lcfirst(Inflector::id2camel($this->target_label, '_'));
         if ($item == 'motherCorporate') {
             $item = 'corporate';
-        }else if ($item == 'bundlingAndPacking') {
+        } else if ($item == 'bundlingAndPacking') {
             $item = 'product';
         }
         if ($this->hasProperty($item)) {
