@@ -11,8 +11,10 @@
 namespace restful\controllers;
 
 
+use cnd\admin\models\activerecords\Setting;
 use cnd\core\api\SController;
 use common\models\DataList;
+use common\models\File;
 use yii\helpers\ArrayHelper;
 use yii\helpers\Inflector;
 use common\models\StatisticNumber;
@@ -32,7 +34,8 @@ class DataController extends SController
      *     @SWG\Parameter( name="Authorization", in="header", required=true, type="string", default="Bearer TOKEN", description="Authorization" )
      * )
      */
-    public function actionStatisticNumbers(){
+    public function actionStatisticNumbers()
+    {
         $models = StatisticNumber::find()->all();
         return $models;
     }
@@ -70,17 +73,17 @@ class DataController extends SController
         $query->orderBy(['name' => SORT_ASC]);
         $list = $query->all();
         $result = [];
-        if(!empty($list) && is_array($list)){
-            foreach($list as $model){
+        if (!empty($list) && is_array($list)) {
+            foreach ($list as $model) {
                 $key = lcfirst(Inflector::id2camel($model->type_label, '_'));
-                if(!isset($result[$key])){
+                if (!isset($result[$key])) {
                     $result[$key] = [];
                 }
                 $down = $model->down;
                 $v = [
                     'value' => $model->name,
                 ];
-                if(count($down) > 0){
+                if (count($down) > 0) {
                     $v['childName'] = isset($relations[$model->type]) ? lcfirst(Inflector::id2camel($types[$relations[$model->type]], '_')) : null;
                     $v['childValues'] = array_values(ArrayHelper::map($down, 'name', 'name'));
                 }
@@ -88,5 +91,25 @@ class DataController extends SController
             }
         }
         return array_merge($emptyList, $result);
+    }
+
+    /**
+     * @SWG\Get(
+     *     path="/marketing-directory",
+     *     tags={"Data"},
+     *     summary="Marketing Directory File",
+     *     @SWG\Response(
+     *          response = 200,
+     *          description = "Marketing Directory Response"
+     *     ),
+     *     security = {{"Bearer": {}}},
+     *     @SWG\Parameter( name="Authorization", in="header", required=true, type="string", default="Bearer TOKEN", description="Authorization" )
+     * )
+     */
+    public function actionMarketingDirectory()
+    {
+        $id = Setting::get('marketing.directory.file.id', null);
+        $file = File::findOne($id);
+        return ['file' => $file];
     }
 }
