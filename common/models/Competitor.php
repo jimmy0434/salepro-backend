@@ -278,13 +278,7 @@ class Competitor extends \cnd\core\components\ActiveRecord
     {
         $list = parent::toArray($fields, $expand, $recursive);
         unset($list['file'], $list['logo'], $list['search_id'], $list['business_unit_id']);
-        $list['businessUnit'] = null;
-        if ($this->businessUnit) {
-            $list['businessUnit'] = [
-                'uid' => $this->businessUnit->uid,
-                'name' => $this->businessUnit->portfolio ? $this->businessUnit->portfolio->name : null,
-            ];
-        }
+
         $list['competitorNews'] = $this->getCompetitorNews()->all();
         $list['competitorManager'] = $this->getCompetitorManager()->all();
         $list['competitorSupplier'] = $this->getCompetitorSupplier()->all();
@@ -300,21 +294,21 @@ class Competitor extends \cnd\core\components\ActiveRecord
         if (!empty($list['competitorFlexible']) && is_array($list['competitorFlexible'])) {
             foreach ($list['competitorFlexible'] as $model) {
                 $productTypes[] = $model->product_type;
-                $sectors[] = $model->sector ? $model->sector->uid : null;
+                $sectors[] = $model->sector && $model->sector->portfolio ? $model->sector->portfolio->uid : null;
             }
         }
 
         if (!empty($list['competitorMasterbatch']) && is_array($list['competitorMasterbatch'])) {
             foreach ($list['competitorMasterbatch'] as $model) {
                 $productTypes[] = $model->product_type;
-                $sectors[] = $model->sector ? $model->sector->uid : null;
+                $sectors[] = $model->sector && $model->sector->portfolio ? $model->sector->portfolio->uid : null;
             }
         }
 
         if (!empty($list['competitorPackaging']) && is_array($list['competitorPackaging'])) {
             foreach ($list['competitorPackaging'] as $model) {
                 $productTypes[] = $model->product_type;
-                $sectors[] = $model->sector ? $model->sector->uid : null;
+                $sectors[] = $model->sector && $model->sector->portfolio ? $model->sector->portfolio->uid : null;
             }
         }
 
@@ -324,6 +318,11 @@ class Competitor extends \cnd\core\components\ActiveRecord
         $list['sectors'] = array_unique(array_filter($sectors, function ($value) {
             return $value;
         }));
+
+        $list['businessUnit'] = null;
+        if ($this->businessUnit && $this->businessUnit->portfolio) {
+            $list['businessUnit'] = $this->businessUnit->portfolio->uid;
+        }
 
         return $list;
     }
