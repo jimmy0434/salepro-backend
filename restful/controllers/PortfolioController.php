@@ -215,14 +215,22 @@ class PortfolioController extends SController
                         /**
                          * @var $query ProductSectorQuery
                          */
-                        $query->from(['productBusinessUnits' => \common\models\ProductBusinessUnit::tableName()]);
+                        $query->from(['productBusinessUnits' => ProductBusinessUnit::tableName()]);
                         $query->joinWith([
                             'businessUnit' => function ($query) use ($uid) {
                                 /**
                                  * @var $query SectorQuery
                                  */
                                 $query->from(['businessUnit' => BusinessUnit::tableName()]);
-                                $query->where(['businessUnit.uid' => $uid]);
+                                $query->joinWith([
+                                    'portfolio' => function ($query) use ($uid) {
+                                        /**
+                                         * @var $query PortfolioQuery
+                                         */
+                                        $query->from(['portfolio' => Portfolio::tableName()]);
+                                        $query->where(['portfolio.uid' => $uid]);
+                                    }
+                                ]);
                             },
                         ]);
                     },
