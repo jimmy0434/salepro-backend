@@ -58,6 +58,7 @@ use Yii;
  */
 class Competitor extends \cnd\core\components\ActiveRecord
 {
+
     /**
      * {@inheritdoc}
      */
@@ -278,7 +279,7 @@ class Competitor extends \cnd\core\components\ActiveRecord
         $list = parent::toArray($fields, $expand, $recursive);
         unset($list['file'], $list['logo'], $list['search_id'], $list['business_unit_id']);
         $list['businessUnit'] = null;
-        if($this->businessUnit) {
+        if ($this->businessUnit) {
             $list['businessUnit'] = [
                 'uid' => $this->businessUnit->uid,
                 'name' => $this->businessUnit->portfolio ? $this->businessUnit->portfolio->name : null,
@@ -292,6 +293,38 @@ class Competitor extends \cnd\core\components\ActiveRecord
         $list['competitorFlexible'] = $this->getCompetitorFlexible()->all();
         $list['competitorMasterbatch'] = $this->getCompetitorMasterbatch()->all();
         $list['competitorPackaging'] = $this->getCompetitorPackaging()->all();
+
+        $sectors = [];
+        $productTypes = [];
+
+        if (!empty($list['competitorFlexible']) && is_array($list['competitorFlexible'])) {
+            foreach ($list['competitorFlexible'] as $model) {
+                $productTypes[] = $model->product_type;
+                $sectors[] = $model->sector ? $model->sector->uid : null;
+            }
+        }
+
+        if (!empty($list['competitorMasterbatch']) && is_array($list['competitorMasterbatch'])) {
+            foreach ($list['competitorMasterbatch'] as $model) {
+                $productTypes[] = $model->product_type;
+                $sectors[] = $model->sector ? $model->sector->uid : null;
+            }
+        }
+
+        if (!empty($list['competitorPackaging']) && is_array($list['competitorPackaging'])) {
+            foreach ($list['competitorPackaging'] as $model) {
+                $productTypes[] = $model->product_type;
+                $sectors[] = $model->sector ? $model->sector->uid : null;
+            }
+        }
+
+        $list['productTypes'] = array_unique(array_filter($productTypes, function ($value) {
+            return $value;
+        }));
+        $list['sectors'] = array_unique(array_filter($sectors, function ($value) {
+            return $value;
+        }));
+
         return $list;
     }
 }
