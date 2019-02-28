@@ -194,7 +194,37 @@ class PortfolioController extends SController
      */
     public function actionBusinessUnitProducts($uid)
     {
-        return $this->products($uid, '\common\models\ProductBusinessUnit', 'productBusinessUnits', '\common\models\BusinessUnit', 'businessUnit');
+        $query = Portfolio::find();
+        $query->from(['portfolioPrimary' => Portfolio::tableName()]);
+        $query->where(['portfolioPrimary.target' => Portfolio::TARGET_PRODUCT]);
+        $query->joinWith([
+            'product' => function ($query) use ($uid) {
+                /**
+                 * @var $query ProductQuery
+                 */
+                $query->from(['product' => Product::tableName()]);
+                $query->joinWith([
+                    'productBusinessUnits' => function ($query) use ($uid) {
+                        /**
+                         * @var $query ProductSectorQuery
+                         */
+                        $query->from(['productBusinessUnits' => \common\models\ProductBusinessUnit::tableName()]);
+                        $query->joinWith([
+                            'businessUnit' => function ($query) use ($uid) {
+                                /**
+                                 * @var $query SectorQuery
+                                 */
+                                $query->from(['businessUnit' => BusinessUnit::tableName()]);
+                                $query->where(['businessUnit.uid' => $uid]);
+                            },
+                        ]);
+                    },
+                ]);
+            },
+        ]);
+        $query->orderBy('portfolioPrimary.position ASC, portfolioPrimary.name ASC');
+        $products = $query->all();
+        return ['products' => $products];
     }
 
     /**

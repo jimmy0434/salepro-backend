@@ -37,13 +37,15 @@ $form = ActiveForm::begin(['id' => Yii::$app->controller->id . '-form']);
                 <div class="panel-body">
                     <?= $form->field($model, 'id')->hiddenInput()->label(false) ?>
                     <?= $form->field($model, 'target')->hiddenInput()->label(false) ?>
-                    <?=
-                    MediaInput::widget([
-                        'model' => $model,
-                        'attr' => 'image',
-                        'title' => 'Image',
-                        'count' => 1,
-                    ])
+                    <?php
+                    if (!in_array($context->target, [Portfolio::TARGET_PRODUCT, Portfolio::TARGET_BUNDLING_AND_PACKING])) {
+                        echo MediaInput::widget([
+                            'model' => $model,
+                            'attr' => 'image',
+                            'title' => 'Image',
+                            'count' => 1,
+                        ]);
+                    }
                     ?>
                     <?= $form->field($model, 'name')->textInput() ?>
                     <?= $form->field($model, 'linkedin')->textInput() ?>
@@ -171,6 +173,21 @@ $form = ActiveForm::begin(['id' => Yii::$app->controller->id . '-form']);
             </div>
         </div>
     </div>
+<?php
+if (in_array($context->target, [Portfolio::TARGET_PRODUCT, Portfolio::TARGET_BUNDLING_AND_PACKING])) {
+    ?>
+    <div class="panel panel-default">
+        <div class="panel-heading"><?= 'Images' ?></div>
+        <div class="panel-body">
+            <?= MediaInput::widget([
+                'model' => $model,
+                'attr' => 'image',
+            ]) ?>
+        </div>
+    </div>
+    <?php
+}
+?>
     <div class="row">
         <div class="col-md-4">
             <div class="panel panel-default">

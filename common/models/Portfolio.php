@@ -323,16 +323,18 @@ class Portfolio extends \cnd\core\components\ActiveRecord
     public function afterFind()
     {
         parent::afterFind();
-        if (is_string($this->image) && Yii::$app->helper->isJson($this->image)) {
-            $this->imageFactory = \Yii::createObject([
-                'class' => 'cnd\filemanager\components\FileOutput',
-                'data' => $this->image,
-            ]);
-        } else {
-            $this->imageFactory = \Yii::createObject([
-                'class' => 'cnd\filemanager\components\FileOutput',
-                'data' => Yii::$app->image->defaultUser,
-            ]);
+        if (!in_array($this->target, [static::TARGET_PRODUCT, static::TARGET_BUNDLING_AND_PACKING])) {
+            if (is_string($this->image) && Yii::$app->helper->isJson($this->image)) {
+                $this->imageFactory = \Yii::createObject([
+                    'class' => 'cnd\filemanager\components\FileOutput',
+                    'data' => $this->image,
+                ]);
+            } else {
+                $this->imageFactory = \Yii::createObject([
+                    'class' => 'cnd\filemanager\components\FileOutput',
+                    'data' => Yii::$app->image->defaultUser,
+                ]);
+            }
         }
         // load news links
         $this->newsLinks = [
@@ -361,7 +363,21 @@ class Portfolio extends \cnd\core\components\ActiveRecord
     public function toArray(array $fields = [], array $expand = [], $recursive = true)
     {
         $data = parent::toArray($fields, $expand, $recursive);
-        $data['image'] = $this->imageFactory->url;
+        if (!in_array($this->target, [static::TARGET_PRODUCT, static::TARGET_BUNDLING_AND_PACKING])) {
+            $data['image'] = $this->imageFactory->url;
+        } else {
+            unset($data['image']);
+            $imagesData = Json::decode($this->image);
+            $data['images'] = [];
+            if (!empty($imagesData) && is_array($imagesData)) {
+                foreach ($imagesData as $imageData) {
+                    if(is_string($imageData) && Yii::$app->helper->isJson($imageData)) {
+                        $image = Json::decode($imageData);
+                        $data['images'][] = $image['url'];
+                    }
+                }
+            }
+        }
         $data['brochure'] = $this->brochure;
         $data['presentation'] = $this->presentation;
         $data['video'] = $this->video;
