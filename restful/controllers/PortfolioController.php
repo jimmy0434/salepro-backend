@@ -19,6 +19,7 @@ use common\models\File;
 use common\models\Portfolio;
 use common\models\PortfolioQuery;
 use common\models\Product;
+use common\models\ProductBusinessUnit;
 use common\models\ProductQuery;
 use common\models\ProductSectorQuery;
 use common\models\SectorQuery;
@@ -270,7 +271,7 @@ class PortfolioController extends SController
                                 /**
                                  * @var $query SectorQuery
                                  */
-                                $query->from([product => Product::tableName()]);
+                                $query->from(["product" => Product::tableName()]);
                                 $query->joinWith([
                                     'portfolio' => function ($query) use ($uid) {
                                         /**
