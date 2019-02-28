@@ -276,7 +276,14 @@ class Competitor extends \cnd\core\components\ActiveRecord
     public function toArray(array $fields = [], array $expand = [], $recursive = true)
     {
         $list = parent::toArray($fields, $expand, $recursive);
-        unset($list['file'], $list['logo'], $list['search_id']);
+        unset($list['file'], $list['logo'], $list['search_id'], $list['business_unit_id']);
+        $list['businessUnit'] = null;
+        if($this->businessUnit) {
+            $list['businessUnit'] = [
+                'uid' => $this->businessUnit->uid,
+                'name' => $this->businessUnit->portfolio ? $this->businessUnit->portfolio->name : null,
+            ];
+        }
         $list['competitorNews'] = $this->getCompetitorNews()->all();
         $list['competitorManager'] = $this->getCompetitorManager()->all();
         $list['competitorSupplier'] = $this->getCompetitorSupplier()->all();

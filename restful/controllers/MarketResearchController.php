@@ -10,6 +10,7 @@
 
 namespace restful\controllers;
 
+use cnd\admin\models\activerecords\Log;
 use common\models\Portfolio;
 use Yii;
 use cnd\core\api\SController;
@@ -74,6 +75,7 @@ class MarketResearchController extends SController
         $query->orderBy($sortAttr . ' ' . $sortDir);
         $query->limit($pageSize)->offset(($page - 1) * $pageSize);
         $list = $query->all();
+        Log::trace("Download Market Research List");
         return ['marketResearch' => $list];
     }
 }

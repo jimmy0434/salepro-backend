@@ -11,6 +11,7 @@
 namespace restful\controllers;
 
 
+use cnd\admin\models\activerecords\Log;
 use cnd\admin\models\activerecords\Setting;
 use cnd\core\api\SController;
 use common\models\DataList;
@@ -36,6 +37,7 @@ class DataController extends SController
      */
     public function actionStatisticNumbers()
     {
+        Log::trace("Download Statistic Numbers");
         $models = StatisticNumber::find()->all();
         return $models;
     }
@@ -90,6 +92,7 @@ class DataController extends SController
                 $result[$key][] = $v;
             }
         }
+        Log::trace("Download Data List");
         return array_merge($emptyList, $result);
     }
 
@@ -110,6 +113,7 @@ class DataController extends SController
     {
         $id = Setting::get('marketing.directory.file.id', null);
         $file = File::findOne($id);
+        Log::trace("Download Marketing Directory Meta File");
         return ['file' => $file];
     }
 }

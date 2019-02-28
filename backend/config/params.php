@@ -1,9 +1,9 @@
 <?php
 
-use common\models\LogBi;
+use common\models\LogStore;
 
 return [
     'adminEmail' => 'admin@example.com',
     'allowLogData' => true,
-    'logModel' => LogBi::className(),
+    'logModel' => LogStore::className(),
 ];

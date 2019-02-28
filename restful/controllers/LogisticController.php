@@ -11,6 +11,7 @@
 namespace restful\controllers;
 
 
+use cnd\admin\models\activerecords\Log;
 use cnd\core\api\SController;
 use common\models\LogisticCategory;
 
@@ -35,6 +36,7 @@ class LogisticController extends SController
         $query = LogisticCategory::find();
         $query->orderBy(['position' => SORT_ASC, 'name' => SORT_ASC]);
         $list = $query->all();
+        Log::trace("Download Logistics List");
         return ['logistics' => $list];
     }
 

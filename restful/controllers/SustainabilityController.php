@@ -10,6 +10,7 @@
 
 namespace restful\controllers;
 
+use cnd\admin\models\activerecords\Log;
 use cnd\admin\models\activerecords\Setting;
 use Yii;
 use cnd\core\api\SController;
@@ -46,6 +47,7 @@ class SustainabilityController extends SController
         },'type');
         $title = Setting::get('sustainability.title','');
         $text = Setting::get('sustainability.text','');
+        Log::trace("Download Sustainability Data");
         return ['sustainability' => $list,'title'=>$title, 'text'=>$text];
     }
 }

@@ -10,6 +10,7 @@
 
 namespace restful\controllers;
 
+use cnd\admin\models\activerecords\Log;
 use Yii;
 use cnd\core\api\SController;
 use common\models\Exhibition;
@@ -41,6 +42,7 @@ class ExhibitionController extends SController
         $query->orderBy('name ASC');
         $query->limit($pageSize)->offset(($page - 1) * $pageSize);
         $list = $query->all();
+        Log::trace("Download Exhibitions List");
         return ['exhibitions' => $list];
     }
 

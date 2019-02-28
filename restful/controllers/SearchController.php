@@ -10,6 +10,7 @@
 
 namespace restful\controllers;
 
+use cnd\admin\models\activerecords\Log;
 use common\models\Search;
 use common\models\SearchTag;
 use common\models\Tag;
@@ -58,6 +59,7 @@ class SearchController extends SController
         $query->where(implode(' OR ', $sql));
         $query->limit($pageSize)->offset(($page - 1) * $pageSize);
         $results = $query->all();
+        Log::trace("Global Search");
         return ['results' => $results];
     }
 }

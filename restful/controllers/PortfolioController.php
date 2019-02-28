@@ -11,6 +11,7 @@
 namespace restful\controllers;
 
 
+use cnd\admin\models\activerecords\Log;
 use cnd\core\api\SController;
 use common\models\BusinessUnit;
 use common\models\BusinessUnitQuery;
@@ -45,6 +46,8 @@ class PortfolioController extends SController
         $businessUnit = $this->list(Portfolio::TARGET_BUSINESS_UNIT);
         $brands = $this->list(Portfolio::TARGET_BRAND);
         $sectors = $this->list(Portfolio::TARGET_SECTOR);
+
+        Log::trace("Download Portfolio Items Data");
 
         return [
             'motherCorporates' => $motherCorporates,
@@ -94,6 +97,7 @@ class PortfolioController extends SController
         $query = Portfolio::find();
         $query->where(['uid' => $uid]);
         $model = $query->one();
+        Log::trace("Download Portfolio Item Data");
         return ['portfolio' => $model];
     }
 
@@ -156,6 +160,7 @@ class PortfolioController extends SController
      */
     public function actionSectorsProducts($uid)
     {
+        Log::trace("Download Products of sector");
         return $this->products($uid, '\common\models\ProductSector', 'productSectors', '\common\models\Sector', 'sector');
     }
 
@@ -175,6 +180,7 @@ class PortfolioController extends SController
      */
     public function actionBrandsProducts($uid)
     {
+        Log::trace("Download Products of brand");
         return $this->products($uid, '\common\models\ProductBrand', 'productBrands', '\common\models\Brand', 'brand');
     }
 
@@ -224,6 +230,7 @@ class PortfolioController extends SController
         ]);
         $query->orderBy('portfolioPrimary.position ASC, portfolioPrimary.name ASC');
         $products = $query->all();
+        Log::trace("Download Products of Business Unit");
         return ['products' => $products];
     }
 
@@ -281,6 +288,7 @@ class PortfolioController extends SController
         ]);
         $query->orderBy('portfolioPrimary.position ASC, portfolioPrimary.name ASC');
         $businessUnits = $query->all();
+        Log::trace("Download Business Units of Product");
         return ['businessUnits' => $businessUnits];
     }
 
@@ -299,6 +307,7 @@ class PortfolioController extends SController
      */
     public function actionBundlingPacking()
     {
+        Log::trace("Download Bundling & Packing Products");
         return ['list' => $this->list(Portfolio::TARGET_BUNDLING_AND_PACKING)];
     }
 }

@@ -11,7 +11,7 @@ $params = array_merge(
 
 return [
     'id' => 'masterpak-restful',
-    'name' => 'Indevco MasterPak Restful Api',
+    'name' => 'SalePro App',
     'basePath' => dirname(__DIR__),
     'controllerNamespace' => 'restful\controllers',
     //'defaultRoute' => 'site/index',

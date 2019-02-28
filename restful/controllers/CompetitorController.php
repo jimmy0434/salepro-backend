@@ -10,6 +10,7 @@
 
 namespace restful\controllers;
 
+use cnd\admin\models\activerecords\Log;
 use Yii;
 use cnd\core\api\SController;
 use common\models\Competitor;
@@ -38,10 +39,10 @@ class CompetitorController extends SController
         $page = Yii::$app->request->get('page', 1);
         $pageSize = Yii::$app->request->get('pageSize', 25);
         $query = Competitor::find();
-        $query->where(['salesman_id' => Yii::$app->user->identity->id]);
         $query->limit($pageSize)->offset(($page - 1) * $pageSize);
         $query->orderBy('name ASC');
         $list = $query->all();
+        Log::trace("Download Competitors List");
         return ['profiles' => $list];
     }
 
@@ -63,6 +64,7 @@ class CompetitorController extends SController
     {
         $uid = Yii::$app->request->get('uid');
         $competitor = Competitor::find()->where(['uid' => $uid, 'salesman_id' => Yii::$app->user->identity->id])->one();
+        Log::trace("Download Competitor Profile");
         return ['profile' => $competitor];
     }
 
@@ -84,6 +86,7 @@ class CompetitorController extends SController
     {
         $uid = Yii::$app->request->get('uid');
         $competitor = Competitor::find()->select('logo')->where(['uid' => $uid, 'salesman_id' => Yii::$app->user->identity->id])->one();
+        Log::trace("Download Competitor Logo");
         return ['logo' => $competitor->logo];
     }
 
@@ -105,6 +108,7 @@ class CompetitorController extends SController
     {
         $uid = Yii::$app->request->get('uid');
         $competitor = Competitor::find()->select('file')->where(['uid' => $uid, 'salesman_id' => Yii::$app->user->identity->id])->one();
+        Log::trace("Download Competitor Meta File");
         return ['file' => $competitor->file];
     }
 
@@ -175,6 +179,7 @@ class CompetitorController extends SController
                 }
             }
         }
+        Log::trace("Save Competitor Profile");
         return ['competitor' => $competitor];
     }
 
