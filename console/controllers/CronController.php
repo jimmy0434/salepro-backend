@@ -24,7 +24,7 @@ class CronController extends Controller
     {
         $out = "";
         $query = Log::find();
-        $query->limit(100);
+        $query->limit(500);
         $query->orderBy('id ASC');
         $list = $query->all();
         if (!empty($list) && is_array($list)) {
