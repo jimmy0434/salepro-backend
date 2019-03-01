@@ -74,8 +74,7 @@
     "post-update-cmd": [
       "php yii migrate --migrationPath=@cnd/admin/migrations --interactive=0",
       "php yii migrate --migrationPath=@cnd/notification/migrations --interactive=0",
-      "php yii migrate --interactive=0",
-      "php yii migrate --db=bi --migrationPath=@console/migrations/bi --interactive=0"
+      "php yii migrate --interactive=0"
     ]
   },
   "repositories": [
