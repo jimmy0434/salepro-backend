@@ -35,8 +35,8 @@ class CompetitorManager extends \cnd\core\components\ActiveRecord
     {
         return array_merge(parent::rules(), [
             [['competitor_id'], 'integer'],
-            [['linkedin'], 'string'],
-            [['first_name', 'last_name', 'position'], 'string', 'max' => 255],
+            //[['linkedin'], 'string'],
+            //[['first_name', 'last_name', 'position'], 'string', 'max' => 255],
             [['competitor_id'], 'exist', 'skipOnError' => true, 'targetClass' => Competitor::className(), 'targetAttribute' => ['competitor_id' => 'id']],
         ]);
     }

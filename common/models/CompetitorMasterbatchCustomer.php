@@ -37,7 +37,7 @@ class CompetitorMasterbatchCustomer extends \cnd\core\components\ActiveRecord
     {
         return array_merge(parent::rules(),[
             [['competitor_id', 'competitor_masterbatch_id'], 'integer'],
-            [['name', 'country', 'share_percentage'], 'string', 'max' => 255],
+            //[['name', 'country', 'share_percentage'], 'string', 'max' => 255],
             [['competitor_id'], 'exist', 'skipOnError' => true, 'targetClass' => Competitor::className(), 'targetAttribute' => ['competitor_id' => 'id']],
             [['competitor_masterbatch_id'], 'exist', 'skipOnError' => true, 'targetClass' => CompetitorMasterbatch::className(), 'targetAttribute' => ['competitor_masterbatch_id' => 'id']],
         ]);

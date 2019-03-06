@@ -48,8 +48,8 @@ class CompetitorFlexible extends \cnd\core\components\ActiveRecord
     {
         return array_merge(parent::rules(), [
             [['competitor_id', 'sector_id', 'embossed', 'perforated'], 'integer'],
-            [['product_type', 'quantity_sold', 'quantity_unit', 'thickness', 'width', 'color', 'printing_colors_number', 'core_id', 'business_terms', 'incoterms', 'payment', 'price', 'currency'], 'string', 'max' => 255],
-            [['competitor_id'], 'exist', 'skipOnError' => true, 'targetClass' => Competitor::className(), 'targetAttribute' => ['competitor_id' => 'id']],
+            //[['product_type', 'quantity_sold', 'quantity_unit', 'thickness', 'width', 'color', 'printing_colors_number', 'core_id', 'business_terms', 'incoterms', 'payment', 'price', 'currency'], 'string', 'max' => 255],
+           [['competitor_id'], 'exist', 'skipOnError' => true, 'targetClass' => Competitor::className(), 'targetAttribute' => ['competitor_id' => 'id']],
             [['sector_id'], 'exist', 'skipOnError' => true, 'targetClass' => Sector::className(), 'targetAttribute' => ['sector_id' => 'id']],
         ]);
     }

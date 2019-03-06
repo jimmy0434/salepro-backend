@@ -48,7 +48,7 @@ class CompetitorPackaging extends \cnd\core\components\ActiveRecord
     {
         return array_merge(parent::rules(), [
             [['competitor_id', 'sector_id'], 'integer'],
-            [['product_type', 'quantity_sold', 'quantity_unit', 'material', 'weight', 'diameter', 'color', 'height', 'neck', 'ctn_volume', 'business_terms', 'incoterms', 'payment', 'price', 'currency'], 'string', 'max' => 255],
+            //[['product_type', 'quantity_sold', 'quantity_unit', 'material', 'weight', 'diameter', 'color', 'height', 'neck', 'ctn_volume', 'business_terms', 'incoterms', 'payment', 'price', 'currency'], 'string', 'max' => 255],
             [['sector_id'], 'exist', 'skipOnError' => true, 'targetClass' => Sector::className(), 'targetAttribute' => ['sector_id' => 'id']],
             [['competitor_id'], 'exist', 'skipOnError' => true, 'targetClass' => Competitor::className(), 'targetAttribute' => ['competitor_id' => 'id']],
         ]);

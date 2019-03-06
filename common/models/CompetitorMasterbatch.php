@@ -47,7 +47,7 @@ class CompetitorMasterbatch extends \cnd\core\components\ActiveRecord
     {
         return array_merge(parent::rules(),[
             [['competitor_id', 'sector_id'], 'integer'],
-            [['product_type', 'quantity_sold', 'quantity_unit', 'active_ingredient', 'mfi', 'resin_type', 'ink_type', 'outdoor', 'food_grade', 'business_terms', 'incoterms', 'payment', 'price', 'currency'], 'string', 'max' => 255],
+            //[['product_type', 'quantity_sold', 'quantity_unit', 'active_ingredient', 'mfi', 'resin_type', 'ink_type', 'outdoor', 'food_grade', 'business_terms', 'incoterms', 'payment', 'price', 'currency'], 'string', 'max' => 255],
             [['competitor_id'], 'exist', 'skipOnError' => true, 'targetClass' => Competitor::className(), 'targetAttribute' => ['competitor_id' => 'id']],
             [['sector_id'], 'exist', 'skipOnError' => true, 'targetClass' => Sector::className(), 'targetAttribute' => ['sector_id' => 'id']],
         ]);

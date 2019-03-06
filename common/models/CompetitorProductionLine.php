@@ -39,7 +39,7 @@ class CompetitorProductionLine extends \cnd\core\components\ActiveRecord
     {
         return array_merge(parent::rules(), [
             [['competitor_id'], 'integer'],
-            [['production_line', 'colors_number', 'layers_number', 'brand_line', 'output', 'unit', 'width', 'machines_number'], 'string', 'max' => 255],
+            //[['production_line', 'colors_number', 'layers_number', 'brand_line', 'output', 'unit', 'width', 'machines_number'], 'string', 'max' => 255],
             [['competitor_id'], 'exist', 'skipOnError' => true, 'targetClass' => Competitor::className(), 'targetAttribute' => ['competitor_id' => 'id']],
         ]);
     }

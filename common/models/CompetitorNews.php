@@ -32,7 +32,7 @@ class CompetitorNews extends \cnd\core\components\ActiveRecord
     {
         return array_merge(parent::rules(), [
             [['competitor_id'], 'integer'],
-            [['url'], 'string'],
+            //[['url'], 'string'],
             [['competitor_id'], 'exist', 'skipOnError' => true, 'targetClass' => Competitor::className(), 'targetAttribute' => ['competitor_id' => 'id']],
         ]);
     }

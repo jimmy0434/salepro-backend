@@ -37,7 +37,7 @@ class CompetitorPackagingCustomer extends \cnd\core\components\ActiveRecord
     {
         return array_merge(parent::rules(), [
             [['competitor_id', 'competitor_packaging_id'], 'integer'],
-            [['name', 'country', 'share_percentage'], 'string', 'max' => 255],
+            //[['name', 'country', 'share_percentage'], 'string', 'max' => 255],
             [['competitor_id'], 'exist', 'skipOnError' => true, 'targetClass' => Competitor::className(), 'targetAttribute' => ['competitor_id' => 'id']],
             [['competitor_packaging_id'], 'exist', 'skipOnError' => true, 'targetClass' => CompetitorPackaging::className(), 'targetAttribute' => ['competitor_packaging_id' => 'id']],
         ]);

@@ -34,7 +34,7 @@ class CompetitorSupplier extends \cnd\core\components\ActiveRecord
     {
         return array_merge(parent::rules(), [
             [['competitor_id'], 'integer'],
-            [['raw_material', 'supplier_name', 'country'], 'string', 'max' => 255],
+            //[['raw_material', 'supplier_name', 'country'], 'string', 'max' => 255],
             [['competitor_id'], 'exist', 'skipOnError' => true, 'targetClass' => Competitor::className(), 'targetAttribute' => ['competitor_id' => 'id']],
         ]);
     }

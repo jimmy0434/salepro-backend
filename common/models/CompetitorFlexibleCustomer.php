@@ -37,7 +37,7 @@ class CompetitorFlexibleCustomer extends \cnd\core\components\ActiveRecord
     {
         return array_merge(parent::rules(), [
             [['competitor_id', 'competitor_flexible_id'], 'integer'],
-            [['name', 'country', 'share_percentage'], 'string', 'max' => 255],
+            //[['name', 'country', 'share_percentage'], 'string', 'max' => 255],
             [['competitor_flexible_id'], 'exist', 'skipOnError' => true, 'targetClass' => CompetitorFlexible::className(), 'targetAttribute' => ['competitor_flexible_id' => 'id']],
             [['competitor_id'], 'exist', 'skipOnError' => true, 'targetClass' => Competitor::className(), 'targetAttribute' => ['competitor_id' => 'id']],
         ]);
