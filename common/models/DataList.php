@@ -43,6 +43,7 @@ class DataList extends \cnd\core\components\ActiveRecord
     const TYPE_TERMS_OF_BUSINESS = 20;
     const TYPE_RAW_MATERIAL = 21;
     const TYPE_PRICE_UNIT = 22;
+    const TYPE_INK_TYPE = 23;
 
     public static function listRelations()
     {
