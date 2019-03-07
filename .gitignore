@@ -40,3 +40,5 @@ phpunit.phar
 .sass-cache
 .well-known
 cgi-bin
+
+web.config
