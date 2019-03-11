@@ -26,6 +26,7 @@ use yii\helpers\Json;
  * @property Portfolio $portfolio
  * @property Brand[] $brands
  * @property Sector[] $sectors
+ * @property Certification[] $certifications
  */
 class BusinessUnit extends \cnd\core\components\ActiveRecord
 {

@@ -419,7 +419,7 @@ class Portfolio extends \cnd\core\components\ActiveRecord
                 $data['details'] = $this->product ? $this->product->details : null;
                 break;
             case static::TARGET_BUSINESS_UNIT:
-                $data['certifications'] = $this->product ? $this->product->certifications : null;
+                $data['certifications'] = $this->businessUnit ? $this->businessUnit->certifications : null;
                 break;
         }
         return $data;
