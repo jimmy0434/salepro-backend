@@ -10,7 +10,7 @@
 
 $this->title = "Salesman";
 
-?>
+use backend\widgets\Log; ?>
 <div class="panel panel-default">
     <div class="panel-heading">
         <?= $user->name ?>
@@ -25,6 +25,6 @@ $this->title = "Salesman";
         </li>
     </ul>
 </div>
-<?= \cnd\admin\widgets\Log::widget(['userId'=>$user->id]) ?>
+<?= Log::widget(['userId'=>$user->id]) ?>
 <?php
 
