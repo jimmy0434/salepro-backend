@@ -16,6 +16,7 @@ use Yii;
 use cnd\core\api\SController;
 use common\models\Sustainability;
 use yii\helpers\ArrayHelper;
+use yii\helpers\Inflector;
 
 class SustainabilityController extends SController
 {
@@ -49,7 +50,7 @@ class SustainabilityController extends SController
         if (!empty($list) && is_array($list)) {
             foreach ($list as $type => $data) {
                 $listData[] = [
-                    'name' => $type,
+                    'name' => Inflector::camel2words(Inflector::id2camel($type, '_')),
                     'list' => array_values($data),
                 ];
             }
