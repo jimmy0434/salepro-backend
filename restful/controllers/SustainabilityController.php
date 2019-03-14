@@ -50,6 +50,7 @@ class SustainabilityController extends SController
         if (!empty($list) && is_array($list)) {
             foreach ($list as $type => $data) {
                 $listData[] = [
+                    'type' => $type,
                     'name' => Inflector::camel2words(Inflector::id2camel($type, '_')),
                     'list' => array_values($data),
                 ];
