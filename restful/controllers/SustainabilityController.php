@@ -42,12 +42,21 @@ class SustainabilityController extends SController
         $query = Sustainability::find();
         $query->limit($pageSize)->offset(($page - 1) * $pageSize);
         $query->orderBy('position ASC, name ASC');
-        $list = ArrayHelper::map($query->all(),'id', function($model){
+        $list = ArrayHelper::map($query->all(), 'id', function ($model) {
             return $model;
-        },'type');
-        $title = Setting::get('sustainability.title','');
-        $text = Setting::get('sustainability.text','');
+        }, 'type');
+        $listData = [];
+        if (!empty($list) && is_array($list)) {
+            foreach ($list as $type => $data) {
+                $listData[] = [
+                    'name' => $type,
+                    'list' => array_values($data),
+                ];
+            }
+        }
+        $title = Setting::get('sustainability.title', '');
+        $text = Setting::get('sustainability.text', '');
         Log::trace("Download Sustainability Data");
-        return ['sustainability' => $list,'title'=>$title, 'text'=>$text];
+        return ['sustainability' => $listData, 'title' => $title, 'text' => $text];
     }
 }
