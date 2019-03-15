@@ -38,7 +38,7 @@ class CronController extends Controller
                     $out .= $this->ansiFormat("Transfer new log #", Console::FG_GREEN) . $this->ansiFormat($log->id, Console::FG_YELLOW, Console::BOLD) . "." . PHP_EOL;
                     $out .= $this->ansiFormat("|", Console::FG_PURPLE) . " - ";
                     $out .= "(" . $this->ansiFormat($log->level, Console::FG_RED) . ") : ";
-                    $out .= $this->ansiFormat($log->user->name, Console::FG_GREEN) . " [";
+                    $out .= $this->ansiFormat($log->user?$log->user->name:"Guest", Console::FG_GREEN) . " [";
                     $out .= $this->ansiFormat($log->message, Console::FG_CYAN) . "] ";
                     $out .= "in " . $this->ansiFormat($log->app, Console::FG_YELLOW) . " ";
                     $out .= "on " . $this->ansiFormat(date('l, d F, Y H:i', strtotime($log->date)), Console::FG_PURPLE);
