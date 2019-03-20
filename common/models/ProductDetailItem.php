@@ -25,6 +25,8 @@ class ProductDetailItem extends \cnd\core\components\ActiveRecord
 
     const TYPE_FILE = 1;
     const TYPE_CONTENT = 2;
+    const TYPE_CALCULATOR_STANDARD_FILM = 3;
+    const TYPE_CALCULATOR_PE_BAGS = 4;
 
     public $image;
     public $text;
@@ -130,6 +132,8 @@ class ProductDetailItem extends \cnd\core\components\ActiveRecord
             $list['content'] = $this->content;
         } else if ($this->type == static::TYPE_FILE) {
             $list['file'] = $this->file;
+        }else if(in_array($this->type,[static::TYPE_CALCULATOR_STANDARD_FILM, static::TYPE_CALCULATOR_PE_BAGS])){
+            $list['calculator'] = $this->type_label;
         }
         return $list;
     }

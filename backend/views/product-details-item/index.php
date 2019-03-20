@@ -74,6 +74,10 @@ $dv = new DataView([
         Yii::$app->permission->can('/product-details-item/manage') ? Html::a('Add New File', Url::to(['manage', 'p' => $product->id, 't' => $context->target, 'd' => $detail->id, 'type' => ProductDetailItem::TYPE_FILE]), ['class' => 'btn btn-success']) : null,
         '&nbsp;&nbsp;',
         Yii::$app->permission->can('/product-details-item/manage') ? Html::a('Add New Content', Url::to(['manage', 'p' => $product->id, 't' => $context->target, 'd' => $detail->id, 'type' => ProductDetailItem::TYPE_CONTENT]), ['class' => 'btn btn-success']) : null,
+        '&nbsp;&nbsp;',
+        Yii::$app->permission->can('/product-details-item/manage') ? Html::a('Add New Standard Film Calculator', Url::to(['manage', 'p' => $product->id, 't' => $context->target, 'd' => $detail->id, 'type' => ProductDetailItem::TYPE_CALCULATOR_STANDARD_FILM]), ['class' => 'btn btn-success']) : null,
+        '&nbsp;&nbsp;',
+        Yii::$app->permission->can('/product-details-item/manage') ? Html::a('Add New EP Bags Calculator', Url::to(['manage', 'p' => $product->id, 't' => $context->target, 'd' => $detail->id, 'type' => ProductDetailItem::TYPE_CALCULATOR_PE_BAGS]), ['class' => 'btn btn-success']) : null,
     ],
     'rowLinks' => [
         function ($row) use ($context, $product, $detail) {
