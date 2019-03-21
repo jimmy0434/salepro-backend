@@ -82,6 +82,19 @@ class FileController extends SController
             $chunk = mb_convert_encoding($chunk, 'UTF-8', 'UTF-8');
             $encryptedData = explode('base64,', $chunk);
             $encryptedData = Yii::$app->getSecurity()->encryptByPassword(base64_decode($encryptedData[1]), $secretKey);
+
+            // remove old file version
+            if (!$order) {
+                $oldItems = FilePartition::find()->where(['file_id' => $model->id])->andWhere(['!=', 'version', $version])->all();
+                if (!empty($oldItems) && is_array($oldItems)) {
+                    foreach ($oldItems as $oldItem) {
+                        $oldItem->delete();
+                    }
+                    Log::trace("Remove old version of file #" . $model->id . " [" . $model->title . "]");
+                }
+            }
+
+            // create new partition
             $partition = new FilePartition();
             $partition->file_id = $model->id;
             $partition->version = $version;
@@ -95,8 +108,8 @@ class FileController extends SController
                     $model->extension = $extension;
                     $model->status = File::STATUS_ACTIVE;
                     $model->save(false);
-                    $users = array_values(ArrayHelper::map(User::find()->where(['type'=>User::TYPE_SALESMAN, 'status' => User::STATUS_ACTIVE])->all(),'id','id'));
-                    if(!empty($users) && is_array($users)) {
+                    $users = array_values(ArrayHelper::map(User::find()->where(['type' => User::TYPE_SALESMAN, 'status' => User::STATUS_ACTIVE])->all(), 'id', 'id'));
+                    if (!empty($users) && is_array($users)) {
                         Yii::$app->notification->send('file-update', [
                             'message' => 'The File `' . $model->title . '`` was updated',
                             'id' => $model->id,
@@ -164,11 +177,12 @@ class FileController extends SController
 
     }
 
-    public function actionPopupManagement(){
+    public function actionPopupManagement()
+    {
         $id = Yii::$app->request->get('id');
         $title = Yii::$app->request->get('title');
         $this->layout = '@backend/views/layout/dialog.php';
-        if(!$id){
+        if (!$id) {
             $model = new File();
             $model->title = $title;
             $model->status = File::STATUS_DRAFT;
