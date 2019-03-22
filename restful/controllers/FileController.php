@@ -61,7 +61,7 @@ class FileController extends SController
     public function actionAll()
     {
         Log::trace("Download all files");
-        $all = File::find()->where(['>', 'partitions', 0])->all();
+        $all = File::find()->all();
         return ["files" => $all];
     }
 }
