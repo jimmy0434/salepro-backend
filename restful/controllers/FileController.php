@@ -61,7 +61,7 @@ class FileController extends SController
     public function actionAll()
     {
         Log::trace("Download all files");
-        $all = File::find()->all();
+        $all = File::find()->where(['!=', 'extension', null])->all();
         return ["files" => $all];
     }
 }
