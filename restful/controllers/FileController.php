@@ -60,25 +60,8 @@ class FileController extends SController
      */
     public function actionAll()
     {
+        Log::trace("Download all files");
         $all = File::find()->all();
         return ["files" => $all];
-    }
-
-    /**
-     * @SWG\Post(
-     *     path="/files/downloaded",
-     *     tags={"File"},
-     *     summary="Mark downloaded list files as done",
-     *     @SWG\Response(
-     *         response = 200
-     *     ),
-     *     security = {{"Bearer": {}}},
-     *     @SWG\Parameter( name="Authorization", in="header", required=true, type="string", default="Bearer TOKEN", description="Authorization" )
-     * )
-     */
-    public function actionAllDownloaded()
-    {
-        Log::trace("Download all files");
-        return ["done" => true];
     }
 }
