@@ -38,6 +38,8 @@ class Bootstrap implements BootstrapInterface
         UrlRule::register('get', '/products/<uid:.+>/business-units', '/portfolio/product-business-units');
         UrlRule::register('get', '/search', '/search/find');
         UrlRule::register('get', '/files/<id:\d+>/download/<version:\d+>/<order:\d+>', '/file/download');
+        UrlRule::register('get', '/files', '/file/all');
+        UrlRule::register('post', '/files/downloaded', '/file/all-downloaded');
         UrlRule::register('get', '/forms/<id:\d+>', '/form/one');
         UrlRule::register('get', '/forms/<id:\d+>/crud', '/form/crud');
         UrlRule::register('post,put', '/forms/<id:\d+>', '/form/save');

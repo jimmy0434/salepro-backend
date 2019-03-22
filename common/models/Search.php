@@ -14,8 +14,9 @@ use Yii;
  * @property int $created_at
  * @property int $updated_at
  *
- * @property Competitor[] $competitors
- * @property MarketResearch[] $marketResearches
+ * @property Competitor $competitor
+ * @property MarketResearch $marketResearche
+ * @property Portfolio $portfolio
  * @property SearchTag[] $searchTags
  */
 class Search extends \cnd\core\components\ActiveRecord
@@ -58,17 +59,25 @@ class Search extends \cnd\core\components\ActiveRecord
     /**
      * @return \yii\db\ActiveQuery
      */
-    public function getCompetitors()
+    public function getCompetitor()
     {
-        return $this->hasMany(Competitor::className(), ['search_id' => 'id']);
+        return $this->hasOne(Competitor::className(), ['search_id' => 'id']);
     }
 
     /**
      * @return \yii\db\ActiveQuery
      */
-    public function getMarketResearches()
+    public function getMarketResearche()
     {
-        return $this->hasMany(MarketResearch::className(), ['search_id' => 'id']);
+        return $this->hasOne(MarketResearch::className(), ['search_id' => 'id']);
+    }
+
+    /**
+     * @return \yii\db\ActiveQuery
+     */
+    public function getPortfolio()
+    {
+        return $this->hasOne(Portfolio::className(), ['search_id' => 'id']);
     }
 
     /**
@@ -124,9 +133,9 @@ class Search extends \cnd\core\components\ActiveRecord
     {
         $list = parent::toArray($fields, $expand, $recursive);
         $t = explode('-', $this->target);
-        if(isset($t[0])){
+        if (isset($t[0])) {
             $list['target'] = [
-                'type' => $t[0],
+                'type' => $t[0] == "portfolio" ? strtolower($this->portfolio->target_label) : $t[0],
                 'uid' => $this->target,
             ];
         }
