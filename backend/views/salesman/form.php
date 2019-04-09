@@ -16,7 +16,7 @@ use yii\web\View;
 
 ?>
     <div class="panel panel-default">
-        <div class="panel-heading"><?= 'Profile Information' ?></div>
+        <div class="panel-heading"><?= 'Basic Information' ?></div>
         <div class="panel-body">
             <?=
             MediaInput::widget([
@@ -26,7 +26,8 @@ use yii\web\View;
                 'count' => 1,
             ])
             ?>
-            <?= $form->field($model, 'name')->textInput(['autocomplete' => 'off']) ?>
+            <?= $form->field($model, 'first_name')->textInput(['autocomplete' => 'off']) ?>
+            <?= $form->field($model, 'last_name')->textInput(['autocomplete' => 'off']) ?>
             <?= $form->field($model, 'job_title')->textInput(['autocomplete' => 'off']) ?>
             <?= $form->field($model, 'mac_address')->textInput(['autocomplete' => 'off']) ?>
         </div>

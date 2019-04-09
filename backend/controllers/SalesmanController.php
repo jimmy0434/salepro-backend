@@ -52,9 +52,13 @@ class SalesmanController extends UserController
                 'profile' => function ($sectionName, $form, $models) use ($that) {
                     echo Html::errorSummary($models);
                     return $that->renderPartial('form', ['model' => $models['salesman'], 'form' => $form]);
+                },
+                'contact' => function ($sectionName, $form, $models) use ($that) {
+                    echo Html::errorSummary($models);
+                    return $that->renderPartial('contact', ['model' => $models['salesman'], 'form' => $form]);
                 }
             ],
-            'template' => '<div class="row"><div class="col-md-6">{login}</div><div class="col-md-6">{profile}</div></div>',
+            'template' => '<div class="row"><div class="col-md-4">{login}</div><div class="col-md-4">{profile}</div><div class="col-md-4">{contact}</div></div>',
             'roleLevel' => Role::LEVEL_APPLICATION,
         ];
     }
@@ -88,10 +92,40 @@ class SalesmanController extends UserController
     public function getViewAttributes($dataLocator)
     {
         return [
-            'salesman.name' => [
-                'label' => 'Name',
+            'salesman.first_name' => [
+                'label' => 'First Name',
                 'value' => function ($attribute, $data) {
-                    return $data->profile !== null ? $data->profile->name : '';
+                    return $data->profile !== null ? ($data->profile->first_name ? $data->profile->first_name : $data->profile->name) : '';
+                },
+            ],
+            'salesman.last_name' => [
+                'label' => 'Last Name',
+                'value' => function ($attribute, $data) {
+                    return $data->profile !== null ? $data->profile->last_name : '';
+                },
+            ],
+            'salesman.phone' => [
+                'label' => 'Phone',
+                'value' => function ($attribute, $data) {
+                    return $data->profile !== null ? $data->profile->phone : '';
+                },
+            ],
+            'salesman.gender' => [
+                'label' => 'Gender',
+                'value' => function ($attribute, $data) {
+                    return $data->profile !== null ? $data->profile->gender : '';
+                },
+            ],
+            'salesman.city' => [
+                'label' => 'City',
+                'value' => function ($attribute, $data) {
+                    return $data->profile !== null ? $data->profile->city : '';
+                },
+            ],
+            'salesman.dob' => [
+                'label' => 'DoB',
+                'value' => function ($attribute, $data) {
+                    return $data->profile !== null ? $data->profile->dob : '';
                 },
             ],
             'salesman.mac_address' => [
@@ -135,7 +169,22 @@ class SalesmanController extends UserController
             'salesman.image' => [
                 'sortable' => false,
             ],
-            'salesman.name' => [
+            'salesman.first_name' => [
+                'sortable' => true,
+            ],
+            'salesman.last_name' => [
+                'sortable' => true,
+            ],
+            'salesman.phone' => [
+                'sortable' => true,
+            ],
+            'salesman.gender' => [
+                'sortable' => true,
+            ],
+            'salesman.city' => [
+                'sortable' => true,
+            ],
+            'salesman.dob' => [
                 'sortable' => true,
             ],
             'salesman.mac_address' => [

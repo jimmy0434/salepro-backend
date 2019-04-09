@@ -101,7 +101,7 @@ class _Controller
      *      ),
      *      security = {{"Bearer": {}}},
      *      @SWG\Parameter( name="Authorization", in="header", required=true, type="string", default="Bearer TOKEN", description="Authorization" ),
-     *      @SWG\Parameter(name="id", required=true, in="formData", type="integer", description="Notification ID"),
+     *      @SWG\Parameter(name="id", required=true, in="formData", type="integer", description="Notification ID")
      * )
      */
 
@@ -116,7 +116,29 @@ class _Controller
      *      ),
      *      @SWG\Parameter(name="regId", required=true, in="formData", type="string", description="Device Registration ID"),
      *      @SWG\Parameter(name="platform", required=true, in="formData", type="string", description="Device Platform Type, android|ios|windows"),
-     *      @SWG\Parameter(name="userId", required=false, in="formData", type="integer", description="User ID"),
+     *      @SWG\Parameter(name="userId", required=false, in="formData", type="integer", description="User ID")
+     * )
+     */
+
+    /**
+     * @SWG\Put(
+     *      path="/profile",
+     *      tags={"User"},
+     *      summary="Update profile fields",
+     *      @SWG\Response(
+     *          response = 200,
+     *          description = "User Response",
+     *      ),
+     *      security = {{"Bearer": {}}},
+     *      @SWG\Parameter( name="Authorization", in="header", required=true, type="string", default="Bearer TOKEN", description="Authorization" ),
+     *      @SWG\Parameter(name="first_name", required=true, in="formData", type="string", description="First Name"),
+     *      @SWG\Parameter(name="last_name", required=true, in="formData", type="string", description="Last Name"),
+     *      @SWG\Parameter(name="job_title", required=false, in="formData", type="string", description="Job Title"),
+     *      @SWG\Parameter(name="dob", required=false, in="formData", type="string", description="Date of Birth"),
+     *      @SWG\Parameter(name="gender", required=false, in="formData", type="string", description="Gender: male | female"),
+     *      @SWG\Parameter(name="phone", required=false, in="formData", type="string", description="Phone"),
+     *      @SWG\Parameter(name="city", required=false, in="formData", type="string", description="City"),
+     *      @SWG\Parameter(name="address", required=false, in="formData", type="string", description="Address")
      * )
      */
 }

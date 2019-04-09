@@ -14,6 +14,14 @@ use yii\helpers\Json;
  * @property string $name
  * @property string $image
  * @property string $mac_address
+ * @property string $job_title
+ * @property string $first_name
+ * @property string $last_name
+ * @property string $dob
+ * @property string $gender
+ * @property string $city
+ * @property string $address
+ * @property string $phone
  * @property int $created_at
  * @property int $updated_at
  * @property string $userName
@@ -26,6 +34,9 @@ use yii\helpers\Json;
 class Salesman extends ActiveRecord implements UserProfile
 {
     public $imageFactory;
+
+    const GENDER_MALE = 'male';
+    const GENDER_FEMALE = 'female';
 
     /**
      * {@inheritdoc}
@@ -40,9 +51,9 @@ class Salesman extends ActiveRecord implements UserProfile
      */
     public function rules()
     {
-        return array_merge(parent::rules(),[
-            [['name'],'required'],
-            [['name', 'mac_address'], 'string', 'max' => 255],
+        return array_merge(parent::rules(), [
+            [['first_name','last_name'], 'required'],
+            [['first_name','last_name','phone','dob','city', 'mac_address'], 'string', 'max' => 255],
             [['id'], 'exist', 'skipOnError' => true, 'targetClass' => User::className(), 'targetAttribute' => ['id' => 'id']],
         ]);
     }
@@ -79,45 +90,56 @@ class Salesman extends ActiveRecord implements UserProfile
         return new SalesmanQuery(get_called_class());
     }
 
-    public function beforeSave($insert) {
-        if(is_array($this->image)){
+    public function beforeSave($insert)
+    {
+        if (is_array($this->image)) {
             $this->image = Json::encode($this->image);
         }
+        $this->name = $this->first_name.' '.$this->last_name;
         return parent::beforeSave($insert);
     }
 
-    public function afterFind() {
+    public function afterFind()
+    {
         parent::afterFind();
-        if(is_string($this->image) && Yii::$app->helper->isJson($this->image)){
+        if (is_string($this->image) && Yii::$app->helper->isJson($this->image)) {
             $this->imageFactory = Yii::createObject([
                 'class' => 'cnd\filemanager\components\FileOutput',
                 'data' => $this->image,
             ]);
-        }else{
+        } else {
             $this->imageFactory = Yii::createObject([
                 'class' => 'cnd\filemanager\components\FileOutput',
                 'data' => Yii::$app->image->defaultUser,
             ]);
         }
+        if(!$this->first_name){
+            $this->first_name = $this->name;
+        }
     }
 
-    public function getUserName(){
+    public function getUserName()
+    {
         return $this->name;
     }
 
-    public function getUserType(){
+    public function getUserType()
+    {
         return $this->user->type_label;
     }
 
-    public function getUserImage(){
-        return ($this->imageFactory !== null)?$this->imageFactory->url:'';
+    public function getUserImage()
+    {
+        return ($this->imageFactory !== null) ? $this->imageFactory->url : '';
     }
 
-    public function getUserDisplay(){
+    public function getUserDisplay()
+    {
         return $this->userName;
     }
 
-    public function setUserImage($data){
+    public function setUserImage($data)
+    {
         $this->image = $data;
         $this->imageFactory = Yii::createObject([
             'class' => 'cnd\filemanager\components\FileOutput',
@@ -125,9 +147,10 @@ class Salesman extends ActiveRecord implements UserProfile
         ]);
     }
 
-    public function toArray(array $fields = [], array $expand = [], $recursive = true){
-        $data = parent::toArray($fields,$expand,$recursive);
-        $data['image'] = $this->imageFactory !== null?$this->imageFactory->url:null;
+    public function toArray(array $fields = [], array $expand = [], $recursive = true)
+    {
+        $data = parent::toArray($fields, $expand, $recursive);
+        $data['image'] = $this->imageFactory !== null ? $this->imageFactory->url : null;
         unset($data['mac_address']);
         return $data;
     }
