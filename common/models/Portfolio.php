@@ -3,6 +3,7 @@
 namespace common\models;
 
 use Yii;
+use yii\base\Exception;
 use yii\helpers\ArrayHelper;
 use yii\helpers\Inflector;
 use yii\helpers\Json;
@@ -251,6 +252,9 @@ class Portfolio extends \cnd\core\components\ActiveRecord
                 if ($item) {
                     $this->assignItems($this->sectorsIds, '\common\models\CorporateSector', 'sector_id', 'corporate_id', $item->id);
                     $this->assignItems($this->businessUnitIds, '\common\models\CorporateBusinessUnit', 'business_unit_id', 'corporate_id', $item->id);
+
+                    $this->sendNotificationToModels($item->sectors);
+                    $this->sendNotificationToModels($item->businessUnits);
                 }
                 break;
             case static::TARGET_BRAND:
@@ -260,6 +264,10 @@ class Portfolio extends \cnd\core\components\ActiveRecord
                     $this->assignItems($this->sectorsIds, '\common\models\SectorBrand', 'sector_id', 'brand_id', $item->id);
                     $this->assignItems($this->productsIds, '\common\models\ProductBrand', 'product_id', 'brand_id', $item->id);
                     $this->assignItems($this->businessUnitIds, '\common\models\BrandBusinessUnit', 'business_unit_id', 'brand_id', $item->id);
+
+                    $this->sendNotificationToModels($item->sectors);
+                    $this->sendNotificationToModels($item->products);
+                    $this->sendNotificationToModels($item->businessUnits);
                 }
                 break;
             case static::TARGET_SECTOR:
@@ -269,6 +277,10 @@ class Portfolio extends \cnd\core\components\ActiveRecord
                     $this->assignItems($this->brandsIds, '\common\models\SectorBrand', 'brand_id', 'sector_id', $item->id);
                     $this->assignItems($this->productsIds, '\common\models\ProductSector', 'product_id', 'sector_id', $item->id);
                     $this->assignItems($this->businessUnitIds, '\common\models\SectorBusinessUnit', 'business_unit_id', 'sector_id', $item->id);
+
+                    $this->sendNotificationToModels($item->brands);
+                    $this->sendNotificationToModels($item->products);
+                    $this->sendNotificationToModels($item->businessUnits);
                 }
                 break;
             case static::TARGET_PRODUCT:
@@ -280,6 +292,10 @@ class Portfolio extends \cnd\core\components\ActiveRecord
                     $this->assignItems($this->sectorsIds, '\common\models\ProductSector', 'sector_id', 'product_id', $item->id);
                     $this->assignItems($this->businessUnitIds, '\common\models\ProductBusinessUnit', 'business_unit_id', 'product_id', $item->id);
                     $this->assignItems($this->certificationsIds, '\common\models\ProductCertification', 'certification_id', 'product_id', $item->id);
+
+                    $this->sendNotificationToModels($item->brands);
+                    $this->sendNotificationToModels($item->sectors);
+                    $this->sendNotificationToModels($item->businessUnits);
                 }
                 break;
             case static::TARGET_BUSINESS_UNIT:
@@ -317,11 +333,11 @@ class Portfolio extends \cnd\core\components\ActiveRecord
                 $this->assignItems($urls, '\common\models\PortfolioLink', 'url', 'portfolio_id', $this->id, ['name' => $names]);
             }
         }
-        if($this->hasAttribute("privilege") && Yii::$app->helper->isJson($this->privilege)) {
+        if ($this->hasAttribute("privilege") && Yii::$app->helper->isJson($this->privilege)) {
             $privilege = Json::decode($this->privilege);
             if (isset($privilege['private']) && !empty($privilege['private']) && is_array($privilege['private'])) {
                 foreach ($privilege['private'] as $userId => $perm) {
-                    $granted = $perm === 'user.'.$userId.'.1.1.0' || $perm === 'user.'.$userId.'.1.0.0';
+                    $granted = $perm === 'user.' . $userId . '.1.1.0' || $perm === 'user.' . $userId . '.1.0.0';
                     Yii::$app->notification->send("portfolio-update-grant", [
                         'message' => 'The ' . $this->target_label . ' portfolio `' . $this->name . '` was ' . ($granted ? 'enabled for' : 'disabled from') . ' watching.',
                         'id' => $this->id,
@@ -492,5 +508,34 @@ class Portfolio extends \cnd\core\components\ActiveRecord
         return ArrayHelper::map(static::find()->where(['target' => $target])->orderBy(['name' => SORT_ASC])->all(), function ($row) {
             return $row->item->id;
         }, 'name');
+    }
+
+    public function sendNotification($model = null)
+    {
+        if (!$model) {
+            $model = $this;
+        }
+        $users = array_values(ArrayHelper::map(User::find()->where(['type' => User::TYPE_SALESMAN, 'status' => User::STATUS_ACTIVE])->all(), 'id', 'id'));
+        if (!empty($users) && is_array($users)) {
+            Yii::$app->notification->send('portfolio-update', [
+                'message' => 'The ' . $model->target_label . ' portfolio `' . $model->name . '` was updated',
+                'id' => $this->id,
+                'uid' => $this->uid,
+                'target' => $model->target_label,
+            ], $users);
+        }
+    }
+
+    public function sendNotificationToModels($models)
+    {
+        if (!empty($models) && is_array($models)) {
+            foreach ($models as $model) {
+                try{
+                    $this->sendNotification($model->portfolio);
+                }catch(Exception $e){
+
+                }
+            }
+        }
     }
 }

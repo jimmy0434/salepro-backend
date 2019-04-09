@@ -1,11 +1,8 @@
 <?php
 
-use cnd\grid\DataLocator;
-use common\models\File;
+use common\models\User;
 use yii\helpers\Html;
-use yii\helpers\Url;
 use yii\web\Request;
-use common\models\Form;
 
 return [
     'aliases' => [
@@ -171,7 +168,7 @@ return [
                 'salesman' => [
                     'title' => 'Salesman',
                     'callback' => function ($query) {
-                        $query->andWhere(['user.type' => \common\models\User::TYPE_SALESMAN]);
+                        $query->andWhere(['user.type' => User::TYPE_SALESMAN, 'user.status' => User::STATUS_ACTIVE]);
                     }
                 ],
             ],

@@ -76,7 +76,8 @@ class PortfolioController extends SController
         if ($model->load(\Yii::$app->request->post()) && $model->validate()) {
             if ($model->save()) {
                 \Yii::$app->session->setFlash('success', ucfirst($this->id) . ' saved successfully');
-                $users = array_values(ArrayHelper::map(User::find()->where(['type'=>User::TYPE_SALESMAN, 'status' => User::STATUS_ACTIVE])->all(),'id','id'));
+                $model->sendNotification();
+                /*$users = array_values(ArrayHelper::map(User::find()->where(['type'=>User::TYPE_SALESMAN, 'status' => User::STATUS_ACTIVE])->all(),'id','id'));
                 if(!empty($users) && is_array($users)) {
                     Yii::$app->notification->send('portfolio-update', [
                         'message' => 'The '.$model->target_label.' portfolio `' . $model->name . '` was updated',
@@ -84,7 +85,7 @@ class PortfolioController extends SController
                         'uid' => $model->uid,
                         'target' => $model->target_label,
                     ], $users);
-                }
+                }*/
             } else {
                 \Yii::$app->session->setFlash('error', ucfirst($this->id) . ' not saved');
             }
