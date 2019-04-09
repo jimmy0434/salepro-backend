@@ -1,4 +1,5 @@
 <?php
+
 use cnd\grid\DataLocator;
 use common\models\File;
 use yii\helpers\Html;
@@ -85,7 +86,7 @@ return [
                 'default' => function ($name, $data) {
                     return '<div class="text-muted">' . $data['message'] . '</div>';
                 },
-                'file-update' => function($name, $data){
+                'file-update' => function ($name, $data) {
                     return Html::tag('div', Html::a($data['message'], [
                         '/file/index',
                         '_page' => 1,
@@ -98,7 +99,7 @@ return [
                         ],
                     ]), ['class' => 'text-muted', 'data' => ['id' => $data['id']]]);
                 },
-                'portfolio-update' => function($name, $data){
+                'portfolio-update' => function ($name, $data) {
                     return Html::tag('div', Html::a($data['message'], [
                         '/portfolio/index',
                         't' => $data['target'],
@@ -145,6 +146,17 @@ return [
         ],
         'keycloak' => [
             'class' => '\common\components\Keycloak',
+        ],
+        'userGroup' => [
+            'class' => 'cnd\core\components\UserGroupProvider',
+            'list' => [
+                'employees' => [
+                    'title' => 'Salesman',
+                    'callback' => function ($query) {
+                        $query->andWhere(['user.type' => \common\models\User::TYPE_SALESMAN]);
+                    }
+                ],
+            ],
         ],
     ],
 ];

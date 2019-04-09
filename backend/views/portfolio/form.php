@@ -212,6 +212,13 @@ if (in_array($context->target, [Portfolio::TARGET_PRODUCT, Portfolio::TARGET_BUN
         </div>
     </div>
 
+    <div class="panel panel-default">
+        <div class="panel-heading"><?= 'Privilege' ?></div>
+        <div class="panel-body">
+            <?= $model->getPrivilegeForm($form) ?>
+        </div>
+    </div>
+
     <div class="form-group text-center">
         <?= Html::submitButton('Save', ['class' => 'btn btn-primary btn-lg']) ?>
     </div>
