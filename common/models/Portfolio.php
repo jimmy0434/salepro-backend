@@ -317,6 +317,21 @@ class Portfolio extends \cnd\core\components\ActiveRecord
                 $this->assignItems($urls, '\common\models\PortfolioLink', 'url', 'portfolio_id', $this->id, ['name' => $names]);
             }
         }
+        if($this->hasAttribute("privilege") && Yii::$app->helper->isJson($this->privilege)) {
+            $privilege = Json::decode($this->privilege);
+            if (isset($privilege['private']) && !empty($privilege['private']) && is_array($privilege['private'])) {
+                foreach ($privilege['private'] as $userId => $perm) {
+                    $granted = $perm === 'user.'.$userId.'.1.1.0' || $perm === 'user.'.$userId.'.1.0.0';
+                    Yii::$app->notification->send("portfolio-update-grant", [
+                        'message' => 'The ' . $this->target_label . ' portfolio `' . $this->name . '` was ' . ($granted ? 'enabled for' : 'disabled from') . ' watching.',
+                        'id' => $this->id,
+                        'uid' => $this->uid,
+                        'target' => $this->target,
+                        'granted' => $granted,
+                    ], [$userId]);
+                }
+            }
+        }
         parent::afterSave($insert, $changedAttributes);
     }
 
@@ -371,7 +386,7 @@ class Portfolio extends \cnd\core\components\ActiveRecord
             $data['images'] = [];
             if (!empty($imagesData) && is_array($imagesData)) {
                 foreach ($imagesData as $imageData) {
-                    if(is_string($imageData) && Yii::$app->helper->isJson($imageData)) {
+                    if (is_string($imageData) && Yii::$app->helper->isJson($imageData)) {
                         $image = Json::decode($imageData);
                         $data['images'][] = $image['url'];
                     }

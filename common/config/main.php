@@ -113,6 +113,20 @@ return [
                         ],
                     ]), ['class' => 'text-muted', 'data' => ['id' => $data['id']]]);
                 },
+                'portfolio-update-grant' => function ($name, $data) {
+                    return Html::tag('div', Html::a($data['message'], [
+                        '/portfolio/index',
+                        't' => $data['target'],
+                        '_page' => 1,
+                        '_pageSize' => 10,
+                        '_filter' => [
+                            'id' => [
+                                'condition' => '=',
+                                'value' => $data['id'],
+                            ],
+                        ],
+                    ]), ['class' => 'text-muted', 'data' => ['id' => $data['id']]]);
+                },
             ],
             'template' => function ($content, $notification, $notificationUser) {
                 ob_start();

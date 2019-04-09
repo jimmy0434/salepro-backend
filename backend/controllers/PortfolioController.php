@@ -79,7 +79,7 @@ class PortfolioController extends SController
                 $users = array_values(ArrayHelper::map(User::find()->where(['type'=>User::TYPE_SALESMAN, 'status' => User::STATUS_ACTIVE])->all(),'id','id'));
                 if(!empty($users) && is_array($users)) {
                     Yii::$app->notification->send('portfolio-update', [
-                        'message' => 'The '.$model->target_label.' portfolio `' . $model->name . '`` was updated',
+                        'message' => 'The '.$model->target_label.' portfolio `' . $model->name . '` was updated',
                         'id' => $model->id,
                         'uid' => $model->uid,
                         'target' => $model->target,
