@@ -119,6 +119,26 @@ class DataController extends SController
     }
 
     /**
+     * @SWG\Get(
+     *     path="/chatbot",
+     *     tags={"Data"},
+     *     summary="External chatbot link",
+     *     @SWG\Response(
+     *          response = 200,
+     *          description = "Chatbot Link Response"
+     *     ),
+     *     security = {{"Bearer": {}}},
+     *     @SWG\Parameter( name="Authorization", in="header", required=true, type="string", default="Bearer TOKEN", description="Authorization" )
+     * )
+     */
+    public function actionChatbotLink()
+    {
+        $link = Setting::get('chatbot.link', null);
+        Log::trace('Download Chatbot Link');
+        return ['link' => $link];
+    }
+
+    /**
      * @SWG\Post(
      *     path="/logs",
      *     tags={"Data"},

@@ -154,4 +154,38 @@ class Salesman extends ActiveRecord implements UserProfile
         unset($data['mac_address']);
         return $data;
     }
+
+    public static function setupProfileSaver($userId){
+        $model = $userId != null?static::findOne($userId):new static();
+        \cnd\core\components\Registration::registerModel('salesman',$model,['Salesman' => Yii::$app->request->post('salesman')]);
+        \cnd\core\components\Registration::beforeSave('salesman',function($name,&$model,&$models){
+            /*$model->id = $models['user']->id;
+            if($model->isNewRecord){
+                $models['user']->status = User::STATUS_PENDING;
+                $models['user']->generatePasswordResetToken();
+                Yii::$app->setting->user($model->id, true)->language = Yii::$app->request->get('_language');
+                Yii::$app->controller->trace('language : '.Yii::$app->request->get('_language').' of user = '.$model->id);
+                Yii::$app->language = Yii::$app->request->get('_language');
+                Yii::$app->mailer->compose('@cnd/dtt/mail/account-confirmation',[
+                    'token' => $models['user']->password_reset_token,
+                    'name' => $model->firstname.' '.$model->lastname,
+                    'userId' => $model->id
+                ])
+                    ->setFrom([Yii::$app->params['adminEmail']=>Yii::$app->params['adminName']])
+                    ->setTo($models['user']->email)
+                    ->setSubject(Yii::t('app','Registration Validation'))
+                    ->send();
+            }
+            $models['user']->name = $model->userName;
+            $models['user']->save();*/
+        });
+    }
+
+    public function getParentReferral(){
+        if($this->parent_referral_code){
+            return $this->hasOne(Client::className(),['referral_code'=>'parent_referral_code']);
+        }
+        return null;
+
+    }
 }

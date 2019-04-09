@@ -56,6 +56,7 @@ class Bootstrap implements BootstrapInterface
         UrlRule::register('get', '/competitions/<uid:.+>', '/competitor/profile');
         UrlRule::register('get', '/logistics', '/logistic/list');
         UrlRule::register('post', '/logs', '/data/add-log');
+        UrlRule::register('get', '/chatbot', '/data/chatbot-link');
 
         Yii::$app->setComponents(
             [

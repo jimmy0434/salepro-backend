@@ -25,15 +25,21 @@ return [
     'modules' => [
         'system' => [
             'class' => 'cnd\core\modules\system\Module',
+            'phoneAuthentication' => false,
+            'emailAuthentication' => true,
             'userType' => function(){
                 return [\common\models\User::TYPE_SALESMAN];
             },
         ],
         'api' => [
             'class' => 'cnd\admin\modules\api\Module',
-            /*'registrationInit' => function($userType, $userId) {
+            'registrationInit' => function($userType, $userId) {
                 \common\models\User::setupProfileSaver($userId);
-            }*/
+                if($userType == \common\models\User::TYPE_SALESMAN){
+                    \common\models\Salesman::setupProfileSaver($userId);
+                }
+
+            }
         ],
         'notification' => [
             'class' => 'cnd\notification\modules\api\Module',

@@ -131,14 +131,14 @@ class _Controller
      *      ),
      *      security = {{"Bearer": {}}},
      *      @SWG\Parameter( name="Authorization", in="header", required=true, type="string", default="Bearer TOKEN", description="Authorization" ),
-     *      @SWG\Parameter(name="first_name", required=true, in="formData", type="string", description="First Name"),
-     *      @SWG\Parameter(name="last_name", required=true, in="formData", type="string", description="Last Name"),
-     *      @SWG\Parameter(name="job_title", required=false, in="formData", type="string", description="Job Title"),
-     *      @SWG\Parameter(name="dob", required=false, in="formData", type="string", description="Date of Birth"),
-     *      @SWG\Parameter(name="gender", required=false, in="formData", type="string", description="Gender: male | female"),
-     *      @SWG\Parameter(name="phone", required=false, in="formData", type="string", description="Phone"),
-     *      @SWG\Parameter(name="city", required=false, in="formData", type="string", description="City"),
-     *      @SWG\Parameter(name="address", required=false, in="formData", type="string", description="Address")
+     *      @SWG\Parameter(name="salesman[first_name]", required=true, in="formData", type="string", description="First Name"),
+     *      @SWG\Parameter(name="salesman[last_name]", required=true, in="formData", type="string", description="Last Name"),
+     *      @SWG\Parameter(name="salesman[job_title]", required=false, in="formData", type="string", description="Job Title"),
+     *      @SWG\Parameter(name="salesman[dob]", required=false, in="formData", type="string", description="Date of Birth"),
+     *      @SWG\Parameter(name="salesman[gender]", required=false, in="formData", type="string", description="Gender: male | female"),
+     *      @SWG\Parameter(name="salesman[phone]", required=false, in="formData", type="string", description="Phone"),
+     *      @SWG\Parameter(name="salesman[city]", required=false, in="formData", type="string", description="City"),
+     *      @SWG\Parameter(name="salesman[address]", required=false, in="formData", type="string", description="Address")
      * )
      */
 }
