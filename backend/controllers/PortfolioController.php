@@ -82,7 +82,7 @@ class PortfolioController extends SController
                         'message' => 'The '.$model->target_label.' portfolio `' . $model->name . '` was updated',
                         'id' => $model->id,
                         'uid' => $model->uid,
-                        'target' => $model->target,
+                        'target' => $model->target_label,
                     ], $users);
                 }
             } else {

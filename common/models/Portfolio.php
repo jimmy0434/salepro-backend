@@ -326,7 +326,7 @@ class Portfolio extends \cnd\core\components\ActiveRecord
                         'message' => 'The ' . $this->target_label . ' portfolio `' . $this->name . '` was ' . ($granted ? 'enabled for' : 'disabled from') . ' watching.',
                         'id' => $this->id,
                         'uid' => $this->uid,
-                        'target' => $this->target,
+                        'target' => $this->target_label,
                         'granted' => $granted,
                     ], [$userId]);
                 }

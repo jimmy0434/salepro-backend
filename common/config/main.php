@@ -168,7 +168,7 @@ return [
         'userGroup' => [
             'class' => 'cnd\core\components\UserGroupProvider',
             'list' => [
-                'employees' => [
+                'salesman' => [
                     'title' => 'Salesman',
                     'callback' => function ($query) {
                         $query->andWhere(['user.type' => \common\models\User::TYPE_SALESMAN]);
