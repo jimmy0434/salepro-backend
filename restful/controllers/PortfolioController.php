@@ -48,7 +48,7 @@ class PortfolioController extends SController
         $brands = $this->list(Portfolio::TARGET_BRAND);
         $sectors = $this->list(Portfolio::TARGET_SECTOR);
 
-        Log::trace("Download Portfolio Items Data");
+        Log::trace('Download Portfolio Items Data');
 
         return [
             'motherCorporates' => $motherCorporates,
@@ -57,6 +57,25 @@ class PortfolioController extends SController
             'brands' => $brands,
             'sectors' => $sectors,
         ];
+    }
+
+    /**
+     * @SWG\Get(
+     *     path="/products",
+     *     tags={"Portfolio"},
+     *     summary="Retrieves the collection of products resources.",
+     *     @SWG\Response(
+     *         response = 200,
+     *         description = "Products collection response"
+     *     ),
+     *     security = {{"Bearer": {}}},
+     *     @SWG\Parameter( name="Authorization", in="header", required=true, type="string", default="Bearer TOKEN", description="Authorization" )
+     * )
+     */
+    public function actionProducts(){
+        $products = $this->list(Portfolio::TARGET_PRODUCT);
+        Log::trace('Download products Items Data');
+        return ['products' => $products];
     }
 
     protected function list($target)
