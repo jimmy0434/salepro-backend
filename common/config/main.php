@@ -62,7 +62,11 @@ return [
         'core' => [
             'class' => 'cnd\core\components\Core',
             'emailsTemplates' => [
-                'forgotPassword' => [
+                'clientNewPassword' => [
+                    'title' => 'User New Password',
+                    'data' => ['name', 'username', 'email', 'password', 'type', 'status'],
+                ],
+                /*'forgotPassword' => [
                     'title' => 'Forgot Password',
                     'data' => ['link', 'name'],
                 ],
@@ -77,7 +81,7 @@ return [
                 'userResetPassword' => [
                     'title' => 'User Reset Password',
                     'data' => ['username', 'email', 'password'],
-                ],
+                ],*/
             ],
         ],
         'notification' => [
