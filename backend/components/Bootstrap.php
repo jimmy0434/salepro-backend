@@ -52,6 +52,7 @@ class Bootstrap implements BootstrapInterface
         $navigator->item('Data List', ['/data-list/index'], 'fa fa-table', 15);
         $navigator->item('Statistic Numbers', ['/statistic-number/index'], 'fa fa-bar-chart', 16);
         $navigator->item('Marketing Directory', ['/marketing-directory/index'], 'fa fa-sitemap', 17);
+        $navigator->item('Custom Notification', ['/custom-notification/index'], 'fa fa-bell', 18);
 
         $developer = MenuManager::block('Developer');
         $developerSection = $developer->section('Documentation');
