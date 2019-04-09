@@ -394,7 +394,8 @@ class Portfolio extends \cnd\core\components\ActiveRecord
             $data['details'] = $this->product->details;
         }
         $data['primaryModel'] = $this->item;
-        unset($data['brochure_id'], $data['presentation_id'], $data['video_id'], $data['search_id'], $data['target'], $data['info_graphic_id']);
+        $data['granted'] = $this->canRead();
+        unset($data['brochure_id'], $data['presentation_id'], $data['video_id'], $data['search_id'], $data['target'], $data['info_graphic_id'], $data['privilege']);
         switch ($this->target) {
             case static::TARGET_MOTHER_CORPORATE:
             case static::TARGET_CORPORATE:
