@@ -11,6 +11,7 @@
 namespace restful\controllers;
 
 
+use Yii;
 use cnd\admin\models\activerecords\Log;
 use cnd\admin\models\activerecords\Setting;
 use cnd\core\api\SController;
@@ -37,7 +38,7 @@ class DataController extends SController
      */
     public function actionStatisticNumbers()
     {
-        Log::trace("Download Statistic Numbers");
+        Log::trace('Download Statistic Numbers');
         $models = StatisticNumber::find()->all();
         return $models;
     }
@@ -92,7 +93,7 @@ class DataController extends SController
                 $result[$key][] = $v;
             }
         }
-        Log::trace("Download Data List");
+        Log::trace('Download Data List');
         return array_merge($emptyList, $result);
     }
 
@@ -113,7 +114,32 @@ class DataController extends SController
     {
         $id = Setting::get('marketing.directory.file.id', null);
         $file = File::findOne($id);
-        Log::trace("Download Marketing Directory Meta File");
+        Log::trace('Download Marketing Directory Meta File');
         return ['file' => $file];
+    }
+
+    /**
+     * @SWG\Post(
+     *     path="/logs",
+     *     tags={"Data"},
+     *     summary="Add log message",
+     *     @SWG\Response(
+     *          response = 200,
+     *          description = "Log Response"
+     *     ),
+     *     security = {{"Bearer": {}}},
+     *     @SWG\Parameter( name="Authorization", in="header", required=true, type="string", default="Bearer TOKEN", description="Authorization" ),
+     *     @SWG\Parameter(name="message", required=true, in="formData", type="string", description="Log Message")
+     * )
+     */
+    public function actionAddLog()
+    {
+        $message = Yii::$app->request->post('message');
+        if ($message) {
+            Log::trace($message);
+            return ['done' => true];
+        }
+        $this->error('`message` parameter is required');
+        return null;
     }
 }
