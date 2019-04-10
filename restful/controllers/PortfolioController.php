@@ -82,7 +82,7 @@ class PortfolioController extends SController
     protected function list($target)
     {
         $query = Portfolio::find();
-        $query->where(['target' => $target, 'status' => Portfolio::STATUS_ENABLED]);
+        $query->where(['portfolio.target' => $target, 'portfolio.status' => Portfolio::STATUS_ENABLED]);
         $query->from(['portfolio' => Portfolio::tableName()]);
         $query->joinWith([
             'brochure' => function ($query) {
