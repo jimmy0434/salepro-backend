@@ -27,7 +27,9 @@ assert($view instanceof View);
 assert($dataLocator instanceof DataLocator);
 assert($context instanceof CompetitionController);
 
-$this->title = "Competitions";
+$this->title = 'Competitions';
+
+$statuses = (new Competitor())->status_list;
 
 $dv = new DataView([
     'dataLocator' => $dataLocator,
@@ -52,6 +54,20 @@ $dv = new DataView([
                 return $data->name;
             },
         ],
+        'status'=>[
+            'label'=>'Status',
+            'value'=>function($attribute,$data, $view) use($statuses){
+                assert($attribute instanceof Attribute);
+                assert($data instanceof Competitor);
+                assert($view instanceof DataViewLocator);
+                if(Yii::$app->permission->can('/competition/status')){
+                    return Html::dropDownList('status',$data->status,$statuses,['class'=>'form-control status-ddl','id'=>'status-'.$data->id,'data-id'=>$data->id]);
+                }
+                return $data->status_label;
+            },
+            'filterBy' => Attribute::FILTER_LIST,
+            'filterList' => $statuses,
+        ],
     ],
     'headerLinks' => [],
     'rowLinks' => [
@@ -75,6 +91,41 @@ $dv->addView('grid', [
         'name' => [
             'sortable' => true,
         ],
+        'status' => [
+            'sortable' => true,
+            'contentOptions' => [
+                'style' => 'width:150px;'
+            ],
+        ],
     ]
 ]);
 echo $dv->render();
+
+if(Yii::$app->permission->can('/competition/status')){
+    $url = Url::toRoute('/competition/status');
+    $script = <<< JS
+        $(document).on('change','.status-ddl',function(){
+            var element = $(this);
+            var data = {
+                id : element.attr('data-id'),
+                status : element.val()
+            };
+            $.ajax({
+                type : 'post',
+                url : '{$url}',
+                data : data,
+                dataType : 'json',
+                beforeSend : function(){
+                    element.prop('disabled',true);
+                },
+                success : function(response){
+                    element.prop('disabled',false);
+                },
+                error : function(){
+                    element.prop('disabled',false);
+                }
+            });
+        });        
+JS;
+    $this->registerJs($script);
+}

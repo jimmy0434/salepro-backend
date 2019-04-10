@@ -37,8 +37,13 @@ use Yii;
  * @property string $mother_other_locations
  * @property string $mother_website
  * @property int $search_id
+ * @property string $status
  * @property int $created_at
  * @property int $updated_at
+ *
+ * @property array $status_list
+ * @property array $status_values
+ * @property string $status_label
  *
  * @property BusinessUnit $businessUnit
  * @property Search $search
@@ -58,6 +63,9 @@ use Yii;
  */
 class Competitor extends \cnd\core\components\ActiveRecord
 {
+
+    const STATUS_ENABLED = 'enabled';
+    const STATUS_DISABLED = 'disabled';
 
     /**
      * {@inheritdoc}
@@ -325,5 +333,13 @@ class Competitor extends \cnd\core\components\ActiveRecord
         }
 
         return $list;
+    }
+
+    public function beforeValidate()
+    {
+        if ($this->isNewRecord) {
+            $this->status = static::STATUS_DISABLED;
+        }
+        return parent::beforeValidate();
     }
 }

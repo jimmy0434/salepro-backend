@@ -77,15 +77,6 @@ class PortfolioController extends SController
             if ($model->save()) {
                 \Yii::$app->session->setFlash('success', ucfirst($this->id) . ' saved successfully');
                 $model->sendNotification();
-                /*$users = array_values(ArrayHelper::map(User::find()->where(['type'=>User::TYPE_SALESMAN, 'status' => User::STATUS_ACTIVE])->all(),'id','id'));
-                if(!empty($users) && is_array($users)) {
-                    Yii::$app->notification->send('portfolio-update', [
-                        'message' => 'The '.$model->target_label.' portfolio `' . $model->name . '` was updated',
-                        'id' => $model->id,
-                        'uid' => $model->uid,
-                        'target' => $model->target_label,
-                    ], $users);
-                }*/
             } else {
                 \Yii::$app->session->setFlash('error', ucfirst($this->id) . ' not saved');
             }
@@ -100,7 +91,8 @@ class PortfolioController extends SController
         return $this->render('form', ['model' => $model, 'isNew' => $isNew]);
     }
 
-    public function actionDelete($id){
+    public function actionDelete($id)
+    {
         $model = Portfolio::find()->where(['id' => $id])->one();
         if ($model !== null) {
             if ($model->delete()) {
@@ -197,5 +189,24 @@ class PortfolioController extends SController
     public function actionAddBusinessUnit()
     {
         return $this->addItem(Portfolio::TARGET_BUSINESS_UNIT);
+    }
+
+    public function actionStatus()
+    {
+        if (Yii::$app->request->isAjax && Yii::$app->request->isPost) {
+            Yii::$app->response->format = 'json';
+            $response = ['changed' => false];
+            $id = Yii::$app->request->post('id');
+            $status = Yii::$app->request->post('status');
+            $model = Portfolio::findOne($id);
+            if ($model !== null) {
+                $model->status = $status;
+                $model->save();
+                $response['changed'] = true;
+                Log::trace("Change Portfolio #" . $model->id . " status, become " . $model->status_label);
+            }
+            return $response;
+        }
+        return $this->redirect(['index', 't' => $this->target]);
     }
 }

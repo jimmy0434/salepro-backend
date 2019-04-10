@@ -45,4 +45,23 @@ class CompetitionController extends SController
         $model = Competitor::findOne($id);
         return $this->render('view', ['model' => $model]);
     }
+
+    public function actionStatus()
+    {
+        if (Yii::$app->request->isAjax && Yii::$app->request->isPost) {
+            Yii::$app->response->format = 'json';
+            $response = ['changed' => false];
+            $id = Yii::$app->request->post('id');
+            $status = Yii::$app->request->post('status');
+            $model = Competitor::findOne($id);
+            if ($model !== null) {
+                $model->status = $status;
+                $model->save();
+                $response['changed'] = true;
+                Log::trace("Change Competitor #" . $model->id . " status, become " . $model->status_label);
+            }
+            return $response;
+        }
+        return $this->redirect(['index']);
+    }
 }

@@ -41,6 +41,7 @@ class CompetitorController extends SController
         $query = Competitor::find();
         $query->limit($pageSize)->offset(($page - 1) * $pageSize);
         $query->orderBy('name ASC');
+        $query->where('status=:status or salesman_id=:salesman', [':status' => Competitor::STATUS_ENABLED, ':salesman' => Yii::$app->user->identity->id]);
         $list = $query->all();
         Log::trace("Download Competitors List");
         return ['profiles' => $list];

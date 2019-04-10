@@ -24,12 +24,17 @@ use yii\helpers\Json;
  * @property int $target
  * @property string $linkedin
  * @property int $position
+ * @property string $status
  * @property int $created_at
  * @property int $updated_at
  *
  * @property array $target_list
  * @property array $target_values
  * @property string $target_label
+ *
+ * @property array $status_list
+ * @property array $status_values
+ * @property string $status_label
  *
  * @property Brand[] $brands
  * @property Corporate[] $corporates
@@ -61,6 +66,9 @@ class Portfolio extends \cnd\core\components\ActiveRecord
     const TARGET_SECTOR = 5;
     const TARGET_PRODUCT = 6;
     const TARGET_BUNDLING_AND_PACKING = 7;
+
+    const STATUS_ENABLED = 'enabled';
+    const STATUS_DISABLED = 'disabled';
 
     public $tags = [];
     public $brandsIds = [];
@@ -530,12 +538,23 @@ class Portfolio extends \cnd\core\components\ActiveRecord
     {
         if (!empty($models) && is_array($models)) {
             foreach ($models as $model) {
-                try{
+                try {
                     $this->sendNotification($model->portfolio);
-                }catch(Exception $e){
+                } catch (Exception $e) {
 
                 }
             }
         }
+    }
+
+    public function beforeValidate()
+    {
+        if ($this->isNewRecord) {
+            $this->status = static::STATUS_ENABLED;
+            if (in_array($this->target, [static::TARGET_PRODUCT, static::TARGET_BUNDLING_AND_PACKING])) {
+                $this->status = static::STATUS_DISABLED;
+            }
+        }
+        return parent::beforeValidate();
     }
 }

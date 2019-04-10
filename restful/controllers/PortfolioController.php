@@ -72,7 +72,8 @@ class PortfolioController extends SController
      *     @SWG\Parameter( name="Authorization", in="header", required=true, type="string", default="Bearer TOKEN", description="Authorization" )
      * )
      */
-    public function actionProducts(){
+    public function actionProducts()
+    {
         $products = $this->list(Portfolio::TARGET_PRODUCT);
         Log::trace('Download products Items Data');
         return ['products' => $products];
@@ -81,7 +82,7 @@ class PortfolioController extends SController
     protected function list($target)
     {
         $query = Portfolio::find();
-        $query->where(['target' => $target]);
+        $query->where(['target' => $target, 'status' => Portfolio::STATUS_ENABLED]);
         $query->from(['portfolio' => Portfolio::tableName()]);
         $query->joinWith([
             'brochure' => function ($query) {

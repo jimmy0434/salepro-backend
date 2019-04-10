@@ -26,6 +26,8 @@ use yii\web\View;
 $context = $this->context;
 
 $this->title = "Portfolio Management | " . $context->targets[$context->target];
+
+$statuses = (new Portfolio())->status_list;
 ?>
     <div class="btn-group btn-group-justified" role="group" aria-label="targets">
         <?php
@@ -113,6 +115,20 @@ $dv = new DataView([
                 return $data->position;
             },
         ],
+        'status' => [
+            'label' => 'Status',
+            'value' => function ($attribute, $data, $view) use ($statuses) {
+                assert($attribute instanceof Attribute);
+                assert($data instanceof Portfolio);
+                assert($view instanceof DataViewLocator);
+                if (Yii::$app->permission->can('/portfolio/status')) {
+                    return Html::dropDownList('status', $data->status, $statuses, ['class' => 'form-control status-ddl', 'id' => 'status-' . $data->id, 'data-id' => $data->id]);
+                }
+                return $data->status_label;
+            },
+            'filterBy' => Attribute::FILTER_LIST,
+            'filterList' => $statuses,
+        ],
     ],
     'headerLinks' => [
         Yii::$app->permission->can('/portfolio/manage') ? Html::a('Add New', Url::to(['manage', 't' => $context->target]), ['class' => 'btn btn-success']) : null,
@@ -153,6 +169,41 @@ $dv->addView('grid', [
         'position' => [
             'sortable' => true,
         ],
+        'status' => [
+            'sortable' => true,
+            'contentOptions' => [
+                'style' => 'width:150px;'
+            ],
+        ],
     ]
 ]);
 echo $dv->render();
+
+if (Yii::$app->permission->can('/portfolio/status')) {
+    $url = Url::toRoute('/portfolio/status', ['t' => $context->target]);
+    $script = <<< JS
+        $(document).on('change','.status-ddl',function(){
+            var element = $(this);
+            var data = {
+                id : element.attr('data-id'),
+                status : element.val()
+            };
+            $.ajax({
+                type : 'post',
+                url : '{$url}',
+                data : data,
+                dataType : 'json',
+                beforeSend : function(){
+                    element.prop('disabled',true);
+                },
+                success : function(response){
+                    element.prop('disabled',false);
+                },
+                error : function(){
+                    element.prop('disabled',false);
+                }
+            });
+        });        
+JS;
+    $this->registerJs($script);
+}
