@@ -151,7 +151,7 @@ function toChunks(file, step, done){
     });
 }
 function extension(file){
-    return file.name.split('.').pop();
+    return file.name.split('.').pop().toLowerCase();
 }
 function parseFile(file,step, callback, done) {
     var fileSize   = file.size;
