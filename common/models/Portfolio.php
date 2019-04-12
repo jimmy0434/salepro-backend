@@ -344,25 +344,35 @@ class Portfolio extends \cnd\core\components\ActiveRecord
         }
         if ($this->hasAttribute("privilege") && Yii::$app->helper->isJson($this->privilege)) {
             $privilege = Json::decode($this->privilege);
-            if (isset($privilege['private']) && !empty($privilege['private']) && is_array($privilege['private'])) {
-                foreach ($privilege['private'] as $userId => $perm) {
-                    $granted = $perm === 'user.' . $userId . '.1.1.0' || $perm === 'user.' . $userId . '.1.0.0';
-                    $user = User::findOne($userId);
-                    if ($user) {
-                        Yii::$app->notification->send("portfolio-update-grant", [
-                            'message' => 'The ' . $this->target_label . ' portfolio `' . $this->name . '` was ' . ($granted ? 'enabled for' : 'disabled from') . ' watching.',
-                            'id' => $this->id,
-                            'uid' => $this->uid,
-                            'target' => $this->target_label,
-                            'granted' => $granted,
-                        ], [$userId]);
-                        $userName = $user->name;
-                        Log::trace('#user-portfolio-permission: '.($granted ? 'Enabled ' . $userName . ' to' : 'Disabled ' . $userName . ' from') . ' view the ' . $this->target_label . ' portfolio `' . $this->name . '` #' . $this->id);
+
+            if (isset($privilege['protected'])) {
+                $users = User::find()->where(['type' => User::TYPE_SALESMAN])->all();
+                $granted = in_array($privilege['protected'], ['user.*.1.0.0', 'user.*.1.1.0']);
+                if (!empty($users) && is_array($users)) {
+                    foreach ($users as $user) {
+                        $userGranted = false;
+                        if(isset($privilege['private'][$user->id])){
+                            $userGranted = $granted || in_array($privilege['private'][$user->id],['user.' . $user->id . '.1.1.0', 'user.' . $user->id . '.1.0.0']);
+                        }
+                        $this->grantNotification($user, $userGranted);
                     }
                 }
             }
         }
         parent::afterSave($insert, $changedAttributes);
+    }
+
+    public function grantNotification($user, $granted)
+    {
+        Yii::$app->notification->send("portfolio-update-grant", [
+            'message' => 'The ' . $this->target_label . ' portfolio `' . $this->name . '` was ' . ($granted ? 'enabled for' : 'disabled from') . ' watching.',
+            'id' => $this->id,
+            'uid' => $this->uid,
+            'target' => $this->target_label,
+            'granted' => $granted,
+        ], [$user->id]);
+        $userName = $user->name;
+        Log::trace('#user-portfolio-permission: ' . ($granted ? 'Enabled ' . $userName . ' to' : 'Disabled ' . $userName . ' from') . ' view the ' . $this->target_label . ' portfolio `' . $this->name . '` #' . $this->id);
     }
 
     public function afterFind()
