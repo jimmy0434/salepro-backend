@@ -68,6 +68,16 @@ $dv = new DataView([
             'filterBy' => Attribute::FILTER_LIST,
             'filterList' => $statuses,
         ],
+        'updated_at' => [
+            'label' => 'Last Modification',
+            'value' => function ($attribute, $data, $view) {
+                assert($attribute instanceof Attribute);
+                assert($data instanceof Competitor);
+                assert($view instanceof DataViewLocator);
+                return date('l, d F, Y H:i',$data->updated_at);
+            },
+            'filterBy' => Attribute::FILTER_NONE,
+        ],
     ],
     'headerLinks' => [],
     'rowLinks' => [
@@ -95,6 +105,12 @@ $dv->addView('grid', [
             'sortable' => true,
             'contentOptions' => [
                 'style' => 'width:150px;'
+            ],
+        ],
+        'updated_at' => [
+            'sortable' => true,
+            'contentOptions' => [
+                'style' => 'text-align:center;white-space: nowrap;width:1%;'
             ],
         ],
     ]

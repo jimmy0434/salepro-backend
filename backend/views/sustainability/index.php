@@ -101,6 +101,16 @@ $dv = new DataView([
                 return $data->name;
             },
         ],
+        'updated_at' => [
+            'label' => 'Last Modification',
+            'value' => function ($attribute, $data, $view) {
+                assert($attribute instanceof Attribute);
+                assert($data instanceof Sustainability);
+                assert($view instanceof DataViewLocator);
+                return date('l, d F, Y H:i',$data->updated_at);
+            },
+            'filterBy' => Attribute::FILTER_NONE,
+        ],
     ],
     'headerLinks' => [
         Yii::$app->permission->can('/sustainability/manage') ? Html::a('Add New', Url::to(['manage','t'=>$context->type]), ['class' => 'btn btn-success']) : null,
@@ -140,6 +150,12 @@ $dv->addView('grid', [
         ],
         'position' => [
             'sortable' => true,
+        ],
+        'updated_at' => [
+            'sortable' => true,
+            'contentOptions' => [
+                'style' => 'text-align:center;white-space: nowrap;width:1%;'
+            ],
         ],
     ]
 ]);
