@@ -15,7 +15,7 @@ use Yii;
  *
  * @property Competitor $competitor
  */
-class CompetitorNews extends \cnd\core\components\ActiveRecord
+class CompetitorNews extends \common\components\ActiveRecord
 {
     /**
      * {@inheritdoc}

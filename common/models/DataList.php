@@ -18,7 +18,7 @@ use yii\helpers\ArrayHelper;
  * @property DataList $up
  * @property DataList $down
  */
-class DataList extends \cnd\core\components\ActiveRecord
+class DataList extends \common\components\ActiveRecord
 {
 
     const TYPE_COUNTRY = 1;

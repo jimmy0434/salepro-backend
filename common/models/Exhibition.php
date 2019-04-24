@@ -29,7 +29,7 @@ use yii\helpers\ArrayHelper;
  * @property ExhibitionCountry[] $exhibitionCountries
  * @property ExhibitionRegion[] $exhibitionRegions
  */
-class Exhibition extends \cnd\core\components\ActiveRecord
+class Exhibition extends \common\components\ActiveRecord
 {
 
     public $sectorsIds = [];

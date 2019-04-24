@@ -20,7 +20,7 @@ use Yii;
  * @property Content $content
  * @property ProductDetail $productDetail
  */
-class ProductDetailItem extends \cnd\core\components\ActiveRecord
+class ProductDetailItem extends \common\components\ActiveRecord
 {
 
     const TYPE_FILE = 1;

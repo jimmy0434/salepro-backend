@@ -28,7 +28,7 @@ use yii\helpers\Json;
  * @property Sector[] $sectors
  * @property Certification[] $certifications
  */
-class BusinessUnit extends \cnd\core\components\ActiveRecord
+class BusinessUnit extends \common\components\ActiveRecord
 {
 
     /**

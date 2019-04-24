@@ -2,7 +2,6 @@
 
 namespace common\models;
 
-use cnd\core\components\ActiveRecord;
 use Yii;
 
 /**
@@ -19,7 +18,7 @@ use Yii;
  *
  * @property File $file
  */
-class FilePartition extends ActiveRecord
+class FilePartition extends \common\components\ActiveRecord
 {
     /**
      * {@inheritdoc}

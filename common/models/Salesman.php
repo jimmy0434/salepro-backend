@@ -2,7 +2,6 @@
 
 namespace common\models;
 
-use cnd\core\components\ActiveRecord;
 use cnd\core\interfaces\UserProfile;
 use Yii;
 use yii\helpers\Json;
@@ -31,7 +30,7 @@ use yii\helpers\Json;
  *
  * @property User $user
  */
-class Salesman extends ActiveRecord implements UserProfile
+class Salesman extends \common\components\ActiveRecord implements UserProfile
 {
     public $imageFactory;
 

@@ -2,7 +2,6 @@
 
 namespace common\models;
 
-use cnd\core\components\ActiveRecord;
 use Yii;
 use yii\helpers\Json;
 
@@ -20,7 +19,7 @@ use yii\helpers\Json;
  * @property File $file
  * @property ProductCertification[] $productCertifications
  */
-class Certification extends ActiveRecord
+class Certification extends \common\components\ActiveRecord
 {
 
     public $imageFactory;

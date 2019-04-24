@@ -2,7 +2,6 @@
 
 namespace common\models;
 
-use cnd\core\components\ActiveRecord;
 use Yii;
 
 /**
@@ -22,7 +21,7 @@ use Yii;
  * @property FormApprovalUser[] $formApprovalUsers
  * @property User $user
  */
-class FormApproval extends ActiveRecord
+class FormApproval extends \common\components\ActiveRecord
 {
     const STATUS_PENDING = 10;
     const STATUS_REJECTED = 20;

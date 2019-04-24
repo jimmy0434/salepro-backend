@@ -20,7 +20,7 @@ use Yii;
  * @property CompetitorFlexibleCustomer[] $competitorFlexibleCustomers
  * @property Competitor $competitor
  */
-class CompetitorFlexibleCustomer extends \cnd\core\components\ActiveRecord
+class CompetitorFlexibleCustomer extends \common\components\ActiveRecord
 {
     /**
      * {@inheritdoc}

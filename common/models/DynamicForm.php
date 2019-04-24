@@ -9,10 +9,9 @@
 namespace common\models;
 
 use Yii;
-use cnd\core\components\ActiveRecord;
 use yii\helpers\Inflector;
 
-class DynamicForm extends ActiveRecord
+class DynamicForm extends \common\components\ActiveRecord
 {
     public static function getDb()
     {

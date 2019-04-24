@@ -30,7 +30,7 @@ use Yii;
  * @property Competitor $competitor
  * @property Sector $sector
  */
-class CompetitorMasterbatch extends \cnd\core\components\ActiveRecord
+class CompetitorMasterbatch extends \common\components\ActiveRecord
 {
     /**
      * {@inheritdoc}

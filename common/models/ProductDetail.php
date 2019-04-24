@@ -17,7 +17,7 @@ use Yii;
  * @property Product $product
  * @property ProductDetailItem[] $productDetailItems
  */
-class ProductDetail extends \cnd\core\components\ActiveRecord
+class ProductDetail extends \common\components\ActiveRecord
 {
     const SECTION_COMPANY = 1;
     //const SECTION_PRE_ORDER = 2;

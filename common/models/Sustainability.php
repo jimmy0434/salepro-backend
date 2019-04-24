@@ -23,7 +23,7 @@ use yii\helpers\Json;
  *
  * @property File $file
  */
-class Sustainability extends \cnd\core\components\ActiveRecord
+class Sustainability extends \common\components\ActiveRecord
 {
 
     const TYPE_DOWNLOAD_FILE = 'download';

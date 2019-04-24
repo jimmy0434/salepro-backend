@@ -30,7 +30,7 @@ use yii\helpers\Json;
  * @property array $status_values
  *
  */
-class Form extends ActiveRecord
+class Form extends \common\components\ActiveRecord
 {
     const STATUS_ACTIVE = 10;
     const STATUS_PENDING = 5;

@@ -17,7 +17,7 @@ use yii\helpers\Json;
  *
  * @property ProductDetailItem[] $productDetailItems
  */
-class Content extends \cnd\core\components\ActiveRecord
+class Content extends \common\components\ActiveRecord
 {
 
     public $imageFactory;

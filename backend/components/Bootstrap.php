@@ -28,6 +28,7 @@ class Bootstrap implements BootstrapInterface
         $data = MenuManager::block('Data');
         $userSection = $data->section('Users');
         $userSection->item('Salesman', ['/salesman/index'], 2);
+        $userSection->item('Groups', ['/group/index'], 3);
 
 
         $navigator = MenuManager::block('Navigator', 10000);

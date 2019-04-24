@@ -2,7 +2,6 @@
 
 namespace common\models;
 
-use cnd\core\components\ActiveRecord;
 use Yii;
 use yii\helpers\Json;
 
@@ -21,7 +20,7 @@ use yii\helpers\Json;
  * @property LogisticCategory $category
  * @property File $file
  */
-class Logistic extends ActiveRecord
+class Logistic extends \common\components\ActiveRecord
 {
 
     public $imageFactory;

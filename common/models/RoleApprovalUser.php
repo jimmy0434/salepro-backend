@@ -2,7 +2,6 @@
 
 namespace common\models;
 
-use cnd\core\components\ActiveRecord;
 use Yii;
 
 /**
@@ -17,7 +16,7 @@ use Yii;
  * @property User $user
  * @property RoleApproval $roleApproval
  */
-class RoleApprovalUser extends ActiveRecord
+class RoleApprovalUser extends \common\components\ActiveRecord
 {
     /**
      * {@inheritdoc}

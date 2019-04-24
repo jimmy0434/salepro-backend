@@ -31,7 +31,7 @@ use Yii;
  * @property Competitor $competitor
  * @property Sector $sector
  */
-class CompetitorFlexible extends \cnd\core\components\ActiveRecord
+class CompetitorFlexible extends \common\components\ActiveRecord
 {
     /**
      * {@inheritdoc}

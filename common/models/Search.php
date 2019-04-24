@@ -19,7 +19,7 @@ use Yii;
  * @property Portfolio $portfolio
  * @property SearchTag[] $searchTags
  */
-class Search extends \cnd\core\components\ActiveRecord
+class Search extends \common\components\ActiveRecord
 {
 
     /**

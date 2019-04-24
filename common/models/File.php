@@ -4,7 +4,6 @@ namespace common\models;
 
 use cnd\cms\models\activerecords\Category;
 use cnd\cms\models\activerecords\Content;
-use cnd\core\components\ActiveRecord;
 use Yii;
 use yii\helpers\ArrayHelper;
 
@@ -29,7 +28,7 @@ use yii\helpers\ArrayHelper;
  * @property int $versionsCount
  * @property Content $content
  */
-class File extends ActiveRecord
+class File extends \common\components\ActiveRecord
 {
 
     const STATUS_ACTIVE = 10;

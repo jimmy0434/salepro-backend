@@ -20,7 +20,7 @@ use Yii;
  * @property SectorBusinessUnit[] $sectorBusinessUnits
  * @property BusinessUnit[] $businessUnits
  */
-class Sector extends \cnd\core\components\ActiveRecord
+class Sector extends \common\components\ActiveRecord
 {
     /**
      * {@inheritdoc}

@@ -15,7 +15,7 @@ use Yii;
  *
  * @property Exhibition $exhibition
  */
-class ExhibitionCountry extends \cnd\core\components\ActiveRecord
+class ExhibitionCountry extends \common\components\ActiveRecord
 {
     /**
      * {@inheritdoc}

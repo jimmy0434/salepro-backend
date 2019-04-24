@@ -16,7 +16,7 @@ use Yii;
  * @property Exhibition $exhibition
  * @property Sector $sector
  */
-class ExhibitionSector extends \cnd\core\components\ActiveRecord
+class ExhibitionSector extends \common\components\ActiveRecord
 {
     /**
      * {@inheritdoc}

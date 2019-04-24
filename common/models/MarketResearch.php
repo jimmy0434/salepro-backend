@@ -26,7 +26,7 @@ use yii\helpers\ArrayHelper;
  * @property MarketResearchCountry[] $countries
  * @property MarketResearchRegion[] $regions
  */
-class MarketResearch extends \cnd\core\components\ActiveRecord
+class MarketResearch extends \common\components\ActiveRecord
 {
 
     public $tags = [];

@@ -16,7 +16,7 @@ use Yii;
  * @property Tag $tag
  * @property Search $search
  */
-class SearchTag extends \cnd\core\components\ActiveRecord
+class SearchTag extends \common\components\ActiveRecord
 {
     /**
      * {@inheritdoc}

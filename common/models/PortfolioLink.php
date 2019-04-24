@@ -16,7 +16,7 @@ use Yii;
  *
  * @property Portfolio $portfolio
  */
-class PortfolioLink extends \cnd\core\components\ActiveRecord
+class PortfolioLink extends \common\components\ActiveRecord
 {
     /**
      * {@inheritdoc}

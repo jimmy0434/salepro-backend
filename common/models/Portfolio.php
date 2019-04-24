@@ -57,7 +57,7 @@ use yii\helpers\Json;
  * @property Product $product
  * @property BusinessUnit $businessUnit
  */
-class Portfolio extends \cnd\core\components\ActiveRecord
+class Portfolio extends \common\components\ActiveRecord
 {
 
     const TARGET_MOTHER_CORPORATE = 1;

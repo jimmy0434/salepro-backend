@@ -2,7 +2,6 @@
 
 namespace common\models;
 
-use cnd\core\components\ActiveRecord;
 use Yii;
 
 /**
@@ -17,7 +16,7 @@ use Yii;
  * @property Product $product
  * @property Certification $certification
  */
-class ProductCertification extends ActiveRecord
+class ProductCertification extends \common\components\ActiveRecord
 {
     /**
      * {@inheritdoc}

@@ -20,7 +20,7 @@ use Yii;
  * @property CompetitorMasterbatchCustomer $competitorMasterbatch
  * @property CompetitorMasterbatchCustomer[] $competitorMasterbatchCustomers
  */
-class CompetitorMasterbatchCustomer extends \cnd\core\components\ActiveRecord
+class CompetitorMasterbatchCustomer extends \common\components\ActiveRecord
 {
     /**
      * {@inheritdoc}

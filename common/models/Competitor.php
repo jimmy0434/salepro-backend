@@ -61,7 +61,7 @@ use Yii;
  * @property PortfolioCompetitor[] $portfolioCompetitors
  * @property Salesman[] $salesman
  */
-class Competitor extends \cnd\core\components\ActiveRecord
+class Competitor extends \common\components\ActiveRecord
 {
 
     const STATUS_ENABLED = 'enabled';

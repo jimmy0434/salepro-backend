@@ -22,7 +22,7 @@ use Yii;
  *
  * @property Competitor $competitor
  */
-class CompetitorProductionLine extends \cnd\core\components\ActiveRecord
+class CompetitorProductionLine extends \common\components\ActiveRecord
 {
     /**
      * {@inheritdoc}

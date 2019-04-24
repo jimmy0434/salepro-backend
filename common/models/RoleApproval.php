@@ -3,7 +3,6 @@
 namespace common\models;
 
 use cnd\admin\models\activerecords\Role;
-use cnd\core\components\ActiveRecord;
 use Yii;
 
 /**
@@ -19,7 +18,7 @@ use Yii;
  * @property RoleApprovalUser[] $roleApprovalUsers
  * @property array $autoCompleteUsers
  */
-class RoleApproval extends ActiveRecord
+class RoleApproval extends \common\components\ActiveRecord
 {
 
     const TYPE_SERIES = 1;

@@ -20,7 +20,7 @@ use Yii;
  * @property ProductSector[] $productSectors
  * @property ProductDetail[] $details
  */
-class Product extends \cnd\core\components\ActiveRecord
+class Product extends \common\components\ActiveRecord
 {
 
     /**

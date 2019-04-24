@@ -2,7 +2,6 @@
 
 namespace common\models;
 
-use cnd\core\components\ActiveRecord;
 use Yii;
 
 /**
@@ -17,7 +16,7 @@ use Yii;
  * @property BusinessUnit $businessUnit
  * @property Product $product
  */
-class ProductBusinessUnit extends ActiveRecord
+class ProductBusinessUnit extends \common\components\ActiveRecord
 {
     /**
      * {@inheritdoc}

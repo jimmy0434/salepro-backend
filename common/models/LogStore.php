@@ -2,7 +2,6 @@
 
 namespace common\models;
 
-use cnd\core\components\ActiveRecord;
 use Yii;
 use yii\helpers\Json;
 
@@ -21,7 +20,7 @@ use yii\helpers\Json;
  *
  * @property BaseUser $user
  */
-class LogStore extends ActiveRecord
+class LogStore extends \common\components\ActiveRecord
 {
     public $data = null;
 

@@ -14,7 +14,7 @@ use yii\helpers\Json;
  * @property int $created_at
  * @property int $updated_at
  */
-class StatisticNumber extends \cnd\core\components\ActiveRecord
+class StatisticNumber extends \common\components\ActiveRecord
 {
 
     public $imageFactory;

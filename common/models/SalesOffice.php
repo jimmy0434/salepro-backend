@@ -16,7 +16,7 @@ use Yii;
  *
  * @property PortfolioSalesOffice[] $portfolioSalesOffices
  */
-class SalesOffice extends \cnd\core\components\ActiveRecord
+class SalesOffice extends \common\components\ActiveRecord
 {
     /**
      * {@inheritdoc}

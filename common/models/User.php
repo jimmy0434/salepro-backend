@@ -26,6 +26,7 @@ use Yii;
  *
  * @property Salesman $salesman
  * @property Salesman|Admin $profile
+ * @property Group $group
  */
 class User extends BaseUser
 {
@@ -76,5 +77,10 @@ class User extends BaseUser
             Yii::$app->mailer->compose('@common/mail/account-password.php', ['user' => $this])->setSubject(Yii::t('app', 'New Password'))->setFrom([Yii::$app->params['adminEmail'] => Yii::$app->params['adminName']])->setTo([$this->email])->send();
             $this->_sendNewPasswordEmail = true;
         }
+    }
+
+    public function getGroup()
+    {
+        return $this->hasOne(Group::className(), ['id' => 'group_id']);
     }
 }
