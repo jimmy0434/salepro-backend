@@ -347,14 +347,28 @@ class Portfolio extends \common\components\ActiveRecord
 
             if (isset($privilege['protected'])) {
                 $users = User::find()->where(['type' => User::TYPE_SALESMAN])->all();
-                $granted = in_array($privilege['protected'], ['user.*.1.0.0', 'user.*.1.1.0']);
+                $granted = in_array($privilege['protected'], ['user.*.1.0.0', 'user.*.1.1.0']) || in_array($privilege['groups'], ['group.*.1.0.0', 'group.*.1.1.0']);
                 if (!empty($users) && is_array($users)) {
                     foreach ($users as $user) {
                         $userGranted = false;
-                        if(isset($privilege['private'][$user->id])){
-                            $userGranted = $granted || in_array($privilege['private'][$user->id],['user.' . $user->id . '.1.1.0', 'user.' . $user->id . '.1.0.0']);
+                        if (isset($privilege['private'][$user->id])) {
+                            $userGranted = $granted || in_array($privilege['private'][$user->id], ['user.' . $user->id . '.1.1.0', 'user.' . $user->id . '.1.0.0']);
                         }
                         $this->grantNotification($user, $userGranted);
+                    }
+                }
+                $groups = Group::find()->orderBy(['name' => SORT_ASC])->all();
+                if (!empty($groups) && is_array($groups)) {
+                    foreach ($groups as $group) {
+                        $groupGranted = false;
+                        if (isset($privilege['group'][$group->id])) {
+                            $groupGranted = $granted || in_array($privilege['group'][$group->id], ['group.' . $group->id . '.1.1.0', 'group.' . $group->id . '.1.0.0']);
+                        }
+                        if (!empty($group->users) && is_array($group->users)) {
+                            foreach ($group->users as $user) {
+                                $this->grantNotification($user, $groupGranted);
+                            }
+                        }
                     }
                 }
             }
