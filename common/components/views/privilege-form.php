@@ -54,6 +54,12 @@ if ($model->isOwner) {
         <div class="row">
             <div class="col-md-12">
                 <div class="row">
+                    <?php
+                    echo $form->field($model, $model->privilegePrefix . 'privilege[public]')->hiddenInput()->label(false);
+                    echo $form->field($model, $model->privilegePrefix . 'privilege[protected]')->hiddenInput()->label(false);
+                    echo $form->field($model, $model->privilegePrefix . 'privilege[groups]')->hiddenInput()->label(false);
+                    /*
+                    ?>
                     <div class="col-md-6">
                         <div class="page-header">
                             <h3>Guest Visitors</h3>
@@ -61,9 +67,10 @@ if ($model->isOwner) {
                         <?= $form->field($model, $model->privilegePrefix . 'privilege[public]')->radioList([
                             'guest.0.0.0' => 'Hidden',
                             'guest.1.0.0' => 'Visible',
-                            /*'guest.1.1.0' => 'Read,Write',*/
+                            //'guest.1.1.0' => 'Read,Write',
                         ], $options)->label(false) ?>
                     </div>
+
                     <div class="col-md-6">
                         <div class="page-header">
                             <h3>System Users</h3>
@@ -71,7 +78,7 @@ if ($model->isOwner) {
                         <?= $form->field($model, $model->privilegePrefix . 'privilege[protected]')->radioList([
                             'user.*.0.0.0' => 'Hidden',
                             'user.*.1.0.0' => 'Visible',
-                            /*'user.*.1.1.0' => 'Read,Write',*/
+                            //'user.*.1.1.0' => 'Read,Write',
                         ], $options)->label(false) ?>
                     </div>
                     <div class="col-md-6">
@@ -81,11 +88,12 @@ if ($model->isOwner) {
                         <?= $form->field($model, $model->privilegePrefix . 'privilege[groups]')->radioList([
                             'group.*.0.0.0' => 'Hidden',
                             'group.*.1.0.0' => 'Visible',
-                            /*'group.*.1.1.0' => 'Read,Write',*/
+                            //'group.*.1.1.0' => 'Read,Write',
                         ], $options)->label(false) ?>
                     </div>
+                    <?php */ ?>
                     <?php
-                    if (CND_APPLICATION == 'backend') {
+                    /*if (CND_APPLICATION == 'backend') {
                         ?>
                         <div class="col-md-6">
                             <div class="page-header">
@@ -94,11 +102,11 @@ if ($model->isOwner) {
                             <?= $form->field($model, $model->privilegePrefix . 'privilege[admin]')->radioList([
                                 'admin.0.0.0' => 'Hidden',
                                 'admin.1.0.0' => 'Visible',
-                                /*'admin.1.1.0' => 'Read,Write',*/
+                                //'admin.1.1.0' => 'Read,Write',
                             ], $options)->label(false) ?>
                         </div>
                         <?php
-                    }
+                    }*/
                     ?>
                 </div>
                 <?php
@@ -122,7 +130,7 @@ if ($model->isOwner) {
                                 echo $form->field($model, $model->privilegePrefix . 'privilege[group][' . $group->id . ']')->radioList([
                                     'group.' . $group->id . '.0.0.0' => 'Hidden',
                                     'group.' . $group->id . '.1.0.0' => 'Visible',
-                                    /*'group.' . $group->id . '.1.1.0' => 'Read,Write',*/
+                                    //'group.' . $group->id . '.1.1.0' => 'Read,Write',
                                 ], $options)->label($group->name, [
                                     'style' => 'display:block;',
                                 ]);
@@ -162,7 +170,7 @@ if ($model->isOwner) {
                                                 echo $form->field($model, $model->privilegePrefix . 'privilege[private][' . $id . ']')->radioList([
                                                     'user.' . $id . '.0.0.0' => 'None',
                                                     'user.' . $id . '.1.0.0' => 'Visible',
-                                                    /*'user.' . $id . '.1.1.0' => 'Read,Write',*/
+                                                    //'user.' . $id . '.1.1.0' => 'Read,Write',
                                                 ], $options)->label($name . '<span class="pull-right text-muted">' . $group->title . '</span>', [
                                                     'style' => 'display:block;',
                                                 ]);
