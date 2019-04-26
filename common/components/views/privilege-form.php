@@ -168,7 +168,7 @@ if ($model->isOwner) {
                                             <div class="col-md-6">
                                                 <?php
                                                 echo $form->field($model, $model->privilegePrefix . 'privilege[private][' . $id . ']')->radioList([
-                                                    'user.' . $id . '.0.0.0' => 'None',
+                                                    'user.' . $id . '.0.0.0' => 'Hidden',
                                                     'user.' . $id . '.1.0.0' => 'Visible',
                                                     //'user.' . $id . '.1.1.0' => 'Read,Write',
                                                 ], $options)->label($name . '<span class="pull-right text-muted">' . $group->title . '</span>', [
