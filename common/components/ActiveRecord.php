@@ -15,6 +15,18 @@ use common\models\User;
 
 class ActiveRecord extends \cnd\core\components\ActiveRecord
 {
+    public function getDefaultPrivilege(){
+        return [
+            'owner' => 'user.'.((Yii::$app->has('user') && !Yii::$app->user->isGuest)?Yii::$app->user->identity->id:'-').'.1.1.1',
+            'admin' => 'admin.1.1.0',
+            'public' => 'guest.0.0.0',
+            'protected' => 'user.*.0.0.0',
+            'groups' => 'group.*.0.0.0',
+            'private' => [],
+            'group' => [],
+        ];
+    }
+
     public function canRead($userId = null)
     {
         if ($this->hasProperty('privilege')) {
