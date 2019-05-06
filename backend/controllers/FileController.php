@@ -111,10 +111,10 @@ class FileController extends SController
                     $users = array_values(ArrayHelper::map(User::find()->where(['type' => User::TYPE_SALESMAN, 'status' => User::STATUS_ACTIVE])->all(), 'id', 'id'));
                     if (!empty($users) && is_array($users)) {
                         Yii::$app->notification->send('file-update', [
-                            'message' => 'The File `' . $model->title . '`` was updated',
+                            'message' => 'The File `' . $model->title . '` was updated',
                             'id' => $model->id,
                             'version' => $model->version,
-                            'versionCount' => $model->versionsCount,
+                            'partitions' => $model->versionsCount,
                         ], $users);
                     }
                 }
