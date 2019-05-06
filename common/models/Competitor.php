@@ -67,7 +67,7 @@ class Competitor extends \common\components\ActiveRecord
     const STATUS_ENABLED = 'enabled';
     const STATUS_DISABLED = 'disabled';
 
-    public static $disableLogo = false;
+    //public static $disableLogo = false;
 
     /**
      * {@inheritdoc}
@@ -337,9 +337,10 @@ class Competitor extends \common\components\ActiveRecord
         }
 
         /*if (static::$disableLogo) {
-            unset($list['logo']);
+            //unset($list['logo']);
+            //$list['logo'] = Yii::$app->helper->getHostName() . Yii::$app->image->defaultImage;
         }*/
-        $list['logo'] = Yii::$app->helper->getHostName() . Yii::$app->image->defaultImage;
+
 
         return $list;
     }
