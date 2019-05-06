@@ -336,9 +336,10 @@ class Competitor extends \common\components\ActiveRecord
             $list['businessUnit'] = $this->businessUnit->portfolio->uid;
         }
 
-        if (static::$disableLogo) {
+        /*if (static::$disableLogo) {
             unset($list['logo']);
-        }
+        }*/
+        $list['logo'] = Yii::$app->image->defaultImage;
 
         return $list;
     }
