@@ -36,6 +36,7 @@ class CompetitorController extends SController
      */
     public function actionList()
     {
+        Competitor::$disableLogo = true;
         $page = Yii::$app->request->get('page', 1);
         $pageSize = Yii::$app->request->get('pageSize', 25);
         $query = Competitor::find();

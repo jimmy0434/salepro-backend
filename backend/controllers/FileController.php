@@ -113,6 +113,8 @@ class FileController extends SController
                         Yii::$app->notification->send('file-update', [
                             'message' => 'The File `' . $model->title . '`` was updated',
                             'id' => $model->id,
+                            'version' => $model->version,
+                            'versionCount' => $model->versionsCount,
                         ], $users);
                     }
                 }
