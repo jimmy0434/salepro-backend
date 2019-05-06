@@ -129,7 +129,9 @@ function startUpload(files){
         let ext = extension(file);
         if($.inArray(ext,extensions) > -1){
             msg("File Extension Valid");
-            let step = {$filePartitionSize};
+            let maxStep = {$filePartitionSize};
+            let steps = Math.floor(file.size / maxStep);
+            let step = file.size / steps;
             toChunks(file,step, function(chunks){
                uploadChunk(0, chunks, (new Date()).getTime(),ext);
             });
