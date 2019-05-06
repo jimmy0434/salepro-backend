@@ -339,7 +339,7 @@ class Competitor extends \common\components\ActiveRecord
         /*if (static::$disableLogo) {
             unset($list['logo']);
         }*/
-        $list['logo'] = Yii::$app->image->defaultImage;
+        $list['logo'] = Yii::$app->helper->getHostName() . Yii::$app->image->defaultImage;
 
         return $list;
     }
