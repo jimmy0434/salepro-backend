@@ -114,7 +114,7 @@ class FileController extends SController
                             'message' => 'The File `' . $model->title . '` was updated',
                             'id' => $model->id,
                             'version' => $model->version,
-                            'partitions' => $model->versionsCount,
+                            'partitions' => $model->partitionsCount,
                         ], $users);
                     }
                 }
