@@ -132,7 +132,7 @@ function startUpload(files){
             let maxStep = {$filePartitionSize};
             console.log('file.size: ',file.size);
             console.log('maxStep: ',maxStep);
-            let steps = Math.floor(file.size / maxStep);
+            let steps = Math.ceil(file.size / maxStep);
             console.log('steps: ',steps);
             let step = file.size / steps;
             console.log('step: ',step);
