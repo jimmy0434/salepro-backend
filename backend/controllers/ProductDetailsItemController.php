@@ -71,7 +71,7 @@ class ProductDetailsItemController extends SController
         return $this->render('index', ['dataLocator' => $dataLocator]);
     }
 
-    public function actionManage($id = null, $type= null)
+    public function actionManage($id = null, $type = null)
     {
         $model = ProductDetailItem::findOne($id);
         if (!$model) {
@@ -94,7 +94,10 @@ class ProductDetailsItemController extends SController
             } else {
                 Log::trace("Update Product Details Item #" . $id);
             }
-            return $this->redirect(['index', 'p' => $this->product->id, 't' => $this->target, 'd'=>$this->detail->id]);
+            if ($isNew || $model->type != ProductDetailItem::TYPE_FILE) {
+                $model->productDetail->product->portfolio->sendNotification();
+            }
+            return $this->redirect(['index', 'p' => $this->product->id, 't' => $this->target, 'd' => $this->detail->id]);
         }
         Log::trace("Open Product Details Item form");
         return $this->render('form', ['model' => $model]);
@@ -115,6 +118,6 @@ class ProductDetailsItemController extends SController
             Log::trace("Product Details Item not found to delete #" . $id);
             \Yii::$app->session->setFlash('error', ucfirst($this->id) . ' not found');
         }
-        return $this->redirect(['index', 'p' => $this->product->id, 't' => $this->target, 'd'=>$this->detail->id]);
+        return $this->redirect(['index', 'p' => $this->product->id, 't' => $this->target, 'd' => $this->detail->id]);
     }
 }
