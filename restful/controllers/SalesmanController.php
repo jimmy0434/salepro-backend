@@ -29,12 +29,12 @@ class SalesmanController extends SController
      *     @SWG\Parameter(name="password", required=true, in="body", @SWG\Schema(type="string"), description="The new password")
      * )
      */
-    public function actionChangePassword(){
+    public function actionChangePassword()
+    {
         /* @var $user User */
         $password = Yii::$app->request->post('password');
         $user = Yii::$app->user->identity;
         $user->setPassword($password);
-        $user->save(false);
-        return ['saved'=>true];
+        return ['saved' => $user->save(false) ? true : false];
     }
 }
