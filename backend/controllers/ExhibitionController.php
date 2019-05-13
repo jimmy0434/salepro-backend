@@ -52,6 +52,7 @@ class ExhibitionController extends SController
             if ($isNew) {
                 Log::trace("Create new exhibition #" . $model->id);
             }else {
+                $model->sendNotification();
                 Log::trace("Update exhibition #" . $id);
             }
             return $this->redirect(['index']);

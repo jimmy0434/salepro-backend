@@ -51,6 +51,7 @@ class MarketResearchController extends SController
             if ($isNew) {
                 Log::trace("Create new market research #" . $model->id);
             }else {
+                $model->sendNotification();
                 Log::trace("Update market research data #" . $id);
             }
             return $this->redirect(['index']);

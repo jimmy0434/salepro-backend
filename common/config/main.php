@@ -141,6 +141,32 @@ return [
                         ],
                     ]), ['class' => 'text-muted', 'data' => ['id' => $data['id']]]);
                 },
+                'market-research-update' => function ($name, $data) {
+                    return Html::tag('div', Html::a($data['message'], [
+                        '/market-research/index',
+                        '_page' => 1,
+                        '_pageSize' => 10,
+                        '_filter' => [
+                            'id' => [
+                                'condition' => '=',
+                                'value' => $data['id'],
+                            ],
+                        ],
+                    ]), ['class' => 'text-muted', 'data' => ['id' => $data['id']]]);
+                },
+                'exhibition-update' => function ($name, $data) {
+                    return Html::tag('div', Html::a($data['message'], [
+                        '/exhibition/index',
+                        '_page' => 1,
+                        '_pageSize' => 10,
+                        '_filter' => [
+                            'id' => [
+                                'condition' => '=',
+                                'value' => $data['id'],
+                            ],
+                        ],
+                    ]), ['class' => 'text-muted', 'data' => ['id' => $data['id']]]);
+                },
             ],
             'template' => function ($content, $notification, $notificationUser) {
                 ob_start();

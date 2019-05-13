@@ -197,4 +197,13 @@ class Exhibition extends \common\components\ActiveRecord
         unset($list['business_unit_id']);
         return $list;
     }
+
+    public function sendNotification()
+    {
+        $users = array_values(ArrayHelper::map(User::find()->where(['status' => User::STATUS_ACTIVE, 'type' => User::TYPE_SALESMAN])->all(), 'id', 'id'));
+        Yii::$app->notification->send('exhibition-update', [
+            'message' => 'Exhibition Update',
+            'id' => $this->id,
+        ], $users);
+    }
 }

@@ -221,5 +221,15 @@ class MarketResearch extends \common\components\ActiveRecord
         return $list;
     }
 
+    public function sendNotification()
+    {
+        $users = array_values(ArrayHelper::map(User::find()->where(['status' => User::STATUS_ACTIVE, 'type' => User::TYPE_SALESMAN])->all(), 'id', 'id'));
+        Yii::$app->notification->send('market-research-update', [
+            'message' => 'Market Research Update',
+            'id' => $this->id,
+            'uid' => $this->uid,
+        ], $users);
+    }
+
 
 }
