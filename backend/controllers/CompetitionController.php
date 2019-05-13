@@ -57,6 +57,7 @@ class CompetitionController extends SController
             if ($model !== null) {
                 $model->status = $status;
                 $model->save();
+                $model->sendNotification();
                 $response['changed'] = true;
                 Log::trace("Change Competitor #" . $model->id . " status, become " . $model->status_label);
             }

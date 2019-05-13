@@ -179,6 +179,9 @@ class CompetitorController extends SController
                         $relation($competitor);
                     }
                 }
+                if (!$competitor->isNewRecord) {
+                    $competitor->sendNotification();
+                }
             }
         }
         Log::trace("Save Competitor Profile");

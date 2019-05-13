@@ -128,6 +128,19 @@ return [
                         ],
                     ]), ['class' => 'text-muted', 'data' => ['id' => $data['id']]]);
                 },
+                'competitor-update' => function ($name, $data) {
+                    return Html::tag('div', Html::a($data['message'], [
+                        '/competition/index',
+                        '_page' => 1,
+                        '_pageSize' => 10,
+                        '_filter' => [
+                            'id' => [
+                                'condition' => '=',
+                                'value' => $data['id'],
+                            ],
+                        ],
+                    ]), ['class' => 'text-muted', 'data' => ['id' => $data['id']]]);
+                },
             ],
             'template' => function ($content, $notification, $notificationUser) {
                 ob_start();

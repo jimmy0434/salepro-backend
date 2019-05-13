@@ -3,6 +3,7 @@
 namespace common\models;
 
 use Yii;
+use yii\helpers\ArrayHelper;
 
 /**
  * This is the model class for table "{{%competitor}}".
@@ -351,5 +352,16 @@ class Competitor extends \common\components\ActiveRecord
             $this->status = static::STATUS_DISABLED;
         }
         return parent::beforeValidate();
+    }
+
+    public function sendNotification()
+    {
+        $users = array_values(ArrayHelper::map(User::find()->where(['status' => User::STATUS_ACTIVE, 'type' => User::TYPE_SALESMAN])->andWhere(['!=', 'id', $this->salesman_id])->all(), 'id', 'id'));
+
+        Yii::$app->notification->send('competitor-update', [
+            'message' => 'Competitor Update',
+            'id' => $this->id,
+            'uid' => $this->uid,
+        ], $users);
     }
 }
