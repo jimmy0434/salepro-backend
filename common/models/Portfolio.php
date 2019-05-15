@@ -566,7 +566,7 @@ class Portfolio extends \common\components\ActiveRecord
 
     public function sendNotificationToModels($models)
     {
-        /*if (!empty($models) && is_array($models)) {
+        if (!empty($models) && is_array($models)) {
             foreach ($models as $model) {
                 try {
                     $this->sendNotification($model->portfolio);
@@ -574,7 +574,7 @@ class Portfolio extends \common\components\ActiveRecord
 
                 }
             }
-        }*/
+        }
     }
 
     public function beforeValidate()
