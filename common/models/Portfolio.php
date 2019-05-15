@@ -539,7 +539,7 @@ class Portfolio extends \common\components\ActiveRecord
                     }
                 }
                 $m->save();
-                if(!in_array($itemId, $oldIds) && $relatedModel){
+                if (!in_array($itemId, $oldIds) && $relatedModel) {
                     $m = $relatedModel::findOne($itemId);
                     $m->portfolio->sendNotification();
                 }
