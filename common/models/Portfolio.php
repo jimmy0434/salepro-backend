@@ -259,8 +259,8 @@ class Portfolio extends \common\components\ActiveRecord
                 Corporate::relateToPortfolio($this->id);
                 $item = $this->item;
                 if ($item) {
-                    $this->assignItems($this->sectorsIds, '\common\models\CorporateSector', 'sector_id', 'corporate_id', $item->id);
-                    $this->assignItems($this->businessUnitIds, '\common\models\CorporateBusinessUnit', 'business_unit_id', 'corporate_id', $item->id);
+                    $this->assignItems($this->sectorsIds, '\common\models\CorporateSector', 'sector_id', 'corporate_id', $item->id, [], '\common\models\Sector');
+                    $this->assignItems($this->businessUnitIds, '\common\models\CorporateBusinessUnit', 'business_unit_id', 'corporate_id', $item->id, [], '\common\models\BusinessUnit');
 
                     $this->sendNotificationToModels($item->sectors);
                     $this->sendNotificationToModels($item->businessUnits);
@@ -270,9 +270,9 @@ class Portfolio extends \common\components\ActiveRecord
                 Brand::relateToPortfolio($this->id);
                 $item = $this->item;
                 if ($item) {
-                    $this->assignItems($this->sectorsIds, '\common\models\SectorBrand', 'sector_id', 'brand_id', $item->id);
-                    $this->assignItems($this->productsIds, '\common\models\ProductBrand', 'product_id', 'brand_id', $item->id);
-                    $this->assignItems($this->businessUnitIds, '\common\models\BrandBusinessUnit', 'business_unit_id', 'brand_id', $item->id);
+                    $this->assignItems($this->sectorsIds, '\common\models\SectorBrand', 'sector_id', 'brand_id', $item->id, [], '\common\models\Sector');
+                    $this->assignItems($this->productsIds, '\common\models\ProductBrand', 'product_id', 'brand_id', $item->id, [], '\common\models\Product');
+                    $this->assignItems($this->businessUnitIds, '\common\models\BrandBusinessUnit', 'business_unit_id', 'brand_id', $item->id, [], '\common\models\BusinessUnit');
 
                     $this->sendNotificationToModels($item->sectors);
                     $this->sendNotificationToModels($item->products);
@@ -283,9 +283,9 @@ class Portfolio extends \common\components\ActiveRecord
                 Sector::relateToPortfolio($this->id);
                 $item = $this->item;
                 if ($item) {
-                    $this->assignItems($this->brandsIds, '\common\models\SectorBrand', 'brand_id', 'sector_id', $item->id);
-                    $this->assignItems($this->productsIds, '\common\models\ProductSector', 'product_id', 'sector_id', $item->id);
-                    $this->assignItems($this->businessUnitIds, '\common\models\SectorBusinessUnit', 'business_unit_id', 'sector_id', $item->id);
+                    $this->assignItems($this->brandsIds, '\common\models\SectorBrand', 'brand_id', 'sector_id', $item->id, [], '\common\models\Brand');
+                    $this->assignItems($this->productsIds, '\common\models\ProductSector', 'product_id', 'sector_id', $item->id, [], '\common\models\Product');
+                    $this->assignItems($this->businessUnitIds, '\common\models\SectorBusinessUnit', 'business_unit_id', 'sector_id', $item->id, [], '\common\models\BusinessUnit');
 
                     $this->sendNotificationToModels($item->brands);
                     $this->sendNotificationToModels($item->products);
@@ -297,9 +297,9 @@ class Portfolio extends \common\components\ActiveRecord
                 Product::relateToPortfolio($this->id);
                 $item = $this->item;
                 if ($item) {
-                    $this->assignItems($this->brandsIds, '\common\models\ProductBrand', 'brand_id', 'product_id', $item->id);
-                    $this->assignItems($this->sectorsIds, '\common\models\ProductSector', 'sector_id', 'product_id', $item->id);
-                    $this->assignItems($this->businessUnitIds, '\common\models\ProductBusinessUnit', 'business_unit_id', 'product_id', $item->id);
+                    $this->assignItems($this->brandsIds, '\common\models\ProductBrand', 'brand_id', 'product_id', $item->id, [], '\common\models\Brand');
+                    $this->assignItems($this->sectorsIds, '\common\models\ProductSector', 'sector_id', 'product_id', $item->id, [], '\common\models\Sector');
+                    $this->assignItems($this->businessUnitIds, '\common\models\ProductBusinessUnit', 'business_unit_id', 'product_id', $item->id, [], '\common\models\BusinessUnit');
                     $this->assignItems($this->certificationsIds, '\common\models\ProductCertification', 'certification_id', 'product_id', $item->id);
 
                     $this->sendNotificationToModels($item->brands);
@@ -516,11 +516,13 @@ class Portfolio extends \common\components\ActiveRecord
         return null;
     }
 
-    protected function assignItems($items, $targetModel, $relationId, $byId, $byValue, $extraParams = [])
+    protected function assignItems($items, $targetModel, $relationId, $byId, $byValue, $extraParams = [], $relatedModel = null)
     {
+        $oldIds = [];
         $old = $targetModel::find()->where([$byId => $byValue])->all();
         if (!empty($old) && is_array($old)) {
             foreach ($old as $m) {
+                $oldIds[] = $m->$relationId;
                 $m->delete();
             }
         }
@@ -537,6 +539,19 @@ class Portfolio extends \common\components\ActiveRecord
                     }
                 }
                 $m->save();
+                if(!in_array($itemId, $oldIds) && $relatedModel){
+                    $m = $relatedModel::findOne($itemId);
+                    $m->portfolio->sendNotification();
+                }
+            }
+        }
+        if ($relatedModel) {
+            $updates = array_diff($oldIds, $items);
+            if (!empty($updates) && is_array($updates)) {
+                foreach ($updates as $updatedId) {
+                    $m = $relatedModel::findOne($updatedId);
+                    $m->portfolio->sendNotification();
+                }
             }
         }
     }
@@ -566,7 +581,7 @@ class Portfolio extends \common\components\ActiveRecord
 
     public function sendNotificationToModels($models)
     {
-        if (!empty($models) && is_array($models)) {
+        /*if (!empty($models) && is_array($models)) {
             foreach ($models as $model) {
                 try {
                     $this->sendNotification($model->portfolio);
@@ -574,7 +589,7 @@ class Portfolio extends \common\components\ActiveRecord
 
                 }
             }
-        }
+        }*/
     }
 
     public function beforeValidate()
