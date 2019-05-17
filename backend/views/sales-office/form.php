@@ -34,7 +34,7 @@ $form = ActiveForm::begin(['id' => Yii::$app->controller->id . '-form']);
         <div class="panel-body">
             <?= $form->field($model, 'id')->hiddenInput()->label(false) ?>
             <?= $form->field($model, 'name')->textInput() ?>
-            <?= $form->field($model, 'position')->textInput(['type' => 'number', 'min' => 0]) ?>
+            <?php //echo $form->field($model, 'position')->textInput(['type' => 'number', 'min' => 0]); ?>
             <?= $form->field($model, 'region')->dropDownList(DataList::dropDownList(DataList::TYPE_REGION)) ?>
             <?= $form->field($model, 'content')->editorInput() ?>
         </div>

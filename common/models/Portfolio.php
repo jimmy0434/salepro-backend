@@ -228,7 +228,7 @@ class Portfolio extends \common\components\ActiveRecord
      */
     public function getSalesOffices()
     {
-        return $this->hasMany(SalesOffice::className(), ['id' => 'sales_office_id'])->orderBy(['position' => SORT_ASC])->via('portfolioSalesOffices');
+        return $this->hasMany(SalesOffice::className(), ['id' => 'sales_office_id'])->via('portfolioSalesOffices');
     }
 
     /**
