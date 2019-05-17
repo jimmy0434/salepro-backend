@@ -45,15 +45,15 @@ class ExhibitionController extends SController
         $isNew = $model->isNewRecord;
         if ($model->load(\Yii::$app->request->post()) && $model->validate()) {
             if ($model->save()) {
+                if ($isNew) {
+                    Log::trace("Create new exhibition #" . $model->id);
+                }else {
+                    Log::trace("Update exhibition #" . $id);
+                }
+                $model->sendNotification();
                 \Yii::$app->session->setFlash('success', ucfirst($this->id) . ' saved successfully');
             } else {
                 \Yii::$app->session->setFlash('error', ucfirst($this->id) . ' not saved');
-            }
-            if ($isNew) {
-                Log::trace("Create new exhibition #" . $model->id);
-            }else {
-                $model->sendNotification();
-                Log::trace("Update exhibition #" . $id);
             }
             return $this->redirect(['index']);
         }
@@ -67,6 +67,7 @@ class ExhibitionController extends SController
         if ($model !== null) {
             if ($model->delete()) {
                 Log::trace("Exhibition deleted #" . $id);
+                $model->sendNotification();
                 \Yii::$app->session->setFlash('success', ucfirst($this->id) . ' deleted successfully');
             } else {
                 Log::trace("Exhibition not deleted #" . $id);

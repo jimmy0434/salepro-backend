@@ -44,15 +44,15 @@ class MarketResearchController extends SController
         $isNew = $model->isNewRecord;
         if ($model->load(\Yii::$app->request->post()) && $model->validate()) {
             if ($model->save()) {
+                if ($isNew) {
+                    Log::trace("Create new market research #" . $model->id);
+                }else {
+                    Log::trace("Update market research data #" . $id);
+                }
+                $model->sendNotification();
                 \Yii::$app->session->setFlash('success', ucfirst($this->id) . ' saved successfully');
             } else {
                 \Yii::$app->session->setFlash('error', ucfirst($this->id) . ' not saved');
-            }
-            if ($isNew) {
-                Log::trace("Create new market research #" . $model->id);
-            }else {
-                $model->sendNotification();
-                Log::trace("Update market research data #" . $id);
             }
             return $this->redirect(['index']);
         }
@@ -65,6 +65,7 @@ class MarketResearchController extends SController
         if ($model !== null) {
             if ($model->delete()) {
                 Log::trace("Market research deleted #" . $id);
+                $model->sendNotification();
                 \Yii::$app->session->setFlash('success', ucfirst($this->id) . ' deleted successfully');
             } else {
                 Log::trace("Market research not deleted #" . $id);
