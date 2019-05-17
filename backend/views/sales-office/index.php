@@ -59,6 +59,15 @@ $dv = new DataView([
                 return $data->region;
             },
         ],
+        'position' => [
+            'label' => 'Position',
+            'value' => function ($attribute, $data, $view) use ($dataLocator) {
+                assert($attribute instanceof Attribute);
+                assert($data instanceof SalesOffice);
+                assert($view instanceof DataViewLocator);
+                return $data->position;
+            },
+        ],
         'updated_at' => [
             'label' => 'Last Modification',
             'value' => function ($attribute, $data, $view) {
@@ -101,6 +110,9 @@ $dv->addView('grid', [
             'sortable' => true,
         ],
         'region' => [
+            'sortable' => true,
+        ],
+        'position' => [
             'sortable' => true,
         ],
         'updated_at' => [

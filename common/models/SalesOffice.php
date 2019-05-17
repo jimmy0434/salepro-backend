@@ -11,6 +11,7 @@ use Yii;
  * @property string $name
  * @property string $content
  * @property string $region
+ * @property int $position
  * @property int $created_at
  * @property int $updated_at
  *
@@ -34,6 +35,7 @@ class SalesOffice extends \common\components\ActiveRecord
         return array_merge(parent::rules(), [
             [['content'], 'string'],
             [['name'], 'string', 'max' => 255],
+            [['position'], 'number', 'min' => 0, 'integerOnly' => true],
         ]);
     }
 
