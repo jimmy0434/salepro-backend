@@ -65,4 +65,22 @@ class CompetitionController extends SController
         }
         return $this->redirect(['index']);
     }
+
+    public function actionDelete($id)
+    {
+        $model = Competitor::find()->where(['id' => $id])->one();
+        if ($model !== null) {
+            if ($model->delete()) {
+                Log::trace("Competitor deleted #" . $id);
+                Yii::$app->session->setFlash('success', ucfirst($this->id) . ' deleted successfully');
+            } else {
+                Log::trace("Competitor not deleted #" . $id);
+                Yii::$app->session->setFlash('error', ucfirst($this->id) . ' not deleted');
+            }
+        } else {
+            Log::trace("Competitor not found to delete #" . $id);
+            Yii::$app->session->setFlash('error', ucfirst($this->id) . ' not found');
+        }
+        return $this->redirect(['index']);
+    }
 }

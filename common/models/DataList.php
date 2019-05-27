@@ -23,7 +23,9 @@ class DataList extends \common\components\ActiveRecord
 
     const TYPE_COUNTRY = 1;
     const TYPE_REGION = 2;
-    const TYPE_PRODUCT_TYPE = 3;
+    const TYPE_PRODUCT_TYPE_FLEXIBLE_PACKAGING = 3;
+    const TYPE_PRODUCT_TYPE_RIGID_PACKAGING_PRODUCTS = 24;
+    const TYPE_PRODUCT_TYPE_MB_COMPOUNDING_PRODUCTS = 25;
     const TYPE_COMPANY_PROFILE = 4;
     const TYPE_POSITION = 5;
     const TYPE_YEAR = 6;
@@ -44,6 +46,10 @@ class DataList extends \common\components\ActiveRecord
     const TYPE_RAW_MATERIAL = 21;
     const TYPE_PRICE_UNIT = 22;
     const TYPE_INK_TYPE = 23;
+    const TYPE_QUALITY = 26;
+    const TYPE_BRAND_EQUITY = 27;
+    const TYPE_PROBLEM_SOLVING_RESPONSE = 28;
+    const TYPE_MARKET_DOMINANCE = 29;
 
     public static function listRelations()
     {

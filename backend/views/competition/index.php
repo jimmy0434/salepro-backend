@@ -87,6 +87,12 @@ $dv = new DataView([
             }
             return null;
         },
+        function ($row) use ($context) {
+            if (Yii::$app->permission->can('/competition/delete')) {
+                return Html::a('Delete', Url::to(['delete', 'id' => $row->id]), ['class' => 'btn btn-danger', 'data-confirm' => 'Are You Sure?']);
+            }
+            return null;
+        },
     ]
 ]);
 $dv->addView('grid', [
@@ -141,7 +147,7 @@ if(Yii::$app->permission->can('/competition/status')){
                     element.prop('disabled',false);
                 }
             });
-        });        
+        });
 JS;
     $this->registerJs($script);
 }
