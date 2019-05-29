@@ -545,7 +545,7 @@ class Portfolio extends \common\components\ActiveRecord
                 }
             }
         }
-        if ($relatedModel) {
+        if ($relatedModel && is_array($oldIds) && is_array($items)) {
             $updates = array_diff($oldIds, $items);
             if (!empty($updates) && is_array($updates)) {
                 foreach ($updates as $updatedId) {
