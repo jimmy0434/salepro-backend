@@ -54,7 +54,7 @@ class DataList extends \common\components\ActiveRecord
     public static function listRelations()
     {
         return [
-            static::TYPE_LINE_BRAND => static::TYPE_PRODUCTION_LINE,
+             static::TYPE_PRODUCTION_LINE => static::TYPE_LINE_BRAND,
         ];
     }
 
