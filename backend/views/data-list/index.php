@@ -29,10 +29,10 @@ assert($context instanceof DataListController);
 $this->title = "Data List Management | " . Inflector::pluralize($context->types[$context->type]);
 
 $children = [];
-if ($context->type == DataList::TYPE_LINE_BRAND) {
+if ($context->type == DataList::TYPE_PRODUCTION_LINE) {
     $children[] = function ($row) use ($context) {
         if (Yii::$app->permission->can('/data-list/index')) {
-            return Html::a('Production Lines', Url::to(['index', 't' => DataList::TYPE_PRODUCTION_LINE, 'u' => $row->id]), ['class' => 'btn btn-warning']);
+            return Html::a('Brands', Url::to(['index', 't' => DataList::TYPE_LINE_BRAND, 'u' => $row->id]), ['class' => 'btn btn-warning']);
         }
         return null;
     };
@@ -116,9 +116,9 @@ $dv->addView('grid', [
         <div class="list-group">
             <?php
             foreach ($context->types as $value => $label) {
-                if ($value != DataList::TYPE_PRODUCTION_LINE) {
+                if ($value != DataList::TYPE_LINE_BRAND) {
                     echo Html::a($label, ['index', 't' => $value], ['class' => 'list-group-item' . ($value == $context->type ? ' active' : '')]);
-                }else if($value == DataList::TYPE_PRODUCTION_LINE && $context->type == DataList::TYPE_PRODUCTION_LINE){
+                }else if($value == DataList::TYPE_LINE_BRAND && $context->type == DataList::TYPE_LINE_BRAND){
                     echo Html::tag('div', $label, ['class'=>'list-group-item active']);
                 }
             }

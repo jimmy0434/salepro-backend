@@ -31,8 +31,8 @@ class DataList extends \common\components\ActiveRecord
     const TYPE_YEAR = 6;
     const TYPE_ANNUAL_SALES_REVENUE = 7;
     const TYPE_NUMBER_OF_EMPLOYEES = 8;
-    const TYPE_LINE_BRAND = 9;
-    const TYPE_PRODUCTION_LINE = 10;
+    const TYPE_PRODUCTION_LINE = 9;
+    const TYPE_LINE_BRAND = 10;
     const TYPE_QUANTITY_UNIT = 11;
     const TYPE_SOCIAL_MEDIA = 12;
     const TYPE_CERTIFICATIONS = 13;
