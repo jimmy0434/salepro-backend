@@ -79,11 +79,11 @@ class DataController extends SController
         if (!empty($list) && is_array($list)) {
             foreach ($list as $model) {
                 $label = $model->type_label;
-                if($model->type == DataList::TYPE_LINE_BRAND){
+                /*if($model->type == DataList::TYPE_LINE_BRAND){
                     $label = $model->type_list[DataList::TYPE_PRODUCTION_LINE];
                 }else if($model->type == DataList::TYPE_PRODUCTION_LINE){
                     $label = $model->type_list[DataList::TYPE_LINE_BRAND];
-                }
+                }*/
                 $key = lcfirst(Inflector::id2camel($label, '_'));
                 if (!isset($result[$key])) {
                     $result[$key] = [];
