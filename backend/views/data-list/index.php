@@ -37,6 +37,14 @@ if ($context->type == DataList::TYPE_PRODUCTION_LINE) {
         return null;
     };
 }
+if ($context->type == DataList::TYPE_RAW_MATERIAL) {
+    $children[] = function ($row) use ($context) {
+        if (Yii::$app->permission->can('/data-list/index')) {
+            return Html::a('Suppliers', Url::to(['index', 't' => DataList::TYPE_SUPPLIER, 'u' => $row->id]), ['class' => 'btn btn-warning']);
+        }
+        return null;
+    };
+}
 
 $dv = new DataView([
     'dataLocator' => $dataLocator,

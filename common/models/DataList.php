@@ -55,6 +55,7 @@ class DataList extends \common\components\ActiveRecord
     {
         return [
              static::TYPE_PRODUCTION_LINE => static::TYPE_LINE_BRAND,
+             static::TYPE_RAW_MATERIAL => static::TYPE_SUPPLIER,
         ];
     }
 

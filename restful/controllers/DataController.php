@@ -63,7 +63,7 @@ class DataController extends SController
         $emptyList = [];
         if (!empty($types) && is_array($types)) {
             foreach ($types as $value => $name) {
-                if (!in_array($value, [DataList::TYPE_PRODUCTION_LINE])) {
+                if (!in_array($value, [DataList::TYPE_LINE_BRAND, DataList::TYPE_SUPPLIER])) {
                     $key = lcfirst(Inflector::id2camel($name, '_'));
                     $emptyList[$key] = [];
                 }
