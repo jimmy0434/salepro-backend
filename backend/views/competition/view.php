@@ -50,12 +50,6 @@ $na = "N/A";
                             <?php
                             if ($model->file) {
                                 $fileExt = strtolower($model->file_ext);
-                                /*$prefix = '';
-                                if (in_array($ext, ['pdf'])) {
-                                    $prefix = 'application/' . $ext;
-                                } else if (in_array($ext, ['jpg', 'jpeg', 'png', 'tiff', 'exif', 'gif', 'bmp', 'ppm', 'pgm', 'pbm', 'pnm'])) {
-                                    $prefix = 'image/' . $ext;
-                                }*/
                                 echo Html::a('Click To Download File', 'data:'.mimeType($fileExt).';base64,'.$model->file, ['target' => '_blank', 'class' => 'text-navy']);
                             }
                             ?>
