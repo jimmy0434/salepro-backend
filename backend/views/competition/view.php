@@ -42,7 +42,7 @@ $na = "N/A";
                             <?php
                             if ($model->logo) {
                                 $logoExt = strtolower($model->logo_ext);
-                                echo Html::img('data:/' . mime_content_type('demo.'.$logoExt) . ';base64,' . $model->logo, ['class' => 'img-responsive', 'style' => 'max-width:100%;']);
+                                echo Html::img('data:/' . _mime_content_type('demo.'.$logoExt) . ';base64,' . $model->logo, ['class' => 'img-responsive', 'style' => 'max-width:100%;']);
                             }
                             ?>
                         </td>
@@ -56,7 +56,7 @@ $na = "N/A";
                                 } else if (in_array($ext, ['jpg', 'jpeg', 'png', 'tiff', 'exif', 'gif', 'bmp', 'ppm', 'pgm', 'pbm', 'pnm'])) {
                                     $prefix = 'image/' . $ext;
                                 }*/
-                                echo Html::a('Click To Download File', 'data:'.mime_content_type('demo.'.$fileExt).';base64,'.$model->file, ['target' => '_blank', 'class' => 'text-navy']);
+                                echo Html::a('Click To Download File', 'data:'._mime_content_type('demo.'.$fileExt).';base64,'.$model->file, ['target' => '_blank', 'class' => 'text-navy']);
                             }
                             ?>
                         </td>
@@ -825,4 +825,14 @@ if (!empty($model->competitorMasterbatch) && is_array($model->competitorMasterba
     </div>
     <?php
 }
-?>
+
+function _mime_content_type($filename) {
+    $result = new finfo();
+
+    if (is_resource($result) === true) {
+        return $result->file($filename, FILEINFO_MIME_TYPE);
+    }
+
+    return false;
+}
+
