@@ -21,7 +21,7 @@ $context = $this->context;
 assert($view instanceof View);
 assert($context instanceof CompetitionController);
 
-$this->title = $model->name.' Profile';
+$this->title = $model->name . ' Profile';
 
 $na = "N/A";
 
@@ -35,20 +35,28 @@ $na = "N/A";
             <table class="table" style="table-layout:fixed;">
                 <tbody>
                 <?php
-                if($model->logo || $model->file) {
+                if ($model->logo || $model->file) {
                     ?>
                     <tr>
                         <td>
                             <?php
                             if ($model->logo) {
-                                echo Html::img($model->logo, ['class' => 'img-responsive', 'style' => 'max-width:100%;']);
+                                $logoExt = strtolower($model->logo_ext);
+                                echo Html::img('data:/' . mime_content_type('demo.'.$logoExt) . ';base64,' . $model->logo, ['class' => 'img-responsive', 'style' => 'max-width:100%;']);
                             }
                             ?>
                         </td>
                         <td>
                             <?php
                             if ($model->file) {
-                                echo Html::a('Click To Download File', $model->file, ['target' => '_blank', 'class' => 'text-navy']);
+                                $fileExt = strtolower($model->file_ext);
+                                /*$prefix = '';
+                                if (in_array($ext, ['pdf'])) {
+                                    $prefix = 'application/' . $ext;
+                                } else if (in_array($ext, ['jpg', 'jpeg', 'png', 'tiff', 'exif', 'gif', 'bmp', 'ppm', 'pgm', 'pbm', 'pnm'])) {
+                                    $prefix = 'image/' . $ext;
+                                }*/
+                                echo Html::a('Click To Download File', 'data:'.mime_content_type('demo.'.$fileExt).';base64,'.$model->file, ['target' => '_blank', 'class' => 'text-navy']);
                             }
                             ?>
                         </td>
