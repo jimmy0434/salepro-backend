@@ -114,6 +114,8 @@ class Bootstrap implements BootstrapInterface
             ]
         );
 
+        Yii::$app->urlManager->addRules(['/notifications/latest' => '/data/waiting-notifications'], false);
+
         $app->user->on(\yii\web\User::EVENT_BEFORE_LOGIN, ['common\models\User', 'beforeLogin']);
 
     }

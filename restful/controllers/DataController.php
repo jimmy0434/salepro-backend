@@ -11,6 +11,7 @@
 namespace restful\controllers;
 
 
+use cnd\notification\models\NotificationUser;
 use Yii;
 use cnd\admin\models\activerecords\Log;
 use cnd\admin\models\activerecords\Setting;
@@ -167,5 +168,27 @@ class DataController extends SController
         }
         $this->error('`message` parameter is required');
         return null;
+    }
+
+    public function actionWaitingNotifications()
+    {
+        $query = NotificationUser::find();
+        $query->orderBy(['date' => SORT_DESC]);
+        $query->andWhere(['user_id' => Yii::$app->user->identity->id, 'status' => NotificationUser::STATUS_SENT]);
+        $list = $query->all();
+        $response = [
+            'count' => count($list),
+            'notReadCount' => 0,
+            'items' => [],
+        ];
+        if (!empty($list) && is_array($list)) {
+            foreach ($list AS $l) {
+                if ($l->status === NotificationUser::STATUS_SENT) {
+                    $response['notReadCount']++;
+                }
+                $response['items'][] = $l;
+            }
+        }
+        return $response;
     }
 }
