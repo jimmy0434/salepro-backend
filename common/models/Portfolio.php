@@ -490,6 +490,9 @@ class Portfolio extends \common\components\ActiveRecord
                 break;
             case static::TARGET_BUSINESS_UNIT:
                 $data['certifications'] = $this->businessUnit ? $this->businessUnit->certifications : null;
+                $data['brands'] = $this->manyToManyPortfolio($this->businessUnit->brands);
+                $data['sectors'] = $this->manyToManyPortfolio($this->businessUnit->sectors);
+                $data['products'] = $this->manyToManyPortfolio($this->businessUnit->products);
                 break;
         }
         return $data;
