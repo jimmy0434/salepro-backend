@@ -135,7 +135,7 @@ class Search extends \common\components\ActiveRecord
         $t = explode('-', $this->target);
         if (isset($t[0])) {
             $list['target'] = [
-                'type' => $t[0] == "portfolio" ? strtolower($this->portfolio->target_label) : $t[0],
+                'type' => $t[0] == "portfolio" && $this->portfolio ? strtolower($this->portfolio->target_label) : $t[0],
                 'uid' => $this->target,
             ];
         }
