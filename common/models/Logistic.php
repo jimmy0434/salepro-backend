@@ -3,6 +3,7 @@
 namespace common\models;
 
 use Yii;
+use yii\helpers\ArrayHelper;
 use yii\helpers\Json;
 
 /**
@@ -120,5 +121,14 @@ class Logistic extends \common\components\ActiveRecord
         $list['file'] = $this->file;
         $list['image'] = $this->imageFactory->url;
         return $list;
+    }
+
+    public function sendNotification()
+    {
+        $users = array_values(ArrayHelper::map(User::find()->where(['status' => User::STATUS_ACTIVE, 'type' => User::TYPE_SALESMAN])->all(), 'id', 'id'));
+        Yii::$app->notification->send('logistic-update', [
+            'message' => 'Logistic Update',
+            'id' => $this->id,
+        ], $users);
     }
 }

@@ -167,6 +167,32 @@ return [
                         ],
                     ]), ['class' => 'text-muted', 'data' => ['id' => $data['id']]]);
                 },
+                'sustainability-update' => function ($name, $data) {
+                    return Html::tag('div', Html::a($data['message'], [
+                        '/sustainability/index',
+                        '_page' => 1,
+                        '_pageSize' => 10,
+                        '_filter' => [
+                            'id' => [
+                                'condition' => '=',
+                                'value' => $data['id'],
+                            ],
+                        ],
+                    ]), ['class' => 'text-muted', 'data' => ['id' => $data['id']]]);
+                },
+                'logistic-update' => function ($name, $data) {
+                    return Html::tag('div', Html::a($data['message'], [
+                        '/logistic/index',
+                        '_page' => 1,
+                        '_pageSize' => 10,
+                        '_filter' => [
+                            'id' => [
+                                'condition' => '=',
+                                'value' => $data['id'],
+                            ],
+                        ],
+                    ]), ['class' => 'text-muted', 'data' => ['id' => $data['id']]]);
+                },
             ],
             'template' => function ($content, $notification, $notificationUser) {
                 ob_start();

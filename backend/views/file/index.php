@@ -91,13 +91,6 @@ $dv = new DataView([
             }
             return null;
         },
-        function ($row) {
-            if (Yii::$app->permission->can('/cms/content/manage')) {
-                $c = Yii::$app->cms->getId('cms.category.defaultFileCategory');
-                return Html::a('Content', Url::to(['/cms/content/manage','id' => $row->content_id,'c'=>$c,'s'=>'file-'.$row->id]), ['class' => 'btn bg-purple','target'=>'_blank']);
-            }
-            return null;
-        },
         function ($row){
             if (Yii::$app->permission->can('/file/manage-meta-data')) {
                 return Html::a('Edit', Url::to(['manage-meta-data', 'id' => $row->id]), ['class' => 'btn btn-info']);

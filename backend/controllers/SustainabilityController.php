@@ -71,13 +71,14 @@ class SustainabilityController extends SController
         if ($model->load(\Yii::$app->request->post()) && $model->validate()) {
             if ($model->save()) {
                 \Yii::$app->session->setFlash('success', ucfirst($this->id) . ' saved successfully');
+                $model->sendNotification();
+                if ($isNew) {
+                    Log::trace("Create new Sustainability #" . $model->id);
+                }else {
+                    Log::trace("Update Sustainability #" . $id);
+                }
             } else {
                 \Yii::$app->session->setFlash('error', ucfirst($this->id) . ' not saved');
-            }
-            if ($isNew) {
-                Log::trace("Create new Sustainability #" . $model->id);
-            }else {
-                Log::trace("Update Sustainability #" . $id);
             }
             return $this->redirect(['index','t'=>$this->type]);
         }
@@ -91,6 +92,7 @@ class SustainabilityController extends SController
         if ($model !== null) {
             if ($model->delete()) {
                 Log::trace("Sustainability deleted #" . $id);
+                $model->sendNotification();
                 \Yii::$app->session->setFlash('success', ucfirst($this->id) . ' deleted successfully');
             } else {
                 Log::trace("Sustainability not deleted #" . $id);

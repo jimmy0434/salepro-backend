@@ -78,13 +78,14 @@ class LogisticController extends SController
         if ($model->load(\Yii::$app->request->post()) && $model->validate()) {
             if ($model->save()) {
                 \Yii::$app->session->setFlash('success', ucfirst($this->id) . ' saved successfully');
+                $model->sendNotification();
+                if ($isNew) {
+                    Log::trace("Create new logistic #" . $model->id);
+                } else {
+                    Log::trace("Update logistic #" . $id);
+                }
             } else {
                 \Yii::$app->session->setFlash('error', ucfirst($this->id) . ' not saved');
-            }
-            if ($isNew) {
-                Log::trace("Create new logistic #" . $model->id);
-            } else {
-                Log::trace("Update logistic #" . $id);
             }
             return $this->redirect(['index', 'c' => $this->category]);
         }
@@ -98,6 +99,7 @@ class LogisticController extends SController
         if ($model !== null) {
             if ($model->delete()) {
                 Log::trace("logistic deleted #" . $id);
+                $model->sendNotification();
                 \Yii::$app->session->setFlash('success', ucfirst($this->id) . ' deleted successfully');
             } else {
                 Log::trace("logistic not deleted #" . $id);
