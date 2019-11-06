@@ -200,10 +200,13 @@ class PortfolioController extends SController
             $status = Yii::$app->request->post('status');
             $model = Portfolio::findOne($id);
             if ($model !== null) {
-                $model->status = $status;
-                $model->save();
-                $response['changed'] = true;
-                Log::trace("Change Portfolio #" . $model->id . " status, become " . $model->status_label);
+				$table = Portfolio::getTableSchema()->name;
+				$sql = <<< SQL
+	UPDATE `{$table}` SET `status` = "{$status}" WHERE `id` = {$id}			
+SQL;
+				Yii::$app->db->createCommand($sql)->execute();
+				$response['changed'] = true;
+				Log::trace("Change Portfolio #" . $model->id . " status, become " . $model->status_label);
             }
             return $response;
         }
