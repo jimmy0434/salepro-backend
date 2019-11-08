@@ -94,9 +94,9 @@ class ProductDetailsItemController extends SController
             } else {
                 Log::trace("Update Product Details Item #" . $id);
             }
-            if (/*$isNew || */$model->type != ProductDetailItem::TYPE_FILE) {
+            //if ($isNew || $model->type != ProductDetailItem::TYPE_FILE) {
                 $model->productDetail->product->portfolio->sendNotification();
-            }
+            //}
             return $this->redirect(['index', 'p' => $this->product->id, 't' => $this->target, 'd' => $this->detail->id]);
         }
         Log::trace("Open Product Details Item form");
