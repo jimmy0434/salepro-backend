@@ -38,7 +38,8 @@
     "npm-asset/xml-js": "*",
     "npm-asset/vue-constants": "*",
     "npm-asset/localforage": "*",
-    "yii2mod/yii2-swagger": "*"
+    "yii2mod/yii2-swagger": "*",
+    "mihaildev/yii2-ckeditor": "^1.0"
   },
   "require-dev": {
     "yiisoft/yii2-debug": "~2.0.0",
@@ -53,10 +54,7 @@
       "enabled": true
     },
     "bitbucket-oauth": {
-      "bitbucket.org": {
-        "consumer-key": "SQfTAZXBraqrfn5yR4",
-        "consumer-secret": "ZuwwYaprptr7JjF7PEQvsm5XRzdVXmWk"
-      }
+
     },
     "github-oauth": {
       "github.com": "1543cc3fccbada7c658fb9c81ee732d9d54a182e"
