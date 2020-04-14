@@ -377,7 +377,7 @@ if (!empty($model->competitorFlexible) && is_array($model->competitorFlexible)) 
                         </tr>
                         <tr>
                             <th>Sector</th>
-                            <td colspan="3"><?= $m->sector && $m->sector->portfolio ? $m->sector->portfolio->name : $na ?></td>
+                            <td colspan="3"><?= $m->sector ? $m->sector : $na ?></td>
                         </tr>
                         <tr>
                             <th>Quantity Sold/Year</th>
@@ -530,7 +530,7 @@ if (!empty($model->competitorPackaging) && is_array($model->competitorPackaging)
                         </tr>
                         <tr>
                             <th>Sector</th>
-                            <td colspan="3"><?= $m->sector && $m->sector->portfolio ? $m->sector->portfolio->name : $na ?></td>
+                            <td colspan="3"><?= $m->sector ? $m->sector : $na ?></td>
                         </tr>
                         <tr>
                             <th>Quantity Sold/Year</th>
@@ -693,7 +693,7 @@ if (!empty($model->competitorMasterbatch) && is_array($model->competitorMasterba
                         </tr>
                         <tr>
                             <th>Sector</th>
-                            <td colspan="3"><?= $m->sector && $m->sector->portfolio ? $m->sector->portfolio->name : $na ?></td>
+                            <td colspan="3"><?= $m->sector  ? $m->sector : $na ?></td>
                         </tr>
                         <tr>
                             <th>Quantity Sold/Year</th>

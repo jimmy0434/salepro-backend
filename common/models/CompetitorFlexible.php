@@ -10,7 +10,7 @@ use Yii;
  * @property int $id
  * @property int $competitor_id
  * @property string $product_type
- * @property int $sector_id
+ //* @property int $sector_id
  * @property string $quantity_sold
  * @property string $quantity_unit
  * @property string $thickness
@@ -27,9 +27,10 @@ use Yii;
  * @property string $currency
  * @property int $created_at
  * @property int $updated_at
+ * @property string $sector
  *
  * @property Competitor $competitor
- * @property Sector $sector
+ //* @property Sector $sector
  */
 class CompetitorFlexible extends \common\components\ActiveRecord
 {
@@ -47,10 +48,11 @@ class CompetitorFlexible extends \common\components\ActiveRecord
     public function rules()
     {
         return array_merge(parent::rules(), [
-            [['competitor_id', 'sector_id', 'embossed', 'perforated'], 'integer'],
+            //[['competitor_id', 'sector_id', 'embossed', 'perforated'], 'integer'],
+            [['competitor_id', 'embossed', 'perforated'], 'integer'],
             //[['product_type', 'quantity_sold', 'quantity_unit', 'thickness', 'width', 'color', 'printing_colors_number', 'core_id', 'business_terms', 'incoterms', 'payment', 'price', 'currency'], 'string', 'max' => 255],
            [['competitor_id'], 'exist', 'skipOnError' => true, 'targetClass' => Competitor::className(), 'targetAttribute' => ['competitor_id' => 'id']],
-            [['sector_id'], 'exist', 'skipOnError' => true, 'targetClass' => Sector::className(), 'targetAttribute' => ['sector_id' => 'id']],
+           // [['sector_id'], 'exist', 'skipOnError' => true, 'targetClass' => Sector::className(), 'targetAttribute' => ['sector_id' => 'id']],
         ]);
     }
 
@@ -63,7 +65,7 @@ class CompetitorFlexible extends \common\components\ActiveRecord
             'id' => 'ID',
             'competitor_id' => 'Competitor ID',
             'product_type' => 'Product Type',
-            'sector_id' => 'Sector ID',
+            //'sector_id' => 'Sector ID',
             'quantity_sold' => 'Quantity Sold',
             'quantity_unit' => 'Quantity Unit',
             'thickness' => 'Thickness',
@@ -80,6 +82,7 @@ class CompetitorFlexible extends \common\components\ActiveRecord
             'currency' => 'Currency',
             'created_at' => 'Created At',
             'updated_at' => 'Updated At',
+            'sector' => 'Sector',
         ];
     }
 
@@ -97,12 +100,12 @@ class CompetitorFlexible extends \common\components\ActiveRecord
     }
 
     /**
-     * @return \yii\db\ActiveQuery
+//     * @return \yii\db\ActiveQuery
      */
-    public function getSector()
-    {
-        return $this->hasOne(Sector::className(), ['id' => 'sector_id']);
-    }
+ //   public function getSector()
+ //   {
+ //       return $this->hasOne(Sector::className(), ['id' => 'sector_id']);
+ //   }
 
     /**
      * {@inheritdoc}

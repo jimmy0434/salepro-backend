@@ -308,21 +308,21 @@ class Competitor extends \common\components\ActiveRecord
         if (!empty($list['competitorFlexible']) && is_array($list['competitorFlexible'])) {
             foreach ($list['competitorFlexible'] as $model) {
                 $productTypes[] = $model->product_type;
-                $sectors[] = $model->sector && $model->sector->portfolio ? $model->sector->portfolio->uid : null;
+                $sectors[] = $model->sector;// && $model->sector->portfolio ? $model->sector->portfolio->uid : null;
             }
         }
 
         if (!empty($list['competitorMasterbatch']) && is_array($list['competitorMasterbatch'])) {
             foreach ($list['competitorMasterbatch'] as $model) {
                 $productTypes[] = $model->product_type;
-                $sectors[] = $model->sector && $model->sector->portfolio ? $model->sector->portfolio->uid : null;
+                $sectors[] = $model->sector; // && $model->sector->portfolio ? $model->sector->portfolio->uid : null;
             }
         }
 
         if (!empty($list['competitorPackaging']) && is_array($list['competitorPackaging'])) {
             foreach ($list['competitorPackaging'] as $model) {
                 $productTypes[] = $model->product_type;
-                $sectors[] = $model->sector && $model->sector->portfolio ? $model->sector->portfolio->uid : null;
+                $sectors[] = $model->sector; // && $model->sector->portfolio ? $model->sector->portfolio->uid : null;
             }
         }
 
