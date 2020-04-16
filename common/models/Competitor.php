@@ -308,7 +308,7 @@ class Competitor extends \common\components\ActiveRecord
 
     public function sendNotificationEmail($isNewCompetitor)
     {
-        Log::trace("Send Notification Emails to admin and user");
+        Log::trace("Send Notification e-mails to admin and user");
         $this->composeNotificationEmail($isNewCompetitor, true);
         $this->composeNotificationEmail($isNewCompetitor, false);
     }

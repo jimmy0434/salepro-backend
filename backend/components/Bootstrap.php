@@ -29,7 +29,7 @@ class Bootstrap implements BootstrapInterface
         $userSection = $data->section('Users');
         $userSection->item('Salesman', ['/salesman/index'], 2);
         $userSection->item('Groups', ['/group/index'], 3);
-
+        $userSection->item('App usage', ['/app-usage/index'], 4);
 
         $navigator = MenuManager::block('Navigator', 10000);
         $navigator->item('Portfolio Management', ['/portfolio/index'], 'fa fa-database', 5);

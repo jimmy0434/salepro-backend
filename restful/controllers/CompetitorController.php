@@ -186,7 +186,7 @@ class CompetitorController extends SController
                 }
             }
         }
-        Log::trace("Save Competitor Profile");
+        Log::trace("Save Competitor Profile ".$competitor->name);
         return ['competitor' => $competitor];
     }
 

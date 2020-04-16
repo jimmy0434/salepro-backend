@@ -163,7 +163,8 @@ class DataController extends SController
     {
         $message = Yii::$app->request->post('message');
         if ($message) {
-            Log::trace($message);
+            //Log::trace($message);
+            Log::appLog($message);
             return ['done' => true];
         }
         $this->error('`message` parameter is required');
