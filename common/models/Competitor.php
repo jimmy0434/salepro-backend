@@ -16,7 +16,8 @@ use cnd\admin\models\activerecords\Log;
  * @property int $business_unit_id
  * @property string $company_profile
  * @property string $headquarter_location
- * @property string $other_locations
+ * @property string $manufacturing_locations
+ * @property string $sales_offices_locations
  * @property string $website
  * @property resource $logo
  * @property string $market_presence
@@ -87,7 +88,7 @@ class Competitor extends \common\components\ActiveRecord
         return array_merge(parent::rules(), [
             [['salesman_id', 'business_unit_id', 'search_id'], 'integer'],
             [['logo', 'file'], 'string'],
-            [['name', 'company_profile', 'headquarter_location', 'other_locations', 'website', 'market_presence', 'established_year', 'annual_sales_revenue', 'employees_number', 'certification', 'certification_others', 'marketing_strategy', 'company_communication', 'quality', 'brand_equity', 'problem_solving_response', 'market_dominance', 'comments', 'mother_name', 'mother_company_profile', 'mother_headquarter_location', 'mother_other_locations', 'mother_website'], 'string', 'max' => 255],
+            [['name', 'company_profile', 'headquarter_location', 'manufacturing_locations', 'manufacturing_locations', 'website', 'market_presence', 'established_year', 'annual_sales_revenue', 'employees_number', 'certification', 'certification_others', 'marketing_strategy', 'company_communication', 'quality', 'brand_equity', 'problem_solving_response', 'market_dominance', 'comments', 'mother_name', 'mother_company_profile', 'mother_headquarter_location', 'mother_other_locations', 'mother_website'], 'string', 'max' => 255],
             [['uid'], 'unique'],
             [['business_unit_id'], 'exist', 'skipOnError' => true, 'targetClass' => BusinessUnit::className(), 'targetAttribute' => ['business_unit_id' => 'id']],
         ]);
@@ -105,7 +106,8 @@ class Competitor extends \common\components\ActiveRecord
             'business_unit_id' => 'Business Unit ID',
             'company_profile' => 'Company Profile',
             'headquarter_location' => 'Headquarter Location',
-            'other_locations' => 'Other Locations',
+            'manufacturing_locations' => 'Manufacturing Locations',
+            'sales_offices_locations' => 'Sales Offices Locations',
             'website' => 'Website',
             'logo' => 'Logo',
             'market_presence' => 'Market Presence',
@@ -404,7 +406,7 @@ class Competitor extends \common\components\ActiveRecord
 
     public function updateCompetitorTablesFields()
     {
-        $this->updateFieldsToTable(CompetitorOtherLocation::className(), 'other_locations');
+        //$this->assignTableToField(CompetitorOtherLocation::className(), 'other_locations');
         $this->updateFieldsToTable(CompetitorMotherOtherLocation::className(), 'mother_other_locations');
         $this->updateFieldsToTable(CompetitorMarketPresence::className(), 'market_presence');
         $this->updateFieldsToTable(CompetitorMarketingStrategy::className(), 'marketing_strategy');
@@ -453,7 +455,7 @@ class Competitor extends \common\components\ActiveRecord
     public function afterFind()
     {
         parent::afterFind();
-        $this->assignTableToField(CompetitorOtherLocation::className(), 'other_locations');
+        //$this->assignTableToField(CompetitorOtherLocation::className(), 'other_locations');
         $this->assignTableToField(CompetitorMotherOtherLocation::className(), 'mother_other_locations');
         $this->assignTableToField(CompetitorMarketPresence::className(), 'market_presence');
         $this->assignTableToField(CompetitorMarketingStrategy::className(), 'marketing_strategy');
