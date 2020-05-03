@@ -95,8 +95,12 @@ $na = "N/A";
                     <td><?= $model->headquarter_location ?? $na ?></td>
                 </tr>
                 <tr>
-                    <th>Other Locations</th>
-                    <td><?= $model->other_locations ?? $na ?></td>
+                    <th>Manufacturing Locations</th>
+                    <td><?= $model->manufacturing_locations ?? $na ?></td>
+                </tr>
+                <tr>
+                    <th>Sales Offices Locations</th>
+                    <td><?= $model->sales_offices_locations ?? $na ?></td>
                 </tr>
                 <tr>
                     <th>Website</th>

@@ -79,8 +79,12 @@ $mime = new Mime();
                         <td><?= $competitor->headquarter_location ?? $na ?></td>
                     </tr>
                     <tr>
-                        <th>Other Locations</th>
-                        <td><?= $competitor->other_locations ?? $na ?></td>
+                        <th>Manufacturing Locations</th>
+                        <td><?= $model->manufacturing_locations ?? $na ?></td>
+                    </tr>
+                    <tr>
+                        <th>Sales Offices Locations</th>
+                        <td><?= $model->sales_offices_locations ?? $na ?></td>
                     </tr>
                     <tr>
                         <th>Website</th>

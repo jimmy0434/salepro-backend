@@ -59,7 +59,7 @@ class SearchController extends SController
         $query->where(implode(' OR ', $sql));
         $query->limit($pageSize)->offset(($page - 1) * $pageSize);
         $results = $query->all();
-        Log::trace("Global Search");
+        Log::trace("Global Search", $query->createCommand()->getRawSql());
         return ['results' => $results];
     }
 }
