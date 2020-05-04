@@ -15,7 +15,7 @@ use Yii;
  * @property int $updated_at
  *
  * @property Competitor $competitor
- * @property MarketResearch $marketResearche
+ * @property MarketResearch $marketResearch
  * @property Portfolio $portfolio
  * @property SearchTag[] $searchTags
  */
