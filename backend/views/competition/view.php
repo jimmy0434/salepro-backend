@@ -131,6 +131,14 @@ $na = "N/A";
                     <td><?= $model->certification_others ?? $na ?></td>
                 </tr>
                 <tr>
+                    <th>Merger</th>
+                    <td><?= $model->merger_company_name ?? $na ?>, <?= $model->merger_country ?? '' ?></td>
+                </tr>
+                <tr>
+                    <th>Acquisition</th>
+                    <td><?= $model->acquisition_company_name ?? $na ?>, <?= $model->acquisition_country ?? '' ?></td>
+                </tr>
+                <tr>
                     <th>Marketing Strategy</th>
                     <td><?= $model->marketing_strategy ?? $na ?></td>
                 </tr>
