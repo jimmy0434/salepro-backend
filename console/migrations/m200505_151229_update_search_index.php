@@ -25,7 +25,7 @@ class m200505_151229_update_search_index extends Migration
         echo "MarketResearch index updated.\n";
 
         // please, comment some code common\models\Competitor before run migration
-        // in functions beforeSave() and afterSave()
+        // in functions beforeSave()
         // and remove comments after migration
        foreach (Competitor::find()->each(100) as $competitor) {
             $competitor->save();
@@ -38,8 +38,6 @@ class m200505_151229_update_search_index extends Migration
      */
     public function safeDown()
     {
-
-
         return true;
     }
 

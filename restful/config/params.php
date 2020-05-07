@@ -1,4 +1,4 @@
 <?php
 return [
-    'adminEmail' => 'salepro@indevcogroup.com',
+    'adminEmail' => 'noreply@napco-national.com',
 ];

@@ -10,10 +10,11 @@
 
 namespace restful\controllers;
 
+use common\models\Competitor;
+use common\models\Salesman;
+use cnd\core\api\SController;
 use cnd\admin\models\activerecords\Log;
 use Yii;
-use cnd\core\api\SController;
-use common\models\Competitor;
 use yii\helpers\Inflector;
 
 class CompetitorController extends SController
@@ -188,7 +189,42 @@ class CompetitorController extends SController
             }
         }
         Log::trace("Save Competitor Profile ".$competitor->name);
+        $this->sendNotificationEmail($competitor);
         return ['competitor' => $competitor];
+    }
+
+    private function composeNotificationEmail($competitor, $sendToAdmin)
+    {
+        Log::trace("Download Competitors List", strtolower($competitor->logo_ext));
+        $email = Yii::$app->mailer->compose();
+        if ($competitor->logo &&  ('jpg' == strtolower($competitor->logo_ext)))
+            $email->setHtmlBody(Yii::$app->mailer->render('competitor', [
+                'competitor' => $competitor,
+                'img' => $email->embed('data:/' . 'image/jpeg' . ';base64,' . $competitor->logo),
+                ], Yii::$app->mailer->htmlLayout));
+        else  // no logo
+            $email->setHtmlBody(Yii::$app->mailer->render('competitor', ['competitor' => $competitor], Yii::$app->mailer->htmlLayout));
+
+        //$email = Yii::$app->mailer->compose('competitor',['competitor' => $competitor]);
+        $modelSalesman = Salesman::findOne(Yii::$app->user->identity->id);
+        if($sendToAdmin)
+            $email->setTo(Yii::$app->params['adminEmail']);
+        else
+            $email->setTo($modelSalesman->user->email);
+
+        if ($competitor->isNewRecord)  // insert
+            $email->setSubject('SalePRO: New competitor '.$competitor->name.' was added by '.$modelSalesman->name);
+        else  // update
+            $email->setSubject( 'SalePRO: Competitor data '.$competitor->name.' was updated by '.$modelSalesman->name);
+
+        $email->setFrom(Yii::$app->params['adminEmail'])->send();
+    }
+
+    private function sendNotificationEmail($competitor)
+    {
+        Log::trace("Send Notification e-mails to admin and user");
+        $this->composeNotificationEmail($competitor, true);
+        $this->composeNotificationEmail($competitor, false);
     }
 
     private function saveCompetitorNode($parentModel, $name, $list, $parentName = null)
