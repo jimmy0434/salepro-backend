@@ -5,6 +5,7 @@ namespace common\models;
 use cnd\core\interfaces\UserProfile;
 use Yii;
 use yii\helpers\Json;
+use yii\helpers\ArrayHelper;
 
 /**
  * This is the model class for table "{{%salesman}}".
@@ -27,6 +28,8 @@ use yii\helpers\Json;
  * @property string $userType
  * @property string $userImage
  * @property string $userDisplay
+ *
+ * @property array $salesmanList
  *
  * @property User $user
  */
@@ -185,6 +188,11 @@ class Salesman extends \common\components\ActiveRecord implements UserProfile
             return $this->hasOne(Client::className(),['referral_code'=>'parent_referral_code']);
         }
         return null;
+    }
 
+    public function getActiveSalesmanList()
+    {
+        $items = ArrayHelper::map($this::find()->all(), 'id', 'userName');
+        return $items;
     }
 }

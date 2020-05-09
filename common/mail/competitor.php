@@ -19,24 +19,11 @@ $mime = new Mime();
                 <table class="table" style="table-layout:fixed;">
                     <tbody>
                     <?php
-                    if ($competitor->logo || $competitor->file) {
+                    if ($competitor->logo) {
                         ?>
                         <tr>
                             <td>
-                                <?php
-                                if ($competitor->logo) {
-                                    $logoExt = strtolower($competitor->logo_ext);
-                                    echo Html::img('data:/' . $mime->TypeExt($logoExt) . ';base64,' . $competitor->logo, ['class' => 'img-responsive', 'style' => 'max-width:100%;']);
-                                }
-                                ?>
-                            </td>
-                            <td>
-                                <?php
-                                if ($competitor->file) {
-                                    $fileExt = strtolower($competitor->file_ext);
-                                    echo Html::a('Click To Download File', 'data:'.$mime->TypeExt($fileExt).';base64,'.$competitor->file, ['target' => '_blank', 'class' => 'text-navy']);
-                                }
-                                ?>
+                                <center><img src="<?= $img ?>" width="150"></center>
                             </td>
                         </tr>
                         <?php

@@ -271,55 +271,14 @@ class Competitor extends \common\components\ActiveRecord
         }
 
         // comment this before run migration for search index update
-        /*
         if (!Yii::$app->user->isGuest && !$this->salesman_id && Yii::$app->user->identity->type == User::TYPE_SALESMAN) {
             $this->salesman_id = Yii::$app->user->identity->id;
         }
-*/
+
         return parent::beforeSave($insert);
     }
 
-    public function composeNotificationEmail($isNew, $sendToAdmin)
-    {
-        $modelSalesman = Salesman::findOne(Yii::$app->user->identity->id);
-        $email = Yii::$app->mailer->compose('competitor',[
-            'competitor' => $this,
-        ]);
-
-        if($sendToAdmin) {
-            $email->setTo(Yii::$app->params['adminEmail']);
-        }
-        else{
-            $email->setTo($modelSalesman->user->email);
-        }
-
-        if ($isNew) { // insert
-            $action = ' added a new competitor ';
-            $email->setSubject('SalePRO: New competitor '.$this->name.' was added by '.$modelSalesman->name);
-        }
-        else { // update
-            $action = ' updated the competitor ';
-            $email->setSubject( 'SalePRO: Competitor data '.$this->name.' was updated by '.$modelSalesman->name);
-        }
-
-        $msg = $modelSalesman->name
-            .$action
-            .$this->name;
-
-        $email->setFrom(Yii::$app->params['adminEmail'])
-            //->setTextBody($msg)
-            //->setHtmlBody($msg)
-            ->send();
-    }
-
-    public function sendNotificationEmail($isNewCompetitor)
-    {
-        Log::trace("Send Notification e-mails to admin and user");
-        $this->composeNotificationEmail($isNewCompetitor, true);
-        $this->composeNotificationEmail($isNewCompetitor, false);
-    }
-
-    public function GetSearchText()
+    private function GetSearchText()
     {
         $text = [];
         $range = $this->competitorFlexible;
