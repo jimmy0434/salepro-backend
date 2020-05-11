@@ -67,7 +67,7 @@ $dv = new DataView([
             }),
         ],
         'action' => [
-            'filter' => false,
+            //'filter' => false,
             'label' => 'Action',
             'value' => function ($attribute, $data, $view) use ($dataLocator) {
                 assert($attribute instanceof Attribute);
@@ -80,7 +80,7 @@ $dv = new DataView([
             },
         ],
         'object' => [
-            'filter' => false,
+            //'filter' => false,
             'label' => 'Object',
             'value' => function ($attribute, $data, $view) use ($dataLocator) {
                 assert($attribute instanceof Attribute);
@@ -93,7 +93,7 @@ $dv = new DataView([
             },
         ],
         'status' => [
-            'filter' => false,
+            //'filter' => false,
             'label' => 'Status',
             'value' => function ($attribute, $data, $view) use ($dataLocator) {
                 assert($attribute instanceof Attribute);
@@ -106,7 +106,7 @@ $dv = new DataView([
             },
         ],
         'device' => [
-            'filter' => false,
+            //'filter' => false,
             'label' => 'Device',
             'value' => function ($attribute, $data, $view) use ($dataLocator) {
                 assert($attribute instanceof Attribute);
@@ -119,7 +119,7 @@ $dv = new DataView([
             },
         ],
         'app_ts' => [
-            'filter' => false,
+            //'filter' => false,
             'label' => 'App date/time',
             'value' => function ($attribute, $data, $view) use ($dataLocator) {
                 assert($attribute instanceof Attribute);
