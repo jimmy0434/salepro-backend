@@ -6,7 +6,7 @@ use Yii;
 use yii\helpers\Json;
 
 /**
- * This is the model class for table "{{%base_log}}".
+ * This is the model class for table "{{%log_store}}".
  *
  * @property int $id
  * @property string $app
@@ -29,7 +29,7 @@ class AppUsage extends \common\components\ActiveRecord
      */
     public static function tableName()
     {
-        return '{{%base_log}}';
+        return '{{%log_store}}';
     }
 
     /**

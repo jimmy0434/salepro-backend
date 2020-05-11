@@ -1,12 +1,14 @@
 <?php
 
 use common\models\AppUsage;
+use common\models\User;
 use backend\controllers\AppUsageController;
 use cnd\grid\Attribute;
 use cnd\grid\DataView;
 use cnd\grid\DataViewLocator;
 use yii\helpers\Html;
 use yii\helpers\Url;
+use yii\helpers\ArrayHelper;
 use yii\web\View;
 use cnd\grid\DataLocator;
 
@@ -18,6 +20,13 @@ assert($dataLocator instanceof DataLocator);
 assert($context instanceof AppUsageController);
 
 $this->title = "App usage statistics";
+
+/*
+$logModel = Log::className();
+if (array_key_exists('logModel', Yii::$app->params) && Yii::$app->params['logModel']) {
+    $logModel = Yii::$app->params['logModel'];
+}
+*/
 
 $dv = new DataView([
     'dataLocator' => $dataLocator,
@@ -42,16 +51,23 @@ $dv = new DataView([
                 return $data->date;
             },
         ],
-        'user' => [
-            'label' => 'User',
-            'value' => function ($attribute, $data, $view) use ($dataLocator) {
-                assert($attribute instanceof Attribute);
-                assert($data instanceof AppUsage);
-                assert($view instanceof DataViewLocator);
-                return $data->user->name;
+        'user_id'=>[
+            'label'=>'User',
+            'value'=>function($attribute,$data){
+                if($data->user !== null){
+                    return $data->user->profile !== null?$data->user->profile->userName:$data->user->username;
+                }
+                return 'GUEST';
             },
+            'filterBy' => Attribute::FILTER_LIST,
+            'filterList' => ArrayHelper::map(User::find()->where(['!=','type',User::TYPE_ROOT])->all(),'id',function($data){
+                return $data->profile !== null?$data->profile->userName:$data->username;
+            },function($data){
+                return $data->type_label;
+            }),
         ],
         'action' => [
+            'filter' => false,
             'label' => 'Action',
             'value' => function ($attribute, $data, $view) use ($dataLocator) {
                 assert($attribute instanceof Attribute);
@@ -64,6 +80,7 @@ $dv = new DataView([
             },
         ],
         'object' => [
+            'filter' => false,
             'label' => 'Object',
             'value' => function ($attribute, $data, $view) use ($dataLocator) {
                 assert($attribute instanceof Attribute);
@@ -76,6 +93,7 @@ $dv = new DataView([
             },
         ],
         'status' => [
+            'filter' => false,
             'label' => 'Status',
             'value' => function ($attribute, $data, $view) use ($dataLocator) {
                 assert($attribute instanceof Attribute);
@@ -88,6 +106,7 @@ $dv = new DataView([
             },
         ],
         'device' => [
+            'filter' => false,
             'label' => 'Device',
             'value' => function ($attribute, $data, $view) use ($dataLocator) {
                 assert($attribute instanceof Attribute);
@@ -100,6 +119,7 @@ $dv = new DataView([
             },
         ],
         'app_ts' => [
+            'filter' => false,
             'label' => 'App date/time',
             'value' => function ($attribute, $data, $view) use ($dataLocator) {
                 assert($attribute instanceof Attribute);
@@ -127,8 +147,8 @@ $dv->addView('grid', [
         'date' => [
             'sortable' => true,
         ],
-        'user' => [
-            'sortable' => false,
+        'user_id'=>[
+            'sortable' => true,
         ],
         'action' => [
             'sortable' => false,
