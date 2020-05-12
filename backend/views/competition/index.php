@@ -58,7 +58,7 @@ $dv = new DataView([
             },
         ],
 
-        'salesman'=>[
+        'salesman_id'=>[
             'label'=>'Salesman',
             'value'=>function($attribute, $data, $view) use ($salesmanList) {
                 assert($attribute instanceof Attribute);
@@ -133,7 +133,7 @@ $dv->addView('grid', [
         'name' => [
             'sortable' => true,
         ],
-        'salesman' => [
+        'salesman_id' => [
             'sortable' => true,
             'contentOptions' => [
                 'style' => 'width:300px;'
