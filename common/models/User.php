@@ -58,6 +58,11 @@ class User extends BaseUser
                 $user->identity->salesman->mac_address = $macAddress;
                 $user->identity->salesman->save(false);
             }
+            if ($user->identity->salesman) {
+                $user->identity->salesman->app_version = Yii::$app->request->post('appVersion');
+                $user->identity->salesman->last_access_date = date("D M d, Y G:i");
+                $user->identity->salesman->save(false);
+            }
             if (!$user->identity->salesman || !$macAddress || !$user->identity->salesman->mac_address || $macAddress != $user->identity->salesman->mac_address) {
                 $user->isValid = false;
                 $user->sender->identity = null;

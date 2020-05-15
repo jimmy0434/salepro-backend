@@ -71,6 +71,9 @@ class Bootstrap implements BootstrapInterface
         ApiDocFactory::appendToParams('Login',[
             ['macAddress','string',true,'MacAddress'],
         ]);
+        ApiDocFactory::appendToParams('Login',[
+            ['appVersion','string',false,'AppVersion'],
+        ]);
         ApiDocFactory::appendToParams('Edit Profile',[
             ['salesman[name]','string',false,'Name of the salesman'],
         ]);

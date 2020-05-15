@@ -121,7 +121,7 @@ class SalesmanController extends UserController
                     element.prop('disabled',false);
                 }
             });
-        });        
+        });
 JS;
             Yii::$app->view->registerJs($script);
         }
@@ -166,6 +166,18 @@ JS;
                 'label' => 'Mac Address',
                 'value' => function ($attribute, $data) {
                     return $data->profile !== null ? $data->profile->mac_address : '';
+                },
+            ],
+            'salesman.app_version' => [
+                'label' => 'App version',
+                'value' => function ($attribute, $data) {
+                    return $data->profile !== null ? $data->profile->app_version : '';
+                },
+            ],
+            'salesman.last_access_date' => [
+                'label' => 'Last access date',
+                'value' => function ($attribute, $data) {
+                    return $data->profile !== null ? $data->profile->last_access_date : '';
                 },
             ],
             'salesman.image' => [
@@ -254,6 +266,18 @@ JS;
                 ],
             ],
             'salesman.mac_address' => [
+                'sortable' => true,
+                'contentOptions' => [
+                    'style' => 'text-align:center;white-space: nowrap;width:1%;'
+                ],
+            ],
+            'salesman.app_version' => [
+                'sortable' => true,
+                'contentOptions' => [
+                    'style' => 'text-align:center;white-space: nowrap;width:1%;'
+                ],
+            ],
+            'salesman.last_access_date' => [
                 'sortable' => true,
                 'contentOptions' => [
                     'style' => 'text-align:center;white-space: nowrap;width:1%;'
