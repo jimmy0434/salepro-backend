@@ -57,7 +57,7 @@ class CompetitionController extends SController
             if ($model !== null) {
                 $model->status = $status;
                 $model->save();
-                $model->sendNotification();
+                $model->notifyAll();
                 $response['changed'] = true;
                 Log::trace("Change Competitor #" . $model->id . " status, become " . $model->status_label);
             }
@@ -75,9 +75,10 @@ class CompetitionController extends SController
             $status = Yii::$app->request->post('status');
             $model = Competitor::findOne($id);
             if ($model !== null) {
+                $model->notifyOne($model->salesman_id); // old owner
                 $model->salesman_id = $status;
                 $model->save();
-                $model->sendNotification();
+                $model->notifyOne($model->salesman_id);  // new owner
                 $response['changed'] = true;
                 Log::trace("Change Competitor #" . $model->id . " salesman to " . $status);
             }
@@ -94,6 +95,7 @@ class CompetitionController extends SController
             if ($model->delete()) {
                 Log::trace("Competitor deleted #" . $id);
                 Yii::$app->session->setFlash('success', ucfirst($this->id) . ' deleted successfully');
+                $model->notifyAll();
             } else {
                 Log::trace("Competitor not deleted #" . $id);
                 Yii::$app->session->setFlash('error', ucfirst($this->id) . ' not deleted');

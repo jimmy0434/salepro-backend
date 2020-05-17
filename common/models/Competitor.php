@@ -432,6 +432,27 @@ class Competitor extends \common\components\ActiveRecord
         ], $users);
     }
 
+    public function notifyAll()
+    {
+        $users = array_values(ArrayHelper::map(User::find()->where(['status' => User::STATUS_ACTIVE, 'type' => User::TYPE_SALESMAN])->all(), 'id', 'id'));
+
+        Yii::$app->notification->send('competitor-update', [
+            'message' => 'Competitor Update',
+            'id' => $this->id,
+            'uid' => $this->uid,
+        ], $users);
+    }
+    public function notifyOne($userId)
+    {
+        $users = array_values(ArrayHelper::map(User::find()->where(['status' => User::STATUS_ACTIVE, 'type' => User::TYPE_SALESMAN])->andWhere(['=', 'id', $userId])->all(), 'id', 'id'));
+
+        Yii::$app->notification->send('competitor-update', [
+            'message' => 'Competitor Update',
+            'id' => $this->id,
+            'uid' => $this->uid,
+        ], $users);
+    }
+
     public function updateCompetitorTablesFields()
     {
         //$this->assignTableToField(CompetitorOtherLocation::className(), 'other_locations');
