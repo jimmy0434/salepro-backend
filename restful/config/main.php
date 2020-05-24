@@ -61,6 +61,9 @@ return [
                 [
                     'class' => 'yii\log\FileTarget',
                     'levels' => ['error', 'warning'],
+                    //'db' => ['
+                    //    except' => ['yii\debug\Module*'],
+                    //],
                 ],
             ],
         ],
