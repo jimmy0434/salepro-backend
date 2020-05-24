@@ -87,6 +87,9 @@ return [
                 'default' => function ($name, $data) {
                     return '<div class="text-muted">' . $data['message'] . '</div>';
                 },
+                'refresh' => function ($name, $data) {
+                    return '<div class="text-muted">' . $data['message'] . '</div>';
+                },
                 'file-update' => function ($name, $data) {
                     return Html::tag('div', Html::a($data['message'], [
                         '/file/index',

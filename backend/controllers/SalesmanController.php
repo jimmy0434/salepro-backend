@@ -315,4 +315,12 @@ JS;
         }
         return $this->redirect(['index']);
     }
+
+    public function actionNotify()
+    {
+        $users = array_values(ArrayHelper::map(User::find()->where(['status' => User::STATUS_ACTIVE, 'type' => User::TYPE_SALESMAN])->all(), 'id', 'id'));
+        Yii::$app->notification->send('refresh', ['message' => 'Refresh'], $users);
+        Yii::$app->session->setFlash('refresh', 'Notifications to refresh data in salesman app was send!');
+        return $this->redirect(['salesman/index']);
+    }
 }
