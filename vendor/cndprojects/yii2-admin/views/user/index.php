@@ -31,7 +31,7 @@ if(Yii::$app->session->hasFlash('refresh'))
 
 if(Yii::$app->permission->can($route.'/manage')){
     $headers[] = Html::a('Add New', Url::to(['manage']),['class'=>'btn btn-success']).' '.
-                 Html::a('Send Refresh', Url::to(['salesman/notify']),['class'=>'btn btn-primary']);
+                 Html::a('Send Refresh to all', Url::to(['salesman/notify','id'=>0]),['class'=>'btn btn-primary']);
 }
 echo $this->context->beforeGrid();
 
