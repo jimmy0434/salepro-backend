@@ -79,7 +79,7 @@ class User extends BaseUser
     {
         parent::afterSave($insert, $changedAttributes);
         if ($this->password && !$this->_sendNewPasswordEmail) {
-            Yii::$app->mailer->compose('@common/mail/account-password.php', ['user' => $this])->setSubject(Yii::t('app', 'New Password'))->setFrom([Yii::$app->params['adminEmail'] => Yii::$app->params['adminName']])->setTo([$this->email])->send();
+            //Yii::$app->mailer->compose('@common/mail/account-password.php', ['user' => $this])->setSubject(Yii::t('app', 'New Password'))->setFrom([Yii::$app->params['adminEmail'] => Yii::$app->params['adminName']])->setTo([$this->email])->send();
             $this->_sendNewPasswordEmail = true;
         }
     }
