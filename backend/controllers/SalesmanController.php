@@ -294,7 +294,7 @@ JS;
 
     public function manageRowButtons()
     {
-        return [
+        return [ 
             function($row) {
                 return Html::a('Send Refresh', Url::to(['salesman/notify','id'=>$row->id]),['class'=>'btn btn-primary']);
             },
