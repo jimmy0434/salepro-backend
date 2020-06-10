@@ -12,6 +12,7 @@ namespace restful\controllers;
 
 use common\models\Competitor;
 use common\models\Salesman;
+use common\models\CompetitorFlexible;
 use cnd\core\api\SController;
 use cnd\admin\models\activerecords\Log;
 use Yii;
@@ -154,15 +155,20 @@ class CompetitorController extends SController
         if (Yii::$app->request->isPut) {
             $uid = Yii::$app->request->get('uid');
             $competitor = Competitor::find()->where(['uid' => $uid, 'salesman_id' => Yii::$app->user->identity->id])->one();
-        } else
+        }
+        else
             if (Yii::$app->request->isPost) {
                 $competitor = new Competitor();
                 $competitor->salesman_id = Yii::$app->user->identity->id;
             }
+
         if (!$competitor) {
             $this->error("Competitor Profile not found");
             return null;
         }
+
+        $isNew = $competitor->isNewRecord;
+
         $data = Yii::$app->request->post('data');
         if (!empty($data) && is_array($data)) {
             $relations = [];
@@ -188,14 +194,17 @@ class CompetitorController extends SController
                 }
             }
         }
+        $competitor->refresh();
+
+        $this->composeNotificationEmail($competitor, $isNew, true);
+        $this->composeNotificationEmail($competitor, $isNew, false);
+
         Log::trace("Save Competitor Profile ".$competitor->name);
-        $this->sendNotificationEmail($competitor);
         return ['competitor' => $competitor];
     }
 
-    private function composeNotificationEmail($competitor, $sendToAdmin)
+    private function composeNotificationEmail($competitor, $isNew, $sendToAdmin)
     {
-        Log::trace("Download Competitors List", strtolower($competitor->logo_ext));
         $email = Yii::$app->mailer->compose();
         if ($competitor->logo &&  ('jpg' == strtolower($competitor->logo_ext)))
             $email->setHtmlBody(Yii::$app->mailer->render('competitor', [
@@ -207,24 +216,21 @@ class CompetitorController extends SController
 
         //$email = Yii::$app->mailer->compose('competitor',['competitor' => $competitor]);
         $modelSalesman = Salesman::findOne(Yii::$app->user->identity->id);
-        if($sendToAdmin)
+        if($sendToAdmin){
             $email->setTo(Yii::$app->params['adminEmail']);
-        else
+            Log::trace("Send Notification Email", Yii::$app->params['adminEmail'] );
+        }
+        else {
             $email->setTo($modelSalesman->user->email);
-
-        if ($competitor->isNewRecord)  // insert
+            Log::trace("Send Notification Email", $modelSalesman->user->email);
+        }
+        
+        if($isNew) // insert
             $email->setSubject('SalePRO: New competitor '.$competitor->name.' was added by '.$modelSalesman->name);
         else  // update
             $email->setSubject( 'SalePRO: Competitor data '.$competitor->name.' was updated by '.$modelSalesman->name);
 
         $email->setFrom(Yii::$app->params['adminEmail'])->send();
-    }
-
-    private function sendNotificationEmail($competitor)
-    {
-        Log::trace("Send Notification e-mails to admin and user");
-        $this->composeNotificationEmail($competitor, true);
-        $this->composeNotificationEmail($competitor, false);
     }
 
     private function saveCompetitorNode($parentModel, $name, $list, $parentName = null)
