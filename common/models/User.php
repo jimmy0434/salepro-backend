@@ -47,6 +47,11 @@ class User extends BaseUser
         return $this->hasOne(Salesman::className(), ['id' => 'id'])->from(['salesman' => Salesman::tableName()]);
     }
 
+    public function getUser()
+    {
+        return $this->hasOne(Salesman::className(), ['id' => 'id'])->from(['salesman' => Salesman::tableName()]);
+    }
+
     public static function beforeLogin($user)
     {
         /**
