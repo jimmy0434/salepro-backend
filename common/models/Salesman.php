@@ -5,6 +5,7 @@ namespace common\models;
 use cnd\core\interfaces\UserProfile;
 use Yii;
 use yii\helpers\Json;
+use yii\helpers\ArrayHelper;
 
 /**
  * This is the model class for table "{{%salesman}}".
@@ -27,6 +28,10 @@ use yii\helpers\Json;
  * @property string $userType
  * @property string $userImage
  * @property string $userDisplay
+ * @property string $app_version
+ * @property string $last_access_date
+ *
+ * @property array $salesmanList
  *
  * @property User $user
  */
@@ -52,7 +57,7 @@ class Salesman extends \common\components\ActiveRecord implements UserProfile
     {
         return array_merge(parent::rules(), [
             [['first_name','last_name'], 'required'],
-            [['first_name','last_name','phone','dob','city', 'mac_address'], 'string', 'max' => 255],
+            [['first_name','last_name','phone','dob','city', 'mac_address','app_version','last_access_date'], 'string', 'max' => 255],
             [['id'], 'exist', 'skipOnError' => true, 'targetClass' => User::className(), 'targetAttribute' => ['id' => 'id']],
         ]);
     }
@@ -69,6 +74,8 @@ class Salesman extends \common\components\ActiveRecord implements UserProfile
             'mac_address' => 'Mac Address',
             'created_at' => 'Created At',
             'updated_at' => 'Updated At',
+            'app_version' => 'App version',
+            'last_access_date' => 'Last access date',
         ];
     }
 
@@ -185,6 +192,11 @@ class Salesman extends \common\components\ActiveRecord implements UserProfile
             return $this->hasOne(Client::className(),['referral_code'=>'parent_referral_code']);
         }
         return null;
+    }
 
+    public function getActiveSalesmanList()
+    {
+        $items = ArrayHelper::map($this::find()->all(), 'id', 'userName');
+        return $items;
     }
 }

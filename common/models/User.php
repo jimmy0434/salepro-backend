@@ -47,6 +47,11 @@ class User extends BaseUser
         return $this->hasOne(Salesman::className(), ['id' => 'id'])->from(['salesman' => Salesman::tableName()]);
     }
 
+    public function getUser()
+    {
+        return $this->hasOne(Salesman::className(), ['id' => 'id'])->from(['salesman' => Salesman::tableName()]);
+    }
+
     public static function beforeLogin($user)
     {
         /**
@@ -56,6 +61,11 @@ class User extends BaseUser
             $macAddress = Yii::$app->request->post('macAddress');
             if ($macAddress && $user->identity->salesman && !$user->identity->salesman->mac_address) {
                 $user->identity->salesman->mac_address = $macAddress;
+                $user->identity->salesman->save(false);
+            }
+            if ($user->identity->salesman) {
+                $user->identity->salesman->app_version = Yii::$app->request->post('appVersion');
+                $user->identity->salesman->last_access_date = date("D M d, Y G:i");
                 $user->identity->salesman->save(false);
             }
             if (!$user->identity->salesman || !$macAddress || !$user->identity->salesman->mac_address || $macAddress != $user->identity->salesman->mac_address) {
@@ -74,7 +84,7 @@ class User extends BaseUser
     {
         parent::afterSave($insert, $changedAttributes);
         if ($this->password && !$this->_sendNewPasswordEmail) {
-            Yii::$app->mailer->compose('@common/mail/account-password.php', ['user' => $this])->setSubject(Yii::t('app', 'New Password'))->setFrom([Yii::$app->params['adminEmail'] => Yii::$app->params['adminName']])->setTo([$this->email])->send();
+            //Yii::$app->mailer->compose('@common/mail/account-password.php', ['user' => $this])->setSubject(Yii::t('app', 'New Password'))->setFrom([Yii::$app->params['adminEmail'] => Yii::$app->params['adminName']])->setTo([$this->email])->send();
             $this->_sendNewPasswordEmail = true;
         }
     }

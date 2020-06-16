@@ -29,6 +29,7 @@ class _Controller
      *     @SWG\Parameter(name="username", required=true, in="formData", type="string", description="Username of Salesman"),
      *     @SWG\Parameter(name="password", required=true, in="formData", type="string", description="Password of Salesman"),
      *     @SWG\Parameter(name="macAddress", required=true, in="formData", type="string", description="MacAddress of Salesman")
+     *     @SWG\Parameter(name="appVersion", required=false, in="formData", type="string", description="AppVersion of Salesman")
      * )
      */
 

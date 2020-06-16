@@ -29,7 +29,7 @@ class Bootstrap implements BootstrapInterface
         $userSection = $data->section('Users');
         $userSection->item('Salesman', ['/salesman/index'], 2);
         $userSection->item('Groups', ['/group/index'], 3);
-
+        $userSection->item('App usage', ['/app-usage/index'], 4);
 
         $navigator = MenuManager::block('Navigator', 10000);
         $navigator->item('Portfolio Management', ['/portfolio/index'], 'fa fa-database', 5);
@@ -70,6 +70,9 @@ class Bootstrap implements BootstrapInterface
     public function apiDefinitions(){
         ApiDocFactory::appendToParams('Login',[
             ['macAddress','string',true,'MacAddress'],
+        ]);
+        ApiDocFactory::appendToParams('Login',[
+            ['appVersion','string',false,'AppVersion'],
         ]);
         ApiDocFactory::appendToParams('Edit Profile',[
             ['salesman[name]','string',false,'Name of the salesman'],

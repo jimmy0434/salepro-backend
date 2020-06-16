@@ -95,8 +95,12 @@ $na = "N/A";
                     <td><?= $model->headquarter_location ?? $na ?></td>
                 </tr>
                 <tr>
-                    <th>Other Locations</th>
-                    <td><?= $model->other_locations ?? $na ?></td>
+                    <th>Manufacturing Locations</th>
+                    <td><?= $model->manufacturing_locations ?? $na ?></td>
+                </tr>
+                <tr>
+                    <th>Sales Offices Locations</th>
+                    <td><?= $model->sales_offices_locations ?? $na ?></td>
                 </tr>
                 <tr>
                     <th>Website</th>
@@ -125,6 +129,14 @@ $na = "N/A";
                 <tr>
                     <th>Other Certifications</th>
                     <td><?= $model->certification_others ?? $na ?></td>
+                </tr>
+                <tr>
+                    <th>Merger</th>
+                    <td><?= $model->merger_company_name ?? $na ?>, <?= $model->merger_country ?? '' ?></td>
+                </tr>
+                <tr>
+                    <th>Acquisition</th>
+                    <td><?= $model->acquisition_company_name ?? $na ?>, <?= $model->acquisition_country ?? '' ?></td>
                 </tr>
                 <tr>
                     <th>Marketing Strategy</th>
@@ -377,7 +389,7 @@ if (!empty($model->competitorFlexible) && is_array($model->competitorFlexible)) 
                         </tr>
                         <tr>
                             <th>Sector</th>
-                            <td colspan="3"><?= $m->sector && $m->sector->portfolio ? $m->sector->portfolio->name : $na ?></td>
+                            <td colspan="3"><?= $m->sector ? $m->sector : $na ?></td>
                         </tr>
                         <tr>
                             <th>Quantity Sold/Year</th>
@@ -530,7 +542,7 @@ if (!empty($model->competitorPackaging) && is_array($model->competitorPackaging)
                         </tr>
                         <tr>
                             <th>Sector</th>
-                            <td colspan="3"><?= $m->sector && $m->sector->portfolio ? $m->sector->portfolio->name : $na ?></td>
+                            <td colspan="3"><?= $m->sector ? $m->sector : $na ?></td>
                         </tr>
                         <tr>
                             <th>Quantity Sold/Year</th>
@@ -693,7 +705,7 @@ if (!empty($model->competitorMasterbatch) && is_array($model->competitorMasterba
                         </tr>
                         <tr>
                             <th>Sector</th>
-                            <td colspan="3"><?= $m->sector && $m->sector->portfolio ? $m->sector->portfolio->name : $na ?></td>
+                            <td colspan="3"><?= $m->sector  ? $m->sector : $na ?></td>
                         </tr>
                         <tr>
                             <th>Quantity Sold/Year</th>

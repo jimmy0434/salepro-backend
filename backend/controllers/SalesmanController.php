@@ -121,7 +121,7 @@ class SalesmanController extends UserController
                     element.prop('disabled',false);
                 }
             });
-        });        
+        });
 JS;
             Yii::$app->view->registerJs($script);
         }
@@ -166,6 +166,18 @@ JS;
                 'label' => 'Mac Address',
                 'value' => function ($attribute, $data) {
                     return $data->profile !== null ? $data->profile->mac_address : '';
+                },
+            ],
+            'salesman.app_version' => [
+                'label' => 'App version',
+                'value' => function ($attribute, $data) {
+                    return $data->profile !== null ? $data->profile->app_version : '';
+                },
+            ],
+            'salesman.last_access_date' => [
+                'label' => 'Last access date',
+                'value' => function ($attribute, $data) {
+                    return $data->profile !== null ? $data->profile->last_access_date : '';
                 },
             ],
             'salesman.image' => [
@@ -259,6 +271,18 @@ JS;
                     'style' => 'text-align:center;white-space: nowrap;width:1%;'
                 ],
             ],
+            'salesman.app_version' => [
+                'sortable' => true,
+                'contentOptions' => [
+                    'style' => 'text-align:center;white-space: nowrap;width:1%;'
+                ],
+            ],
+            'salesman.last_access_date' => [
+                'sortable' => true,
+                'contentOptions' => [
+                    'style' => 'text-align:center;white-space: nowrap;width:1%;'
+                ],
+            ],
             'user.group_id' => [
                 'sortable' => true,
                 'contentOptions' => [
@@ -270,7 +294,11 @@ JS;
 
     public function manageRowButtons()
     {
-        return [];
+        return [ 
+            function($row) {
+                return Html::a('Send Refresh', Url::to(['salesman/notify','id'=>$row->id]),['class'=>'btn btn-primary']);
+            },
+        ];
     }
 
     public function actionChangeGroup()
@@ -290,5 +318,17 @@ JS;
             return $response;
         }
         return $this->redirect(['index']);
+    }
+
+    public function actionNotify($id)
+    {
+        if($id==0)
+            $users = array_values(ArrayHelper::map(User::find()->where(['status' => User::STATUS_ACTIVE, 'type' => User::TYPE_SALESMAN])->all(), 'id', 'id'));
+        else
+            $users = array_values(ArrayHelper::map(User::find()->where(['status' => User::STATUS_ACTIVE, 'type' => User::TYPE_SALESMAN, 'id' => $id])->all(), 'id', 'id'));
+
+        Yii::$app->notification->send('refresh', ['message' => 'Refresh'], $users);
+        Yii::$app->session->setFlash('refresh', 'Notifications to refresh data  in salesman app was send!');
+        return $this->redirect(['salesman/index']);
     }
 }

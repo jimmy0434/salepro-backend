@@ -4,6 +4,7 @@ namespace common\models;
 
 use Yii;
 use yii\helpers\ArrayHelper;
+use cnd\admin\models\activerecords\Log;
 
 /**
  * This is the model class for table "{{%competitor}}".
@@ -15,7 +16,8 @@ use yii\helpers\ArrayHelper;
  * @property int $business_unit_id
  * @property string $company_profile
  * @property string $headquarter_location
- * @property string $other_locations
+ * @property string $manufacturing_locations
+ * @property string $sales_offices_locations
  * @property string $website
  * @property resource $logo
  * @property string $market_presence
@@ -86,7 +88,7 @@ class Competitor extends \common\components\ActiveRecord
         return array_merge(parent::rules(), [
             [['salesman_id', 'business_unit_id', 'search_id'], 'integer'],
             [['logo', 'file'], 'string'],
-            [['name', 'company_profile', 'headquarter_location', 'other_locations', 'website', 'market_presence', 'established_year', 'annual_sales_revenue', 'employees_number', 'certification', 'certification_others', 'marketing_strategy', 'company_communication', 'quality', 'brand_equity', 'problem_solving_response', 'market_dominance', 'comments', 'mother_name', 'mother_company_profile', 'mother_headquarter_location', 'mother_other_locations', 'mother_website'], 'string', 'max' => 255],
+            [['name', 'company_profile', 'headquarter_location', 'manufacturing_locations', 'manufacturing_locations', 'website', 'market_presence', 'established_year', 'annual_sales_revenue', 'employees_number', 'certification', 'certification_others', 'marketing_strategy', 'company_communication', 'quality', 'brand_equity', 'problem_solving_response', 'market_dominance', 'comments', 'mother_name', 'mother_company_profile', 'mother_headquarter_location', 'mother_other_locations', 'mother_website'], 'string', 'max' => 255],
             [['uid'], 'unique'],
             [['business_unit_id'], 'exist', 'skipOnError' => true, 'targetClass' => BusinessUnit::className(), 'targetAttribute' => ['business_unit_id' => 'id']],
         ]);
@@ -104,7 +106,8 @@ class Competitor extends \common\components\ActiveRecord
             'business_unit_id' => 'Business Unit ID',
             'company_profile' => 'Company Profile',
             'headquarter_location' => 'Headquarter Location',
-            'other_locations' => 'Other Locations',
+            'manufacturing_locations' => 'Manufacturing Locations',
+            'sales_offices_locations' => 'Sales Offices Locations',
             'website' => 'Website',
             'logo' => 'Logo',
             'market_presence' => 'Market Presence',
@@ -266,16 +269,84 @@ class Competitor extends \common\components\ActiveRecord
         if ($this->isNewRecord || !$this->uid) {
             $this->uid = uniqid('competitor-', true);
         }
+
+        // comment this before run migration for search index update
         if (!Yii::$app->user->isGuest && !$this->salesman_id && Yii::$app->user->identity->type == User::TYPE_SALESMAN) {
             $this->salesman_id = Yii::$app->user->identity->id;
         }
+
         return parent::beforeSave($insert);
+    }
+
+    private function GetSearchText()
+    {
+        $text = [];
+        $range = $this->competitorFlexible;
+        if (!empty($range) && is_array($range)) {
+            foreach ($range as $model) {
+                $text[] = $model->product_type;
+                $text[] = $model->sector;
+            }
+        }
+
+        $range = $this->competitorMasterbatch;
+        if (!empty($range) && is_array($range)) {
+            foreach ($range as $model) {
+                $text[] = $model->product_type;
+                $text[] = $model->sector;
+            }
+        }
+
+        $range = $this->competitorPackaging;
+        if (!empty($range) && is_array($range)) {
+            foreach ($range as $model) {
+                $text[] = $model->product_type;
+                $text[] = $model->sector;
+            }
+        }
+
+        if ($this->businessUnit && $this->businessUnit->portfolio) {
+            $text[]  = $this->businessUnit->portfolio->name;
+        }
+
+        $range = $this->competitorProductionLine;
+        if (!empty($range) && is_array($range)) {
+            foreach ($range as $model) {
+                $text[] = $model->production_line;
+            }
+        }
+
+        $result = implode(' ', $text).' '
+            .$this->company_profile.' '
+            .$this->headquarter_location.' '
+            .$this->manufacturing_locations.' '
+            .$this->sales_offices_locations.' '
+            .$this->website.' '
+            .$this->market_presence.' '
+            .$this->established_year.' '
+            .$this->annual_sales_revenue.' '
+            .$this->employees_number.' '
+            .$this->certification.' '
+            .$this->certification_others.' '
+            .$this->marketing_strategy.' '
+            .$this->company_communication.' '
+            .$this->quality.' '
+            .$this->brand_equity.' '
+            .$this->problem_solving_response.' '
+            .$this->market_dominance.' '
+            .$this->comments.' '
+            .$this->mother_name.' '
+            .$this->mother_company_profile.' '
+            .$this->mother_headquarter_location.' '
+            .$this->mother_other_locations;
+
+        return($result);
     }
 
     public function afterSave($insert, $changedAttributes)
     {
         if ($this->status == static::STATUS_ENABLED) {
-            $search = Search::updateRecord([], $this->uid, $this->name, '');
+            $search = Search::updateRecord([], $this->uid, $this->name, $this->GetSearchText());
             if (!$this->search_id) {
                 try {
                     Yii::$app->db->createCommand()->update(static::tableName(), ['search_id' => $search->id], ['id' => $this->id])->execute();
@@ -285,6 +356,7 @@ class Competitor extends \common\components\ActiveRecord
             }
         }
         $this->updateCompetitorTablesFields();
+        //$this->sendNotificationEmail($insert); // <- comment this before run migration for search index update
         parent::afterSave($insert, $changedAttributes); // TODO: Change the autogenerated stub
     }
 
@@ -308,21 +380,21 @@ class Competitor extends \common\components\ActiveRecord
         if (!empty($list['competitorFlexible']) && is_array($list['competitorFlexible'])) {
             foreach ($list['competitorFlexible'] as $model) {
                 $productTypes[] = $model->product_type;
-                $sectors[] = $model->sector && $model->sector->portfolio ? $model->sector->portfolio->uid : null;
+                $sectors[] = $model->sector;// && $model->sector->portfolio ? $model->sector->portfolio->uid : null;
             }
         }
 
         if (!empty($list['competitorMasterbatch']) && is_array($list['competitorMasterbatch'])) {
             foreach ($list['competitorMasterbatch'] as $model) {
                 $productTypes[] = $model->product_type;
-                $sectors[] = $model->sector && $model->sector->portfolio ? $model->sector->portfolio->uid : null;
+                $sectors[] = $model->sector; // && $model->sector->portfolio ? $model->sector->portfolio->uid : null;
             }
         }
 
         if (!empty($list['competitorPackaging']) && is_array($list['competitorPackaging'])) {
             foreach ($list['competitorPackaging'] as $model) {
                 $productTypes[] = $model->product_type;
-                $sectors[] = $model->sector && $model->sector->portfolio ? $model->sector->portfolio->uid : null;
+                $sectors[] = $model->sector; // && $model->sector->portfolio ? $model->sector->portfolio->uid : null;
             }
         }
 
@@ -360,9 +432,30 @@ class Competitor extends \common\components\ActiveRecord
         ], $users);
     }
 
+    public function notifyAll()
+    {
+        $users = array_values(ArrayHelper::map(User::find()->where(['status' => User::STATUS_ACTIVE, 'type' => User::TYPE_SALESMAN])->all(), 'id', 'id'));
+
+        Yii::$app->notification->send('competitor-update', [
+            'message' => 'Competitor Update',
+            'id' => $this->id,
+            'uid' => $this->uid,
+        ], $users);
+    }
+    public function notifyOne($userId)
+    {
+        $users = array_values(ArrayHelper::map(User::find()->where(['status' => User::STATUS_ACTIVE, 'type' => User::TYPE_SALESMAN])->andWhere(['=', 'id', $userId])->all(), 'id', 'id'));
+
+        Yii::$app->notification->send('competitor-update', [
+            'message' => 'Competitor Update',
+            'id' => $this->id,
+            'uid' => $this->uid,
+        ], $users);
+    }
+
     public function updateCompetitorTablesFields()
     {
-        $this->updateFieldsToTable(CompetitorOtherLocation::className(), 'other_locations');
+        //$this->assignTableToField(CompetitorOtherLocation::className(), 'other_locations');
         $this->updateFieldsToTable(CompetitorMotherOtherLocation::className(), 'mother_other_locations');
         $this->updateFieldsToTable(CompetitorMarketPresence::className(), 'market_presence');
         $this->updateFieldsToTable(CompetitorMarketingStrategy::className(), 'marketing_strategy');
@@ -411,7 +504,7 @@ class Competitor extends \common\components\ActiveRecord
     public function afterFind()
     {
         parent::afterFind();
-        $this->assignTableToField(CompetitorOtherLocation::className(), 'other_locations');
+        //$this->assignTableToField(CompetitorOtherLocation::className(), 'other_locations');
         $this->assignTableToField(CompetitorMotherOtherLocation::className(), 'mother_other_locations');
         $this->assignTableToField(CompetitorMarketPresence::className(), 'market_presence');
         $this->assignTableToField(CompetitorMarketingStrategy::className(), 'marketing_strategy');

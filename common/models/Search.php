@@ -15,7 +15,7 @@ use Yii;
  * @property int $updated_at
  *
  * @property Competitor $competitor
- * @property MarketResearch $marketResearche
+ * @property MarketResearch $marketResearch
  * @property Portfolio $portfolio
  * @property SearchTag[] $searchTags
  */
@@ -102,6 +102,8 @@ class Search extends \common\components\ActiveRecord
         return new SearchQuery(get_called_class());
     }
 
+    // $target - uid
+    // $title - entity name
     public static function updateRecord($tags, $target, $title, $text = null)
     {
         $model = static::find()->where(['target' => $target])->one();
@@ -112,12 +114,15 @@ class Search extends \common\components\ActiveRecord
         $model->title = $title;
         $model->text = $text;
         $model->save();
+
         $tagsRels = $model->searchTags;
         if (!empty($tagsRels) && is_array($tagsRels)) {
             foreach ($tagsRels as $tagRel) {
                 $tagRel->delete();
             }
         }
+
+        // adding tags to search_tag table
         if (!empty($tags) && is_array($tags)) {
             foreach ($tags as $tagId) {
                 $tag = new SearchTag();

@@ -146,6 +146,26 @@ class DataController extends SController
     }
 
     /**
+     * @SWG\Get(
+     *     path="/dashboard",
+     *     tags={"Data"},
+     *     summary="External dashboard link",
+     *     @SWG\Response(
+     *          response = 200,
+     *          description = "Dashboard Link Response"
+     *     ),
+     *     security = {{"Bearer": {}}},
+     *     @SWG\Parameter( name="Authorization", in="header", required=true, type="string", default="Bearer TOKEN", description="Authorization" )
+     * )
+     */
+    public function actionDashboardLink()
+    {
+        $link = Setting::get('dashboard.link', null);
+        Log::trace('Download Dashboard Link');
+        return ['link' => $link];
+    }
+
+    /**
      * @SWG\Post(
      *     path="/logs",
      *     tags={"Data"},
@@ -163,7 +183,8 @@ class DataController extends SController
     {
         $message = Yii::$app->request->post('message');
         if ($message) {
-            Log::trace($message);
+            //Log::trace($message);
+            Log::appLog($message);
             return ['done' => true];
         }
         $this->error('`message` parameter is required');

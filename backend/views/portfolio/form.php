@@ -21,6 +21,7 @@ use cnd\admin\models\activerecords\Setting;
 use cnd\filemanager\widgets\MediaInput;
 use cnd\form\ActiveForm;
 use common\models\Portfolio;
+use mihaildev\ckeditor\CKEditor;
 use yii\helpers\Html;
 use yii\web\View;
 
@@ -50,7 +51,12 @@ $form = ActiveForm::begin(['id' => Yii::$app->controller->id . '-form']);
                     <?= $form->field($model, 'name')->textInput() ?>
                     <?= $form->field($model, 'linkedin')->textInput() ?>
                     <?= $form->field($model, 'position')->textInput(['type' => 'number', 'min' => 0]) ?>
-                    <?= $form->field($model, 'description')->editorInput(['style' => ['min-height' => '250px', 'resize' => 'none']]) ?>
+                    <?= $form->field($model, 'description')->widget(CKEditor::className(),[
+                        'editorOptions' => [
+                            'preset' => 'full',
+                            'inline' => false,
+                        ],
+                    ]); ?>
                 </div>
             </div>
         </div>
