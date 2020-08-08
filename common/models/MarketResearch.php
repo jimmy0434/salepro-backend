@@ -51,7 +51,8 @@ class MarketResearch extends \common\components\ActiveRecord
             [['name', 'year', 'source'], 'string', 'max' => 255],
             [['file_id'], 'exist', 'skipOnError' => true, 'targetClass' => File::className(), 'targetAttribute' => ['file_id' => 'id']],
             [['sector_id'], 'exist', 'skipOnError' => true, 'targetClass' => Sector::className(), 'targetAttribute' => ['sector_id' => 'id']],
-            [['tags', 'productsIds', 'countriesNames', 'regionsNames'], 'safe'],
+            [['name', 'countriesNames', 'regionsNames'], 'required'],
+            [['tags', 'productsIds'], 'safe'],
             [['uid'], 'unique'],
         ]);
     }
