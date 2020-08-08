@@ -13,6 +13,7 @@ use cnd\grid\Attribute;
 use cnd\grid\DataView;
 use cnd\grid\DataViewLocator;
 use common\models\MarketResearch;
+use common\models\Portfolio;
 use yii\helpers\ArrayHelper;
 use yii\helpers\Html;
 use yii\helpers\Url;
@@ -100,6 +101,10 @@ $dv = new DataView([
                 }
                 return null;
             },
+            'filterBy' => Attribute::FILTER_LIST,
+            'filterList' => ArrayHelper::map(\common\models\Sector::find()->all(),'id',function($data){
+                return $data->portfolio->name;
+            }),
         ],
         'products' => [
             'label' => 'Products',
