@@ -199,14 +199,17 @@ class PortfolioController extends SController
             $id = Yii::$app->request->post('id');
             $status = Yii::$app->request->post('status');
             $model = Portfolio::findOne($id);
+
             if ($model !== null) {
+                Log::trace("Change Portfolio #" . $model->id . " " . $model->name . " status, become " . $status);
 				$table = Portfolio::getTableSchema()->name;
-				$sql = <<< SQL
-	UPDATE `{$table}` SET `status` = "{$status}" WHERE `id` = {$id}			
-SQL;
+				$sql = "UPDATE `{$table}` SET `status` = \"{$status}\" WHERE `id` = {$id}";
 				Yii::$app->db->createCommand($sql)->execute();
-				$response['changed'] = true;
-				Log::trace("Change Portfolio #" . $model->id . " status, become " . $model->status_label);
+                if($status =='enabled')
+                    $model->grantNotificationAll(true);
+                else
+                    $model->grantNotificationAll(false);
+                $response['changed'] = true;
             }
             return $response;
         }

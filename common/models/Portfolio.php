@@ -342,12 +342,18 @@ class Portfolio extends \common\components\ActiveRecord
                 $this->assignItems($urls, '\common\models\PortfolioLink', 'url', 'portfolio_id', $this->id, ['name' => $names]);
             }
         }
+        if($this->status == Portfolio::STATUS_DISABLED)
+        {
+            $this->grantNotificationAll(false);
+        }
+        else
         if ($this->hasAttribute("privilege") && Yii::$app->helper->isJson($this->privilege)) {
             $privilege = Json::decode($this->privilege);
 
             if (isset($privilege['protected'])) {
                 $users = User::find()->where(['type' => User::TYPE_SALESMAN])->all();
                 $granted = in_array($privilege['protected'], ['user.*.1.0.0', 'user.*.1.1.0']) || in_array($privilege['groups'], ['group.*.1.0.0', 'group.*.1.1.0']);
+
                 if (!empty($users) && is_array($users)) {
                     foreach ($users as $user) {
                         $userGranted = false;
@@ -357,6 +363,7 @@ class Portfolio extends \common\components\ActiveRecord
                         $this->grantNotification($user, $userGranted);
                     }
                 }
+
                 $groups = Group::find()->orderBy(['name' => SORT_ASC])->all();
                 if (!empty($groups) && is_array($groups)) {
                     foreach ($groups as $group) {
@@ -386,7 +393,18 @@ class Portfolio extends \common\components\ActiveRecord
             'granted' => $granted,
         ], [$user->id]);
         $userName = $user->name;
-        Log::trace('#user-portfolio-permission: ' . ($granted ? 'Enabled ' . $userName . ' to' : 'Disabled ' . $userName . ' from') . ' view the ' . $this->target_label . ' portfolio `' . $this->name . '` #' . $this->id);
+        Log::trace('Grant portfolio permission', ($granted ? 'Enabled ' . $userName . ' to' : 'Disabled ' . $userName . ' from') . ' view the ' . $this->target_label . ' portfolio `' . $this->name . '` #' . $this->id);
+    }
+
+    public function grantNotificationAll($granted)
+    {
+        Log::trace('Grant portfolio permission for all users', $this->id." ".$this->name."".$granted);
+        $users = User::find()->where(['type' => User::TYPE_SALESMAN, 'status' => User::STATUS_ACTIVE])->all();
+        if (!empty($users) && is_array($users)) {
+            foreach ($users as $user) {
+                $this->grantNotification($user, $granted);
+            }
+        }
     }
 
     public function afterFind()

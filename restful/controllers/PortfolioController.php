@@ -118,7 +118,7 @@ class PortfolioController extends SController
         $query = Portfolio::find();
         $query->where(['uid' => $uid]);
         $model = $query->one();
-        Log::trace("Download Portfolio Item Data");
+        Log::trace("Download Portfolio Item Data", $model->name);
         return ['portfolio' => $model];
     }
 
