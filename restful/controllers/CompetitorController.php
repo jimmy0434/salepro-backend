@@ -230,7 +230,8 @@ class CompetitorController extends SController
         else  // update
             $email->setSubject( 'SalePRO: Competitor data '.$competitor->name.' was updated by '.$modelSalesman->name);
 
-        $email->setFrom(Yii::$app->params['adminEmail'])->send();
+        $email->setFrom(Yii::$app->mailer->transport->getUsername())->send();
+        //$email->setFrom(Yii::$app->params['adminEmail'])->send();
     }
 
     private function saveCompetitorNode($parentModel, $name, $list, $parentName = null)
