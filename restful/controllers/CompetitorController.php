@@ -194,11 +194,10 @@ class CompetitorController extends SController
                 }
             }
         }
-        $competitor->refresh();
 
+        $competitor->refresh();
         $this->composeNotificationEmail($competitor, $isNew, true);
         $this->composeNotificationEmail($competitor, $isNew, false);
-
         Log::trace("Save Competitor Profile ".$competitor->name);
         return ['competitor' => $competitor];
     }
@@ -207,6 +206,8 @@ class CompetitorController extends SController
     {
         try {
             $email = Yii::$app->mailer->compose();
+            $email->setFrom(Yii::$app->mailer->transport->getUsername());
+
             if ($competitor->logo &&  ('jpg' == strtolower($competitor->logo_ext)))
                 $email->setHtmlBody(Yii::$app->mailer->render('competitor', [
                     'competitor' => $competitor,
@@ -224,15 +225,12 @@ class CompetitorController extends SController
                 $email->setTo($modelSalesman->user->email);
                 Log::trace("Send notification e-mail", $modelSalesman->user->email);
             }
-
-            if($isNew) // insert
+            if($isNew)  // insert
                 $email->setSubject('SalePRO: New competitor '.$competitor->name.' was added by '.$modelSalesman->name);
-            else  // update
+            else        // update
                 $email->setSubject( 'SalePRO: Competitor data '.$competitor->name.' was updated by '.$modelSalesman->name);
 
-            $email->setFrom(Yii::$app->mailer->transport->getUsername())->send();
-
-            Yii::$app->mailer->send();
+            $email->send();
         }
         catch (\Swift_TransportException $STe) {
             Log::trace("Send notification e-mail error: ".$STe->getMessage());
