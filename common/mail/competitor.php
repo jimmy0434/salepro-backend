@@ -19,15 +19,17 @@ $mime = new Mime();
                 <table class="table" style="table-layout:fixed;">
                     <tbody>
                     <?php
+                    /*
                     if ($competitor->logo) {
                         ?>
                         <tr>
                             <td>
-                                <center><img src="<?= $img ?>" width="150"></center>
+                                <img src="<?= $img ?>" width="150">
                             </td>
                         </tr>
                         <?php
                     }
+                    */
                     ?>
                     <tr>
                         <th>Name</th>

@@ -207,14 +207,14 @@ class CompetitorController extends SController
         try {
             $email = Yii::$app->mailer->compose();
             $email->setFrom(Yii::$app->mailer->transport->getUsername());
-
+/*
             if ($competitor->logo &&  ('jpg' == strtolower($competitor->logo_ext)))
                 $email->setHtmlBody(Yii::$app->mailer->render('competitor', [
                     'competitor' => $competitor,
                     'img' => $email->embed('data:/' . 'image/jpeg' . ';base64,' . $competitor->logo),
                 ], Yii::$app->mailer->htmlLayout));
             else  // no logo
-                $email->setHtmlBody(Yii::$app->mailer->render('competitor', ['competitor' => $competitor], Yii::$app->mailer->htmlLayout));
+ */               $email->setHtmlBody(Yii::$app->mailer->render('competitor', ['competitor' => $competitor], Yii::$app->mailer->htmlLayout));
 
             $modelSalesman = Salesman::findOne(Yii::$app->user->identity->id);
             if($sendToAdmin){

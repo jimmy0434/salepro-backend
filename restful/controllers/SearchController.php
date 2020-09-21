@@ -60,6 +60,7 @@ class SearchController extends SController
         $query->limit($pageSize)->offset(($page - 1) * $pageSize);
         $results = $query->all();
         Log::trace("Global Search", $query->createCommand()->getRawSql());
+        Log::trace("Global Search results", $results);
         return ['results' => $results];
     }
 }
