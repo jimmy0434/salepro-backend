@@ -38,9 +38,13 @@ class FileController extends SController
     public function actionDownload($id, $version, $order = 0)
     {
         $partition = FilePartition::find()->where(['file_id' => $id, 'version' => $version, 'order' => $order])->one();
-        $secretKey = Yii::$app->secretKey($partition->file_id, $partition->order);
-        $partition->data = base64_encode(Yii::$app->getSecurity()->decryptByPassword($partition->data, $secretKey));
-        Log::trace("Download Partition number #" . $order . " of file #" . $id . " , version #" . $version);
+        if ($partition == NULL) {
+            Log::trace("Error: Partition not found #" . $order . " of file #" . $id . " , version #" . $version);
+        } else {
+            $secretKey = Yii::$app->secretKey($partition->file_id, $partition->order);
+            $partition->data = base64_encode(Yii::$app->getSecurity()->decryptByPassword($partition->data, $secretKey));
+            Log::trace("Download Partition number #" . $order . " of file #" . $id . " , version #" . $version);
+        }
         return ['partition' => $partition];
     }
 
