@@ -62,7 +62,11 @@ class MarketResearchController extends SController
             $sortAttr = substr($sort, 1);
             $sortDir = 'DESC';
         }
+        
+
+    
         $query = MarketResearch::find();
+     
         if ($sectorUid) {
             $portfolio = Portfolio::find()->where(['target' => Portfolio::TARGET_SECTOR, 'uid' => $sectorUid])->one();
             if ($portfolio) {
@@ -74,8 +78,16 @@ class MarketResearchController extends SController
         }
         $query->orderBy($sortAttr . ' ' . $sortDir);
         $query->limit($pageSize)->offset(($page - 1) * $pageSize);
+       
+       
+    
+        
         $list = $query->all();
+        
+
+        
         Log::trace("Download Market Research List");
+        
         return ['marketResearch' => $list];
     }
 }

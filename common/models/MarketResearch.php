@@ -4,6 +4,11 @@ namespace common\models;
 
 use Yii;
 use yii\helpers\ArrayHelper;
+use cnd\admin\models\activerecords\Log;
+use yii\base\Exception;
+use yii\helpers\Inflector;
+use yii\helpers\Json;
+
 
 /**
  * This is the model class for table "{{%market_research}}".
@@ -134,7 +139,9 @@ class MarketResearch extends \common\components\ActiveRecord
      */
     public static function find()
     {
+        
         return new MarketResearchQuery(get_called_class());
+        
     }
 
     public function afterFind()
@@ -191,7 +198,7 @@ class MarketResearch extends \common\components\ActiveRecord
         $this->assignItems($this->regionsNames, '\common\models\MarketResearchRegion', 'region', 'market_research_id', $this->id);
         if ($this->sector && $this->sector->portfolio) {
             $search = Search::updateRecord($this->tags, $this->uid, $this->name, $this->GetSearchText());
-            if (!$this->search_id) {
+                        if (!$this->search_id) {
                 try {
                     Yii::$app->db->createCommand()->update(static::tableName(), ['search_id' => $search->id], ['id' => $this->id])->execute();
                 } catch (\Throwable $t) {
@@ -199,6 +206,41 @@ class MarketResearch extends \common\components\ActiveRecord
                 }
             }
         }
+        if ($this->hasAttribute("privilege") && Yii::$app->helper->isJson($this->privilege)) {
+            $privilege = Json::decode($this->privilege);
+     
+            if (isset($privilege['protected'])) {
+                $users = User::find()->where(['type' => User::TYPE_SALESMAN])->all();
+                $granted = in_array($privilege['protected'], ['user.*.1.0.0', 'user.*.1.1.0']) || in_array($privilege['groups'], ['group.*.1.0.0', 'group.*.1.1.0']);
+            
+                if (!empty($users) && is_array($users)) {
+                  
+                    foreach ($users as $user) {
+                        $userGranted = false;
+                        if (isset($privilege['private'][$user->id])) {
+                            $userGranted = $granted || in_array($privilege['private'][$user->id], ['user.' . $user->id . '.1.1.0', 'user.' . $user->id . '.1.0.0']);
+                        }
+                        $this->grantNotification($user, $userGranted);
+                    }
+                }
+
+                $groups = Group::find()->orderBy(['name' => SORT_ASC])->all();
+                if (!empty($groups) && is_array($groups)) {
+                    foreach ($groups as $group) {
+                        $groupGranted = false;
+                        if (isset($privilege['group'][$group->id])) {
+                            $groupGranted = $granted || in_array($privilege['group'][$group->id], ['group.' . $group->id . '.1.1.0', 'group.' . $group->id . '.1.0.0']);
+                        }
+                        if (!empty($group->users) && is_array($group->users)) {
+                            foreach ($group->users as $user) {
+                                $this->grantNotification($user, $groupGranted);
+                            }
+                        }
+                    }
+                }
+            }
+        }
+   
         parent::afterSave($insert, $changedAttributes);
     }
 
@@ -221,13 +263,56 @@ class MarketResearch extends \common\components\ActiveRecord
     }
 
     public function toArray(array $fields = [], array $expand = [], $recursive = true)
-    {
+    { 
+        $lists=[];
+        $test =$this->canRead();
         $list = parent::toArray($fields, $expand, $recursive);
-        unset($list['search_id'], $list['sector_id'], $list['file_id']);
+        if($test==true)
+        {
+            
+       
+      
+        
+        
+        unset($list['search_id'], $list['sector_id'], $list['file_id'], $list['privilege']);
+      
+            $list['granted'] = $this->canRead();
+            $list['sector'] = $this->sector->portfolio;
+            $list['file'] = $this->file;
+            $list['countries'] = array_values(ArrayHelper::map($this->countries, 'id', 'country'));
+            $list['regions'] = array_values(ArrayHelper::map($this->regions, 'id', 'region'));
+           
+            $products = $this->products;
+            $list['products'] = [];
+            if(!empty($products) && is_array($products)){
+                foreach($products as $product){
+                    if ($product->portfolio) {
+                        $list['products'][] = [
+                            'uid' => $product->portfolio->uid,
+                            'name' => $product->portfolio->name,
+                        ];
+                    }
+                }
+            }
+        
+
+           
+      
+           return $list;
+           
+           
+      
+        }  
+        else{
+        $list['id']=0;
+        $list['uid']=0;
+        unset($list['search_id'], $list['sector_id'], $list['file_id'], $list['privilege']);
+        $list['granted'] = $this->canRead();
         $list['sector'] = $this->sector->portfolio;
         $list['file'] = $this->file;
         $list['countries'] = array_values(ArrayHelper::map($this->countries, 'id', 'country'));
         $list['regions'] = array_values(ArrayHelper::map($this->regions, 'id', 'region'));
+       
         $products = $this->products;
         $list['products'] = [];
         if(!empty($products) && is_array($products)){
@@ -240,18 +325,36 @@ class MarketResearch extends \common\components\ActiveRecord
                 }
             }
         }
-        return $list;
+     return $list ;
+
+        }
+      
     }
 
     public function sendNotification()
     {
-        $users = array_values(ArrayHelper::map(User::find()->where(['status' => User::STATUS_ACTIVE, 'type' => User::TYPE_SALESMAN])->all(), 'id', 'id'));
-        Yii::$app->notification->send('market-research-update', [
-            'message' => 'Market Research Update',
+
+        $users = array_values(ArrayHelper::map(User::find()->where(['type' => User::TYPE_SALESMAN, 'status' => User::STATUS_ACTIVE])->all(), 'id', 'id'));
+        if (!empty($users) && is_array($users)) {
+            Yii::$app->notification->send('market-research-update', [
+                'message' => 'Market Research Update',
+                'id' => $this->id,
+                'uid' => $this->uid,
+            ], $users);
+        }
+
+
+    }
+    public function grantNotification($user, $granted)
+    {
+        Yii::$app->notification->send("market-research-update-grant", [
+            'message' => 'The market-research `' . $this->name . '` was ' . ($granted ? 'enabled for' : 'disabled from') . ' watching.',
             'id' => $this->id,
             'uid' => $this->uid,
-        ], $users);
+            'granted' => $granted,
+        ], [$user->id]);
+        $userName = $user->name;
+        Log::trace('Grant market-research permission', ($granted ? 'Enabled ' . $userName . ' to' : 'Disabled ' . $userName . ' from') . ' view the  market-research `' . $this->name . '` #' . $this->id);
     }
-
 
 }

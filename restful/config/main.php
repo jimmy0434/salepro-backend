@@ -55,18 +55,19 @@ return [
             // this is the name of the session cookie used for login on the backend
             'name' => 'masterpakRestful',
         ],
-        'log' => [
+        /* 'log' => [
             'traceLevel' => YII_DEBUG ? 3 : 0,
             'targets' => [
                 [
                     'class' => 'yii\log\FileTarget',
                     'levels' => ['error', 'warning'],
-                    //'db' => ['
-                    //    except' => ['yii\debug\Module*'],
-                    //],
+                   
+                    'db' => [
+                        'except' => ['yii\debug\Module*'],
+                    ],
                 ],
             ],
-        ],
+        ],*/
 		'errorHandler' => [
             'errorAction' => 'api/guest/error',
         ],

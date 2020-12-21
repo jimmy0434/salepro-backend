@@ -21,6 +21,8 @@ use common\models\File;
 use yii\helpers\ArrayHelper;
 use yii\helpers\Inflector;
 use common\models\StatisticNumber;
+use common\models\User;
+use common\models\News;
 
 class DataController extends SController
 {
@@ -158,11 +160,53 @@ class DataController extends SController
      *     @SWG\Parameter( name="Authorization", in="header", required=true, type="string", default="Bearer TOKEN", description="Authorization" )
      * )
      */
+    public function actionDashboardLink2()
+    {
+       
+     
+  
+    $link = Setting::get('dashboard.link', null);
+    Log::trace('Download Dashboard Link');
+    return ['link' => $link];
+   
+
+   
+    }
+    public function actionNewsLink()
+    {
+       
+     
+  
+    $News =  News::find()->all();
+    Log::trace('Download News');
+    return ['News' => $News];
+   
+
+   
+    }
     public function actionDashboardLink()
     {
-        $link = Setting::get('dashboard.link', null);
-        Log::trace('Download Dashboard Link');
-        return ['link' => $link];
+      
+        $user = Yii::$app->user->identity;
+        $email = User::find()->select(['email'])->where(['id' => $user->id])->one();
+       
+       $email=$user->email;
+    
+       $email= substr($email, strpos($email, "@") + 1);
+   
+  
+   if  ($email=='napcogroup.com'||$email=='napconational.com'){
+    $link = Setting::get('dashboard.link2', null);
+    Log::trace('Download Dashboard Link');
+    return ['link' => $link];
+   }
+ //  if ($email=='indevcogroup.com')
+  else {
+    $link = Setting::get('dashboard.link', null);
+    Log::trace('Download Dashboard Link');
+    return ['link' => $link]; 
+   }
+   
     }
 
     /**

@@ -40,6 +40,7 @@ $form = ActiveForm::begin(['id' => Yii::$app->controller->id . '-form']);
                     <?= $form->field($model, 'target')->hiddenInput()->label(false) ?>
                     <?php
                     if (!in_array($context->target, [Portfolio::TARGET_PRODUCT, Portfolio::TARGET_BUNDLING_AND_PACKING])) {
+                        
                         echo MediaInput::widget([
                             'model' => $model,
                             'attr' => 'image',
@@ -48,6 +49,7 @@ $form = ActiveForm::begin(['id' => Yii::$app->controller->id . '-form']);
                         ]);
                     }
                     ?>
+                    
                     <?= $form->field($model, 'name')->textInput() ?>
                     <?= $form->field($model, 'linkedin')->textInput() ?>
                     <?= $form->field($model, 'position')->textInput(['type' => 'number', 'min' => 0]) ?>
@@ -55,8 +57,38 @@ $form = ActiveForm::begin(['id' => Yii::$app->controller->id . '-form']);
                         'editorOptions' => [
                             'preset' => 'full',
                             'inline' => false,
+                    
                         ],
-                    ]); ?>
+                    ]);
+                   
+                    
+                     
+                
+
+                    ?>
+                                <?= $form->field($model, 'specifications')->widget(CKEditor::className(),[
+                       'editorOptions' => [
+                           'preset' => 'full',
+                           'inline' => false,
+                       ],
+                   ]); ?>
+                        <?= $form->field($model, 'applications')->widget(CKEditor::className(),[
+                       'editorOptions' => [
+                           'preset' => 'full',
+                           'inline' => false,
+                       ],
+                   ]); ?>
+                      <?= $form->field($model, 'knowas')->widget(CKEditor::className(),[
+                       'editorOptions' => [
+                           'preset' => 'full',
+                           'inline' => false,
+                       ],
+                   ]);
+                ?>
+                
+                    
+                   
+                        
                 </div>
             </div>
         </div>
@@ -179,15 +211,25 @@ $form = ActiveForm::begin(['id' => Yii::$app->controller->id . '-form']);
             </div>
         </div>
     </div>
+
 <?php
 if (in_array($context->target, [Portfolio::TARGET_PRODUCT, Portfolio::TARGET_BUNDLING_AND_PACKING])) {
     ?>
     <div class="panel panel-default">
-        <div class="panel-heading"><?= 'Images' ?></div>
+        <div class="panel-heading"><?= 'Images Outside' ?></div>
         <div class="panel-body">
             <?= MediaInput::widget([
                 'model' => $model,
                 'attr' => 'image',
+            ]) ?>
+        </div>
+    </div>
+    <div class="panel panel-default">
+        <div class="panel-heading"><?= 'Images ' ?></div>
+        <div class="panel-body">
+            <?= MediaInput::widget([
+                'model' => $model,
+                'attr' => 'imageinside',
             ]) ?>
         </div>
     </div>

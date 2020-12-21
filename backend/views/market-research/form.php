@@ -11,6 +11,7 @@
 use backend\controllers\MarketResearchController;
 use backend\widgets\AutoCompleteInput;
 use backend\widgets\FileSelector;
+
 use cnd\admin\models\activerecords\Setting;
 use cnd\form\ActiveForm;
 use common\models\MarketResearch;
@@ -73,8 +74,15 @@ $form = ActiveForm::begin(['id' => Yii::$app->controller->id . '-form']);
                         'title' => false,
                         'fileName' => uniqid('market-research-file-', true),
                         'ext' => Setting::get('market-research.attachment.extensions', 'xlsx,xls,pdf,pptx,ppt'),
+                       
+                        
                     ]) ?>
+
+
+
+
                 </div>
+                
             </div>
             <div class="panel panel-default">
                 <div class="panel-heading">Search Tags</div>
@@ -90,6 +98,13 @@ $form = ActiveForm::begin(['id' => Yii::$app->controller->id . '-form']);
                     ]) ?>
                 </div>
             </div>
+        </div>
+    </div>
+    
+    <div class="panel panel-default">
+        <div class="panel-heading"><?= 'Privilege' ?></div>
+        <div class="panel-body">
+            <?= $model->getPrivilegeForm($form) ?>
         </div>
     </div>
     <div class="form-group text-center">
