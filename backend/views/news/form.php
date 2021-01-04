@@ -70,6 +70,7 @@ $form = ActiveForm::begin(['id' => Yii::$app->controller->id . '-form']);
                 <div class="panel-body">
                 <?= $form->field($model, 'source')->textInput() ?>
                 <?= $form->field($model, 'url')->textInput() ?>
+                <?= $form->field($model, 'source_person')->textInput() ?>
                 </div>
             </div>
             
