@@ -35,8 +35,8 @@ class Bootstrap implements BootstrapInterface
         $navigator->item('Portfolio Management', ['/portfolio/index'], 'fa fa-database', 5);
       
         $navigator->item('Exhibitions', ['/exhibition/index'], 'fa fa-cubes', 6);
-        //$navigator->item('News', ['/exhibition/index'], 'fa fa-cubes', 6);
-      //  $navigator->item('News', ['/news/index'], 'fa fa-newspaper-o', 7);
+      
+        $navigator->item('News', ['/news/index'], 'fa fa-newspaper-o', 7);
         //$navigator->item('Market Research', ['/market-research/index'], 'fa fa-search', 7);
         $marketIntel = $navigator->section('Market Intel', 'fa fa-server', 8);
         $marketIntel->item('Market Research', ['/market-research/index']);

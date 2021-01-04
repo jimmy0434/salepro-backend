@@ -37,7 +37,7 @@ class News extends \common\components\ActiveRecord
     {
         return array_merge(parent::rules(), [
             [['title'], 'required'],
-            [['title', 'source', 'url','details'], 'string', 'max' => 255],
+            [['title', 'source', 'url','details'], 'string'],
            
         ]);
     }
