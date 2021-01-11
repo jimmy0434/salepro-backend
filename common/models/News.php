@@ -76,13 +76,10 @@ class News extends \common\components\ActiveRecord
         $formatter = \Yii::$app->formatter;
         $list = parent::toArray($fields, $expand, $recursive);
        
-        $list['image'] = $this->imageFactory->url;
-       
-    
-       
-        $list['date'] = Yii::$app->formatter->asDate($this->created_at, 'php:Y-m-d');
-
-    
+        $list['image'] = $this->imageFactory->url;   
+      //  $list['date'] = Yii::$app->formatter->asDate($this->created_at, 'php:Y-m-d');
+      $list['created_at'] = strtotime($list['date']); 
+      
         return $list;
 
         

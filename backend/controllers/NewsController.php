@@ -101,8 +101,10 @@ class NewsController extends SController
     public function actionAddNews(){
         Yii::$app->response->format = 'json';
         $title = Yii::$app->request->post('title');
+       
         $model = new News();
         $model->title = $title;
+       
         if ($model->save()) {
             return ['id' => $model->id];
          

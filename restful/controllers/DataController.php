@@ -42,7 +42,8 @@ class DataController extends SController
     public function actionStatisticNumbers()
     {
         Log::trace('Download Statistic Numbers');
-        $models = StatisticNumber::find()->all();
+        $models = StatisticNumber::find()->orderBy('order')->all();
+      
         return $models;
     }
 

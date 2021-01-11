@@ -48,6 +48,7 @@ if (!empty($models) && is_array($models)) {
                     <div class="col-md-9">
                         <?= $form->field($model, '[' . $i . ']id')->hiddenInput()->label(false) ?>
                         <?= $form->field($model, '[' . $i . ']label')->textInput() ?>
+                        <?= $form->field($model, '[' . $i . ']order')->textInput() ?>
                     </div>
                 </div>
             </div>

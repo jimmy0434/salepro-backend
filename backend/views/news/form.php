@@ -17,6 +17,7 @@ use common\models\News;
 use yii\helpers\Html;
 use yii\web\View;
 use mihaildev\ckeditor\CKEditor;
+use yii\jui\DatePicker;
 
 $view = $this;
 $context = $this->context;
@@ -56,9 +57,13 @@ $form = ActiveForm::begin(['id' => Yii::$app->controller->id . '-form']);
                         ],
                     ]);
                     ?>
-           
-                     
-                
+   
+   <?= DatePicker::widget([
+    'model' => $model,
+    'attribute' => 'date',
+    
+    'dateFormat' => 'MMM-yyyy'
+]) ?>
 
                   
                 </div>
