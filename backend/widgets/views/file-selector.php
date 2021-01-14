@@ -35,6 +35,9 @@ if($file) {
     <div class="file-selector">
         <h3 class="header">
             <?= $title ?>
+            <?php
+            if($fileId) echo Html::a('<span class="glyphicon glyphicon-eye-open"></span>', array('file/download', 'id'=>$fileId), ['target'=>'_blank']);
+            ?>
         </h3>
         <?php
         $hid = Html::getInputId($model, $property);
