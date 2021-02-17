@@ -9,6 +9,7 @@
  */
 
 use backend\controllers\NewsController;
+use backend\widgets\AutoCompleteInput;
 use backend\widgets\FileSelector;
 use cnd\admin\models\activerecords\Setting;
 use cnd\filemanager\widgets\MediaInput;
@@ -76,6 +77,9 @@ $form = ActiveForm::begin(['id' => Yii::$app->controller->id . '-form']);
                 <?= $form->field($model, 'source')->textInput() ?>
                 <?= $form->field($model, 'url')->textInput() ?>
                 <?= $form->field($model, 'source_person')->textInput() ?>
+
+
+              
                 </div>
             </div>
             

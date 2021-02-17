@@ -135,6 +135,18 @@ $mime = new Mime();
                         <th>Market Dominance</th>
                         <td><?= $competitor->market_dominance ?? $na ?></td>
                     </tr>
+                    <th>Timely Delivery</th>
+                    <td><?= $competitor->timely_delivery ?? $na ?></td>
+                </tr>
+                <tr>
+                    <th>Lead Time</th>
+                    <td><?= $competitor->lead_time ?? $na ?></td>
+                </tr>
+                <tr>
+                    <th>Customer Relationship</th>
+                    <td><?= $competitor->customer_relationship ?? $na ?></td>
+                </tr>
+                
                     <tr>
                         <th>Comments</th>
                         <td><?= $competitor->comments ?? $na ?></td>
@@ -442,10 +454,15 @@ if (!empty($competitor->competitorFlexible) && is_array($competitor->competitorF
                             <td colspan="3"><?= $m->payment ?? $na ?></td>
                         </tr>
                         <tr>
-                            <th>Price</th>
+                            <th>Price DDP</th>
                             <td><?= $m->price ?? $na ?></td>
                             <th>Currency</th>
                             <td><?= $m->currency ?? $na ?></td>
+                        </tr>
+                        <tr>
+                            <th>Market Share %</th>
+                            <td><?= $m->market_share_percentage ?? $na ?></td>
+                            
                         </tr>
                         <?php
                         if (!empty($m->competitorFlexibleCustomer) && is_array($competitor->competitorFlexibleCustomer)) {
@@ -605,11 +622,17 @@ if (!empty($competitor->competitorPackaging) && is_array($competitor->competitor
                             <td colspan="3"><?= $m->payment ?? $na ?></td>
                         </tr>
                         <tr>
-                            <th>Price</th>
+                            <th>Price DDP</th>
                             <td><?= $m->price ?? $na ?></td>
                             <th>Currency</th>
                             <td><?= $m->currency ?? $na ?></td>
                         </tr>
+                        <tr>
+                            <th>Market Share %</th>
+                            <td><?= $m->market_share_percentage ?? $na ?></td>
+                            
+                        </tr>
+          
                         <?php
                         if (!empty($m->competitorPackagingCustomer) && is_array($competitor->competitorPackagingCustomer)) {
                             ?>
@@ -750,11 +773,17 @@ if (!empty($competitor->competitorMasterbatch) && is_array($competitor->competit
                             <td colspan="3"><?= $m->payment ?? $na ?></td>
                         </tr>
                         <tr>
-                            <th>Price</th>
+                            <th>Price DDP</th>
                             <td><?= $m->price ?? $na ?></td>
                             <th>Currency</th>
                             <td><?= $m->currency ?? $na ?></td>
                         </tr>
+                        <tr>
+                            <th>Market Share %</th>
+                            <td><?= $m->market_share_percentage ?? $na ?></td>
+                            
+                        </tr>
+          
                         <?php
                         if (!empty($m->competitorMasterbatchCustomer) && is_array($competitor->competitorMasterbatchCustomer)) {
                             ?>

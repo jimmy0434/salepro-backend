@@ -29,7 +29,7 @@ $form = ActiveForm::begin(['id' => Yii::$app->controller->id.'-form']);
                 <div class="panel-heading"><?= ucfirst(Yii::$app->controller->id).' Form' ?></div>
                 <div class="panel-body">
                     <?= $form->field($model, 'id')->hiddenInput()->label(false) ?>
-                    <?= $form->field($model, 'title')->textInput() ?>
+                    <?= $form->field($model, 'titled')->textInput() ?>
                     <?= $form->field($model, 'status')->dropDownList($model->status_list) ?>
                 </div>
             </div>

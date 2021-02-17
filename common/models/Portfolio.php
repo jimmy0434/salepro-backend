@@ -116,10 +116,18 @@ class Portfolio extends \common\components\ActiveRecord
             'name' => 'Name',
             'description' => 'Description',
             'info_graphic_id' => 'InfoGraphics',
+            'info_graphic_idd' => 'InfoGraphicss',
+            'info_graphic_iddd' => 'InfoGraphicsss',
             'image' => 'Image',
             'brochure_id' => 'Brochure ID',
+            'brochure_idd' => 'Brochure IDD',
+            'brochure_iddd' => 'Brochure IDDD',
             'presentation_id' => 'Presentation ID',
+            'presentation_idd' => 'Presentation IDD',   
+            'presentation_iddd' => 'Presentation IDDD',
             'video_id' => 'Video ID',
+            'video_idd' => 'Video IDD',
+            'video_iddd' => 'Video IDDD',
             'search_id' => 'Search ID',
             'target' => 'Target',
             'created_at' => 'Created At',
@@ -195,21 +203,56 @@ class Portfolio extends \common\components\ActiveRecord
     {
         return $this->hasOne(File::className(), ['id' => 'brochure_id']);
     }
+    public function getBrochure2()
+    {
+        return $this->hasOne(File::className(), ['id' => 'brochure_idd']);
+    }
+    public function getBrochure3()
+    {
+        return $this->hasOne(File::className(), ['id' => 'brochure_iddd']);
+    }
 
     public function getPresentation()
     {
         return $this->hasOne(File::className(), ['id' => 'presentation_id']);
     }
-
+    public function getPresentation2()
+    {
+        return $this->hasOne(File::className(), ['id' => 'presentation_idd']);
+    }
+    public function getPresentation3()
+    {
+        return $this->hasOne(File::className(), ['id' => 'presentation_iddd']);
+    }
     public function getVideo()
     {
         return $this->hasOne(File::className(), ['id' => 'video_id']);
+    }
+    
+    public function getVideo2()
+    {
+        return $this->hasOne(File::className(), ['id' => 'video_idd']);
+    }
+    
+    public function getVideo3()
+    {
+        return $this->hasOne(File::className(), ['id' => 'video_iddd']);
     }
 
     public function getInfoGraphic()
     {
         return $this->hasOne(File::className(), ['id' => 'info_graphic_id']);
     }
+    public function getInfoGraphic2()
+    {
+        return $this->hasOne(File::className(), ['id' => 'info_graphic_idd']);
+    }
+
+    public function getInfoGraphic3()
+    {
+        return $this->hasOne(File::className(), ['id' => 'info_graphic_iddd']);
+    }
+
 
     public function getSearch()
     {
@@ -388,6 +431,18 @@ class Portfolio extends \common\components\ActiveRecord
         parent::afterSave($insert, $changedAttributes);
     }
 
+    public function afterDelete()
+    {
+     
+        $search = Search::find()->where(['id' =>$this->search_id])->all();
+      
+           
+            foreach ($search as $search) {
+                $search->delete();
+            }
+        
+    }
+
     public function grantNotification($user, $granted)
     {
         Yii::$app->notification->send("portfolio-update-grant", [
@@ -487,9 +542,17 @@ class Portfolio extends \common\components\ActiveRecord
             }
         }
         $data['brochure'] = $this->brochure;
+        $data['brochure2'] = $this->brochure2;
+        $data['brochure3'] = $this->brochure3;
         $data['presentation'] = $this->presentation;
+        $data['presentation2'] = $this->presentation2;
+        $data['presentation3'] = $this->presentation3;
         $data['video'] = $this->video;
+        $data['video2'] = $this->video2;
+        $data['video3'] = $this->video3;
         $data['infoGraphics'] = $this->infoGraphic;
+        $data['infoGraphics2'] = $this->infoGraphic2;
+        $data['infoGraphics3'] = $this->infoGraphic3;
         $data['news'] = isset($this->newsLinks['Url']) ? $this->newsLinks['Url'] : [];
         $data['links'] = array_values(ArrayHelper::map($this->portfolioLinks, 'id', function ($model) {
             return [
@@ -503,7 +566,7 @@ class Portfolio extends \common\components\ActiveRecord
         }
         $data['primaryModel'] = $this->item;
         $data['granted'] = $this->canRead();
-        unset($data['brochure_id'], $data['presentation_id'], $data['video_id'], $data['search_id'], $data['target'], $data['info_graphic_id'], $data['privilege']);
+        unset($data['brochure_id'], $data['brochure_idd'], $data['brochure_iddd'], $data['presentation_id'], $data['presentation_idd'], $data['presentation_iddd'], $data['video_id'], $data['video_idd'], $data['video_iddd'], $data['search_id'], $data['target'], $data['info_graphic_id'],$data['info_graphic_idd'],$data['info_graphic_iddd'], $data['privilege']);
         switch ($this->target) {
             case static::TARGET_MOTHER_CORPORATE:
             case static::TARGET_CORPORATE:

@@ -5,6 +5,7 @@ use yii\helpers\Html;
 use yii\web\Request;
 
 return [
+    'timeZone' => 'Asia/Lebanon', 
     'aliases' => [
         '@bower' => '@vendor/bower-asset',
         '@npm' => '@vendor/npm-asset',
@@ -45,9 +46,7 @@ return [
         'helper' => [
             'class' => 'cnd\core\components\Helper',
         ],
-        'timezone' => [
-            'class' => 'cnd\core\data\TimeZone',
-        ],
+      
         'i18n' => array(
             'translations' => array(
                 'app*' => array(

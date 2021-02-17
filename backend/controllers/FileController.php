@@ -73,6 +73,7 @@ class FileController extends SController
             $response = [
                 "done" => false,
             ];
+            $name= Yii::$app->request->post('name');
             $version = Yii::$app->request->post('version');
             $order = Yii::$app->request->post('order');
             $count = Yii::$app->request->post('count');
@@ -106,6 +107,7 @@ class FileController extends SController
                 if ($order == $count - 1) {
                     $model->version = $version;
                     $model->extension = $extension;
+                    $model->name = $name;
                     $model->status = File::STATUS_ACTIVE;
                     $model->save(false);
                     $users = array_values(ArrayHelper::map(User::find()->where(['type' => User::TYPE_SALESMAN, 'status' => User::STATUS_ACTIVE])->all(), 'id', 'id'));

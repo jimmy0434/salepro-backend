@@ -16,7 +16,10 @@ use common\models\File;
 use yii\helpers\Json;
 use yii\helpers\Url;
 use yii\web\View;
+use cnd\form\ActiveForm;
 
+
+$form = ActiveForm::begin(['id' => Yii::$app->controller->id . '-form']);
 Yii::$app->notification->enabled = false;
 
 $this->title = 'Manage File Upload';
@@ -24,6 +27,7 @@ $context = $this->context;
 $extensions = Yii::$app->request->get('ext', Setting::get('file.allowed.extensions', 'pdf,png,jpg,mp4'));
 $extensions = array_values(explode(',', $extensions));
 $uploadUrl = Url::to(['file/manage-upload', 'id' => $model->id]);
+
 ?>
     <div class="row">
         <div class="col-md-6">
@@ -32,12 +36,17 @@ $uploadUrl = Url::to(['file/manage-upload', 'id' => $model->id]);
                     <h3 style="margin: 0;padding: 0;">Upload File</h3>
                 </div>
                 <div class="panel-body">
+                <b>Label</b>
+                            <input type="text" id="namee" name="name" value="<?= $model->name ?>" >
+                           <br>
                     <!-- Standar Form -->
                     <h4>Select file from your computer</h4>
                     <form action="" method="post" enctype="multipart/form-data" id="js-upload-form">
                         <div class="form-inline">
                             <div class="form-group">
-                                <input type="file" name="files" id="js-upload-files"
+                            
+                       
+                                 <input type="file" name="files" id="js-upload-files"
                                        accept="<?= implode(',', array_map(function ($item) {
                                            return '.' . $item;
                                        }, $extensions)) ?>">
@@ -97,12 +106,15 @@ $exts = Json::encode($extensions);
 $fileId = $model->id;
 $fileName = $model->title;
 $extension = $model->extension;
+
 $filePartitionSize = Setting::get('file.upload.partition.size',1024 * 1024 * 1);
 $ready = <<< JS
     let dropZone = document.getElementById('drop-zone');
     let uploadForm = document.getElementById('js-upload-form');
+   
     uploadForm.addEventListener('submit', function(e) {
         let uploadFiles = document.getElementById('js-upload-files').files;
+    
         e.preventDefault();
         startUpload(uploadFiles)
     });
@@ -125,7 +137,7 @@ function startUpload(files){
     $('.alert-processing').hide().empty();
     if(files[0]){
         let file = files[0];
-        let extensions = {$exts};
+        let extensions = {$exts};   
         let ext = extension(file);
         if($.inArray(ext,extensions) > -1){
             msg("File Extension Valid");
@@ -201,7 +213,12 @@ function msg(text){
     $('.alert-processing').append('<p>'+text+'</p>').show();
 }
 function uploadChunk(index, chunks, version, extension){
+  
+    var test = $('#namee').val();
+
+   
     if(index < chunks.length){
+        
         $.ajax({
             type: 'post',
             url : '{$uploadUrl}',
@@ -210,11 +227,13 @@ function uploadChunk(index, chunks, version, extension){
                 chunk: chunks[index],
                 order: index,
                 count: chunks.length,
-                extension, extension
+                extension, extension,
+                name:test
+
             },
             dataType: 'json',
             beforeSend: function(){
-                msg("Start uploading chunk "+(index+1)+'/'+chunks.length+' , version '+version);
+                msg("Start uploading chunk "+(index+1)+'/'+chunks.length+' , version '+version );
             },
             success: function(response){
                 uploadChunk(index+1, chunks, version, extension);

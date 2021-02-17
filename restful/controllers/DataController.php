@@ -161,13 +161,13 @@ class DataController extends SController
      *     @SWG\Parameter( name="Authorization", in="header", required=true, type="string", default="Bearer TOKEN", description="Authorization" )
      * )
      */
-    public function actionDashboardLink2()
+    public function actionTradedataLink()
     {
        
      
   
-    $link = Setting::get('dashboard.link', null);
-    Log::trace('Download Dashboard Link');
+    $link = Setting::get('tradedata.link', null);
+    Log::trace('Download trade data Link');
     return ['link' => $link];
    
 

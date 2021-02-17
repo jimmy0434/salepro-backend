@@ -21,6 +21,7 @@ class FileSelector extends Widget
     public $title;
     public $fileName;
     public $ext;
+    public $name;
 
     public function run()
     {
@@ -32,7 +33,7 @@ class FileSelector extends Widget
             if ($fileId) {
                 $file = File::findOne($fileId);
             }
-            return $this->render('file-selector', ['file' => $file, 'model' => $model, 'property' => $property, 'fileId' => $fileId, 'title' => $this->title, 'fileName' => $this->fileName, 'ext' => $this->ext]);
+            return $this->render('file-selector', ['file' => $file, 'model' => $model, 'property' => $property, 'fileId' => $fileId, 'title' => $this->title, 'fileName' => $this->fileName, 'ext' => $this->ext, 'name'=>$this->name]);
         }
         return null;
     }

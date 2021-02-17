@@ -50,6 +50,17 @@ $dv = new DataView([
                 return $data->title;
             },
         ],
+        'name' => [
+            'label' => 'NAme',
+            'value' => function ($attribute, $data, $view) use ($dataLocator) {
+                /**
+                 * @var $attribute Attribute
+                 * @var $data File
+                 * @var $view DataView
+                 */
+                return $data->name;
+            },
+        ],
         'version' => [
             'label' => 'Version',
             'value' => function ($attribute, $data, $view) use ($dataLocator) {

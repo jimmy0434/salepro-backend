@@ -51,6 +51,12 @@ class DataList extends \common\components\ActiveRecord
     const TYPE_PROBLEM_SOLVING_RESPONSE = 28;
     const TYPE_MARKET_DOMINANCE = 29;
     const TYPE_COMPETITOR_SECTOR = 30;
+ 
+    const TYPE_TIMELY_DELIVERY =32; 
+    const TYPE_LEAD_TIME =33; 
+    const TYPE_CUSTOMER_RELATIONSHIP =34;     
+
+
 
     public static function listRelations()
     {

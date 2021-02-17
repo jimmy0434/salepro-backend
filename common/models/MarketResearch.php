@@ -190,7 +190,17 @@ class MarketResearch extends \common\components\ActiveRecord
 
         return($result);
     }
-
+    public function afterDelete()
+    {
+     
+        $search = Search::find()->where(['id' =>$this->search_id])->all();
+      
+           
+            foreach ($search as $search) {
+                $search->delete();
+            }
+        
+    }
     public function afterSave($insert, $changedAttributes)
     {
         $this->assignItems($this->productsIds, '\common\models\MarketResearchProduct', 'product_id', 'market_research_id', $this->id);

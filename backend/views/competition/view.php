@@ -163,6 +163,18 @@ $na = "N/A";
                     <td><?= $model->market_dominance ?? $na ?></td>
                 </tr>
                 <tr>
+                    <th>Timely Delivery</th>
+                    <td><?= $model->timely_delivery ?? $na ?></td>
+                </tr>
+                <tr>
+                    <th>Lead Time</th>
+                    <td><?= $model->lead_time ?? $na ?></td>
+                </tr>
+                <tr>
+                    <th>Customer Relationship</th>
+                    <td><?= $model->customer_relationship ?? $na ?></td>
+                </tr>
+                <tr>
                     <th>Comments</th>
                     <td><?= $model->comments ?? $na ?></td>
                 </tr>
@@ -469,10 +481,15 @@ if (!empty($model->competitorFlexible) && is_array($model->competitorFlexible)) 
                             <td colspan="3"><?= $m->payment ?? $na ?></td>
                         </tr>
                         <tr>
-                            <th>Price</th>
+                            <th>Price DDP</th>
                             <td><?= $m->price ?? $na ?></td>
                             <th>Currency</th>
                             <td><?= $m->currency ?? $na ?></td>
+                        </tr>
+                        <tr>
+                            <th>Market Share %</th>
+                            <td><?= $m->market_share_percentage ?? $na ?></td>
+                            
                         </tr>
                         <?php
                         if (!empty($m->competitorFlexibleCustomer) && is_array($model->competitorFlexibleCustomer)) {
@@ -632,10 +649,15 @@ if (!empty($model->competitorPackaging) && is_array($model->competitorPackaging)
                             <td colspan="3"><?= $m->payment ?? $na ?></td>
                         </tr>
                         <tr>
-                            <th>Price</th>
+                            <th>Price DDP</th>
                             <td><?= $m->price ?? $na ?></td>
                             <th>Currency</th>
                             <td><?= $m->currency ?? $na ?></td>
+                        </tr>
+                        <tr>
+                            <th>Market Share %</th>
+                            <td><?= $m->market_share_percentage ?? $na ?></td>
+                            
                         </tr>
                         <?php
                         if (!empty($m->competitorPackagingCustomer) && is_array($model->competitorPackagingCustomer)) {
@@ -777,10 +799,15 @@ if (!empty($model->competitorMasterbatch) && is_array($model->competitorMasterba
                             <td colspan="3"><?= $m->payment ?? $na ?></td>
                         </tr>
                         <tr>
-                            <th>Price</th>
+                            <th>Price DDP</th>
                             <td><?= $m->price ?? $na ?></td>
                             <th>Currency</th>
                             <td><?= $m->currency ?? $na ?></td>
+                        </tr>
+                        <tr>
+                            <th>Market Share %</th>
+                            <td><?= $m->market_share_percentage ?? $na ?></td>
+                            
                         </tr>
                         <?php
                         if (!empty($m->competitorMasterbatchCustomer) && is_array($model->competitorMasterbatchCustomer)) {

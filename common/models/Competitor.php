@@ -88,7 +88,7 @@ class Competitor extends \common\components\ActiveRecord
         return array_merge(parent::rules(), [
             [['salesman_id', 'business_unit_id', 'search_id'], 'integer'],
             [['logo', 'file'], 'string'],
-            [['name', 'company_profile', 'headquarter_location', 'manufacturing_locations', 'manufacturing_locations', 'website', 'market_presence', 'established_year', 'annual_sales_revenue', 'employees_number', 'certification', 'certification_others', 'marketing_strategy', 'company_communication', 'quality', 'brand_equity', 'problem_solving_response', 'market_dominance', 'comments', 'mother_name', 'mother_company_profile', 'mother_headquarter_location', 'mother_other_locations', 'mother_website'], 'string', 'max' => 255],
+            [['name', 'company_profile', 'headquarter_location', 'manufacturing_locations', 'manufacturing_locations', 'website', 'market_presence', 'established_year', 'annual_sales_revenue', 'employees_number', 'certification', 'certification_others', 'marketing_strategy', 'company_communication', 'quality', 'brand_equity', 'problem_solving_response', 'market_dominance' ,'timely_delivery','lead_time','customer_relationship', 'comments', 'mother_name', 'mother_company_profile', 'mother_headquarter_location', 'mother_other_locations', 'mother_website'], 'string', 'max' => 255],
             [['uid'], 'unique'],
             [['business_unit_id'], 'exist', 'skipOnError' => true, 'targetClass' => BusinessUnit::className(), 'targetAttribute' => ['business_unit_id' => 'id']],
         ]);
@@ -122,6 +122,9 @@ class Competitor extends \common\components\ActiveRecord
             'brand_equity' => 'Brand Equity',
             'problem_solving_response' => 'Problem Solving Response',
             'market_dominance' => 'Market Dominance',
+            'timely_delivery'=>'Timely Delivery',
+            'lead_time'=>'Lead Time',
+            'customer_relationship'=>'Customer Relationship',
             'comments' => 'Comments',
             'file' => 'File',
             'mother_name' => 'Mother Name',
@@ -412,7 +415,17 @@ class Competitor extends \common\components\ActiveRecord
 
         return $list;
     }
-
+    public function afterDelete()
+    {
+     
+        $search = Search::find()->where(['id' =>$this->search_id])->all();
+      
+           
+            foreach ($search as $search) {
+                $search->delete();
+            }
+        
+    }
     public function beforeValidate()
     {
         if ($this->isNewRecord) {

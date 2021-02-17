@@ -63,6 +63,7 @@ class File extends \common\components\ActiveRecord
             'title' => 'Title',
             'content_id' => 'Content',
             'version' => 'Version',
+            'name' =>'name',
             'status' => 'Status',
             'created_at' => 'Created At',
             'updated_at' => 'Updated At',

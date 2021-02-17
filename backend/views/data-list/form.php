@@ -13,6 +13,9 @@ use cnd\form\ActiveForm;
 use common\models\DataList;
 use yii\helpers\Html;
 use yii\web\View;
+use cnd\filemanager\widgets\MediaInput;
+use backend\widgets\AutoCompleteInput;
+
 
 $view = $this;
 $context = $this->context;
@@ -35,6 +38,20 @@ $form = ActiveForm::begin(['id' => Yii::$app->controller->id . '-form']);
             <?= $form->field($model, 'parent_id')->hiddenInput()->label(false) ?>
             <?= $form->field($model, 'type')->hiddenInput()->label(false) ?>
             <?= $form->field($model, 'name')->textInput() ?>
+            
+<?php
+            if (in_array($context->type, [DataList::TYPE_LEAD_TIME,DataList::TYPE_TIMELY_DELIVERY,DataList::TYPE_CUSTOMER_RELATIONSHIP,DataList::TYPE_QUALITY,DataList::TYPE_PROBLEM_SOLVING_RESPONSE,DataList::TYPE_BRAND_EQUITY])) {
+                
+                echo $form->field($model, 'weight')->textInput();
+
+                echo $form->field($model, 'score')->textInput(); 
+               
+                    
+              
+            }
+                ?>
+                
+                  
         </div>
     </div>
     <div class="form-group text-center">
