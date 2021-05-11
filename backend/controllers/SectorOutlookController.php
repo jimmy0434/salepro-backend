@@ -1,0 +1,56 @@
+<?php
+
+namespace backend\controllers;
+use Yii;
+use cnd\admin\models\activerecords\Log;
+use cnd\core\components\SController;
+use cnd\grid\DataLocator;
+use common\models\SectorOutlook;
+
+class SectorOutlookController extends SController
+{
+    public function actionIndex()
+    { 
+        $dataLocator = DataLocator::create(SectorOutlook::className(), [
+            'orderBy' => 'updated_at DESC, created_at DESC, id DESC',
+            'pageSize' => 20,
+        ], function ($dl, $query) {
+            $m = new SectorOutlook();
+            $attrs = $m->attributes;
+            unset($attrs['file']);
+            $attrs = array_keys($attrs);
+            $query->select($attrs);
+        });
+        Log::trace("Show Sector Outlook List (page:" . $dataLocator->page . ", count: " . $dataLocator->pageSize . ")");
+        if (Yii::$app->request->isAjax) {
+            return $this->renderAjax('index', ['dataLocator' => $dataLocator]);
+        }
+        return $this->render('index', ['dataLocator' => $dataLocator]);
+
+    }
+    public function actionView($id)
+    {
+        $model = SectorOutlook::findOne($id);
+        return $this->render('view', ['model' => $model]);
+    }
+
+  
+    public function actionDelete($id)
+    {
+        $model = SectorOutlook::find()->where(['id' => $id])->one();
+        if ($model !== null) {
+            if ($model->delete()) {
+                Log::trace("SectorOutlook deleted #" . $id);
+                Yii::$app->session->setFlash('success', ucfirst($this->id) . ' deleted successfully');
+               // $model->notifyAll();
+            } else {
+                Log::trace("SectorOutlook not deleted #" . $id);
+                Yii::$app->session->setFlash('error', ucfirst($this->id) . ' not deleted');
+            }
+        } else {
+            Log::trace("SectorOutlook not found to delete #" . $id);
+            Yii::$app->session->setFlash('error', ucfirst($this->id) . ' not found');
+        }
+        return $this->redirect(['index']);
+    }
+}

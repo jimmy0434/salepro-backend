@@ -26,6 +26,7 @@ class DataList extends \common\components\ActiveRecord
     const TYPE_PRODUCT_TYPE_FLEXIBLE_PACKAGING = 3;
     const TYPE_PRODUCT_TYPE_RIGID_PACKAGING_PRODUCTS = 24;
     const TYPE_PRODUCT_TYPE_MB_COMPOUNDING_PRODUCTS = 25;
+    const TYPE_PRODUCT_TYPE_VGA= 39;
     const TYPE_COMPANY_PROFILE = 4;
     const TYPE_POSITION = 5;
     const TYPE_YEAR = 6;
@@ -51,11 +52,33 @@ class DataList extends \common\components\ActiveRecord
     const TYPE_PROBLEM_SOLVING_RESPONSE = 28;
     const TYPE_MARKET_DOMINANCE = 29;
     const TYPE_COMPETITOR_SECTOR = 30;
- 
+ const TYPE_SINGLE_TEXT=31;
     const TYPE_TIMELY_DELIVERY =32; 
     const TYPE_LEAD_TIME =33; 
     const TYPE_CUSTOMER_RELATIONSHIP =34;     
-
+   const TYPE_MARKET_TRENDS =35;   
+    const TYPE_MARKET_TRENDS_Status =36; 
+    const TYPE_MARKET_TRENDS_Risk_Category =37; 
+    const TYPE_MARKET_TRENDS_CATEGORY =38;    
+    const TYPE_FIVE_FORCES_NUMBER_OF_SUPPLIERS =72;
+    const TYPE_FIVE_FORCES_SUPPLIERS_LOCATION =40;
+    const TYPE_FIVE_FORCES_AVERAGE_SIZE_OF_MAIN_SUPPLIERS =41;
+    const TYPE_FIVE_FORCES_UNIQUENESS_OF_SERVICE =42;
+    const TYPE_FIVE_FORCES_YOUR_ABILITY_TO_SUBSITUTE =43;
+    const TYPE_FIVE_FORCES_AVERAGE_DESC =44;
+    const TYPE_FIVE_FORCES_NUMBER_OF_BUYERS =45;
+    const TYPE_FIVE_FORCES_CONCENTRATION_OF_BUYERS =46;
+    const TYPE_FIVE_FORCES_BUYERS_SIZE_OF_ORDERS =47;
+    const TYPE_FIVE_FORCES_AVERAGE_ASC =48;
+    const TYPE_FIVE_FORCES_INDUSTRY_SECTOR_GROWTH =49;
+    const TYPE_FIVE_FORCES_SUBSITUTE_PRICE_VS_INDUSTRY =50;
+    const TYPE_FIVE_FORCES_SUBSITUTE_PRODUCT_QUALITY_VS_INDUSTRY =51;
+    const TYPE_FIVE_FORCES_NUMBER_OF_COMPETITORS =52;
+    const TYPE_FIVE_FORCES_TREAT_BRAND_NAME =53;
+    const TYPE_FIVE_FORCES_ACCESS_TO_DISTRIBUTION_CHANNELS =54;
+    const TYPE_SECTOR_OUTLOOK_SECTOR =55;
+    const TYPE_SECTOR_OUTLOOK_INDUSTRY =56;
+   
 
 
     public static function listRelations()
@@ -63,6 +86,8 @@ class DataList extends \common\components\ActiveRecord
         return [
              static::TYPE_PRODUCTION_LINE => static::TYPE_LINE_BRAND,
              static::TYPE_RAW_MATERIAL => static::TYPE_SUPPLIER,
+             static::TYPE_MARKET_TRENDS_CATEGORY => static::TYPE_MARKET_TRENDS,
+             static::TYPE_SECTOR_OUTLOOK_SECTOR => static::TYPE_SECTOR_OUTLOOK_INDUSTRY,
         ];
     }
 
@@ -123,4 +148,92 @@ class DataList extends \common\components\ActiveRecord
     {
         return ArrayHelper::map(static::find()->orderBy(['name' => SORT_ASC])->where(['type' => $type])->all(), 'name', 'name');
     }
+    public static function updateRecord($name,$type,$parent)
+    {
+
+if($parent=='1')
+{
+    $parents=896;
+    $model = static::find()->where(['name' => $name])->Andwhere(['parent_id' => $parents])->one();
+    if (!$model) {
+        $model = new static();
+        $model->name = $name;
+        $model->parent_id = $parents;
+    }
+    $model->name = $name;
+    $model->type = $type;
+    $model->parent_id = $parents;
+    $model->save();
+
+}
+
+else if($parent=='2')
+{
+    $parents=897;
+    $model = static::find()->where(['name' => $name])->Andwhere(['parent_id' => $parents])->one();
+    if (!$model) {
+        $model = new static();
+        $model->name = $name;
+        $model->parent_id = $parents;
+    }
+    $model->name = $name;
+    $model->type = $type;
+    $model->parent_id = $parents;
+    $model->save();
+
+}
+else if($parent=='3')
+{
+    $parents=898;
+    $model = static::find()->where(['name' => $name])->Andwhere(['parent_id' => $parents])->one();
+    if (!$model) {
+        $model = new static();
+        $model->name = $name;
+        $model->parent_id = $parents;
+    }
+    $model->name = $name;
+    $model->type = $type;
+    $model->parent_id = $parents;
+    $model->save();
+
+}
+else if($parent=='4')
+{
+    $parents=899;
+    $model = static::find()->where(['name' => $name])->Andwhere(['parent_id' => $parents])->one();
+    if (!$model) {
+        $model = new static();
+        $model->name = $name;
+        $model->parent_id = $parents;
+    }
+    $model->name = $name;
+    $model->type = $type;
+    $model->parent_id = $parents;
+    $model->save();
+
+}
+else if($parent=='5')
+{
+    $parents=900;
+    $model = static::find()->where(['name' => $name])->Andwhere(['parent_id' => $parents])->one();
+    if (!$model) {
+        $model = new static();
+        $model->name = $name;
+        $model->parent_id = $parents;
+    }
+    $model->name = $name;
+    $model->type = $type;
+    $model->parent_id = $parents;
+    $model->save();
+
+}
+
+
+       
+
+      
+
+        return $model;
+    }
+
 }

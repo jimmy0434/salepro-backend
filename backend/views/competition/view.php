@@ -1,14 +1,5 @@
 <?php
-/**
- * Created by PhpStorm.
- * Project: masterpak
- * Company: Codendot <https://codendot.com>
- * User: Jawdat Sobh <jawdat@codendot.com>
- * Date: 2/8/2019
- * Time: 8:19 AM
- *
- * @var $model Competitor
- */
+
 
 use backend\controllers\CompetitionController;
 use common\models\Competitor;
@@ -31,7 +22,7 @@ $na = "N/A";
         <div class="panel panel-default">
             <div class="panel-heading">
                 Basic Information
-            </div>
+                 </div>
             <table class="table" style="table-layout:fixed;">
                 <tbody>
                 <?php
@@ -93,6 +84,10 @@ $na = "N/A";
                 <tr>
                     <th>Headquarter Location</th>
                     <td><?= $model->headquarter_location ?? $na ?></td>
+                </tr>
+                <tr>
+                    <th>Headquarter Coordinates</th>
+                    <td><?= $model->hq_coordinates ?? $na ?></td>
                 </tr>
                 <tr>
                     <th>Manufacturing Locations</th>
@@ -162,18 +157,7 @@ $na = "N/A";
                     <th>Market Dominance</th>
                     <td><?= $model->market_dominance ?? $na ?></td>
                 </tr>
-                <tr>
-                    <th>Timely Delivery</th>
-                    <td><?= $model->timely_delivery ?? $na ?></td>
-                </tr>
-                <tr>
-                    <th>Lead Time</th>
-                    <td><?= $model->lead_time ?? $na ?></td>
-                </tr>
-                <tr>
-                    <th>Customer Relationship</th>
-                    <td><?= $model->customer_relationship ?? $na ?></td>
-                </tr>
+                
                 <tr>
                     <th>Comments</th>
                     <td><?= $model->comments ?? $na ?></td>
@@ -854,6 +838,106 @@ if (!empty($model->competitorMasterbatch) && is_array($model->competitorMasterba
             <hr>
             <?php
         }
+        ?>
+    </div>
+    <?php
+}
+if (!empty($model->competitorVga) && is_array($model->competitorVga)) {
+    ?>
+    <div class="panel panel-default">
+        <div class="panel-heading">
+            Value Analysis
+        </div>
+        <?php
+       foreach ($model->competitorVga as $m) {
+        ?>
+        <div class="row">
+            <div class="col-md-4">
+                <table class="table table-striped table-hover table-condensed" style="table-layout:fixed;">
+                    <tbody>
+                    <tr>
+                    <tr>
+                        <th>Country</th>
+                        <td colspan="3"><?= $m->country ? $m->country : $na ?></td>
+                    </tr>
+                        <th>Product Type</th>
+                        <td colspan="3"><?= $m->product_type ?? $na ?></td>
+                    </tr>
+                   
+                    </tr>
+                        
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
+            <div class="col-md-4">
+                <table class="table table-striped table-hover table-condensed" style="table-layout:fixed;">
+                    <tbody>
+                    
+                    <tr>
+                    <th>Quality</th>
+                    <td colspan="3"><?= $m->quality ? $m->quality : $na ?></td>
+                   
+                </tr>
+                <tr>
+                    <th>Brand Equity</th>
+                    <td colspan="3"><?= $m->brand_equity ? $m->brand_equity : $na ?></td>
+                   
+                  
+                </tr>
+                <tr>
+                    <th>Problem Solving Response</th>
+                    <td colspan="3"><?= $m->problem_solving_response ? $m->problem_solving_response : $na ?></td>
+          
+                </tr>
+               
+                <th>Timely Delivery</th>
+                <td colspan="3"><?= $m->timely_delivery ? $m->timely_delivery : $na ?></td>
+          
+         
+            </tr>
+            <tr>
+                <th>Lead Time</th>
+                <td colspan="3"><?= $m->lead_time ? $m->lead_time : $na ?></td>
+          
+           </tr>
+            <tr>
+                <th>Customer Relationship</th>
+                <td colspan="3"><?= $m->customer_relationship ? $m->customer_relationship : $na ?></td>
+          
+          </tr>
+      
+                
+                    </tbody>
+                </table>
+       </div>
+            <div class="col-md-4">
+                <table class="table table-striped table-hover table-condensed" style="table-layout:fixed;">
+                    <tbody>
+                    
+                    <tr>
+                        <th>Payment Facilities</th>
+                        <td colspan="3"><?= $m->payment_facilities ?? $na ?></td>
+                    </tr>
+                    <tr>
+                        <th>Price DDP</th>
+                        <td><?= $m->price ?? $na ?></td>
+                       
+                    </tr>
+                    <tr>
+                        <th>Market Share %</th>
+                        <td><?= $m->market_share_percentage ?? $na ?></td>
+                        
+                    </tr>
+      
+                
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        <hr>
+        <?php
+    }
         ?>
     </div>
     <?php

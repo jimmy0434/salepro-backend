@@ -44,19 +44,25 @@ class Bootstrap implements BootstrapInterface
         //$navigator->item('Competitors', ['/competitor/index'], 'fa fa-id-card-o', 8);
         //$navigator->item('Forms', ['/form/index'], 'fa fa-server', 9);
         //$navigator->item('Form Approval', ['/form-approval/index'], 'fa fa-check', 10);
-        $navigator->item('Sustainability', ['/sustainability/index'], 'fa fa-angle-double-right', 11);
+        $navigator->item('Sustainability', ['/sustainability/index'], 'fa fa-angle-double-right', 9);
 
-        $logistic = $navigator->section('Logistics', 'fa fa-exchange', 12);
+        $logistic = $navigator->section('Logistics', 'fa fa-exchange', 10);
         $logistic->item('Files', ['/logistic/index']);
         $logistic->item('Categories ', ['/logistic-category/index']);
 
-        $navigator->item('Certifications', ['/certification/index'], 'fa fa-certificate', 13);
+        $navigator->item('Certifications', ['/certification/index'], 'fa fa-certificate', 11);
+        $navigator->item('Five Forces', ['/five-forces/index'], '', 12);
 
-        $navigator->item('Sales Offices', ['/sales-office/index'], 'fa fa-map-marker', 14);
-        $navigator->item('Data List', ['/data-list/index'], 'fa fa-table', 15);
-        $navigator->item('Statistic Numbers', ['/statistic-number/index'], 'fa fa-bar-chart', 16);
-        $navigator->item('Marketing Directory', ['/marketing-directory/index'], 'fa fa-sitemap', 17);
-        $navigator->item('Custom Notification', ['/custom-notification/index'], 'fa fa-bell', 18);
+        $navigator->item('Sales Offices', ['/sales-office/index'], 'fa fa-map-marker', 13);
+        $MarketTrends = $navigator->section('STEEP', 'fa fa-server', 14);
+        $MarketTrends->item('Market Trends', ['/steep/index']);
+        $MarketTrends->item('Steep Analysis', ['/steep-analysis/index']);
+        $navigator->item('Sector Outlook', ['/sector-outlook/index'], '', 15);
+       
+        $navigator->item('Data List', ['/data-list/index'], 'fa fa-table', 16);
+        $navigator->item('Statistic Numbers', ['/statistic-number/index'], 'fa fa-bar-chart', 17);
+        $navigator->item('Marketing Directory', ['/marketing-directory/index'], 'fa fa-sitemap', 18);
+        $navigator->item('Custom Notification', ['/custom-notification/index'], 'fa fa-bell', 19);
 
         $developer = MenuManager::block('Developer');
         $developerSection = $developer->section('Documentation');

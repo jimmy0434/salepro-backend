@@ -5,26 +5,28 @@ namespace common\models;
 use Yii;
 
 /**
- * This is the model class for table "{{%sales_office}}".
+ * This is the model class for table "mpk_sales_office".
  *
  * @property int $id
  * @property string $name
  * @property string $content
- * @property string $region
- * @property int $position
  * @property int $created_at
  * @property int $updated_at
+ * @property string $region
+ * @property int $position
+ * @property int $file_id
  *
  * @property PortfolioSalesOffice[] $portfolioSalesOffices
+ * @property File $file
  */
-class SalesOffice extends \common\components\ActiveRecord
+class SalesOffice extends \yii\db\ActiveRecord
 {
     /**
      * {@inheritdoc}
      */
     public static function tableName()
     {
-        return '{{%sales_office}}';
+        return 'mpk_sales_office';
     }
 
     /**
@@ -32,11 +34,13 @@ class SalesOffice extends \common\components\ActiveRecord
      */
     public function rules()
     {
-        return array_merge(parent::rules(), [
+        return [
             [['content'], 'string'],
-            [['name'], 'string', 'max' => 255],
-            [['position'], 'number', 'min' => 0, 'integerOnly' => true],
-        ]);
+            [['created_at', 'updated_at'], 'required'],
+            [['created_at', 'updated_at', 'position', 'file_id'], 'integer'],
+            [['name', 'region'], 'string', 'max' => 255],
+            [['file_id'], 'exist', 'skipOnError' => true, 'targetClass' => File::className(), 'targetAttribute' => ['file_id' => 'id']],
+        ];
     }
 
     /**
@@ -50,6 +54,9 @@ class SalesOffice extends \common\components\ActiveRecord
             'content' => 'Content',
             'created_at' => 'Created At',
             'updated_at' => 'Updated At',
+            'region' => 'Region',
+            'position' => 'Position',
+            'file_id' => 'File ID',
         ];
     }
 
@@ -62,11 +69,28 @@ class SalesOffice extends \common\components\ActiveRecord
     }
 
     /**
+     * @return \yii\db\ActiveQuery
+     */
+    public function getFile()
+    {
+        return $this->hasOne(File::className(), ['id' => 'file_id']);
+    }
+
+    /**
      * {@inheritdoc}
      * @return SalesOfficeQuery the active query used by this AR class.
      */
     public static function find()
     {
         return new SalesOfficeQuery(get_called_class());
+    }
+
+    public function toArray(array $fields = [], array $expand = [], $recursive = true)
+    {
+        $list = parent::toArray($fields, $expand, $recursive);
+        unset($list['file_id']);
+        $list['file'] = $this->file;
+    
+        return $list;
     }
 }

@@ -13,6 +13,8 @@ namespace restful\controllers;
 use common\models\Competitor;
 use common\models\Salesman;
 use common\models\CompetitorFlexible;
+use common\models\competitorVga;
+
 use cnd\core\api\SController;
 use cnd\admin\models\activerecords\Log;
 use Yii;

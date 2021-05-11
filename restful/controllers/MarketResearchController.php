@@ -66,6 +66,7 @@ class MarketResearchController extends SController
 
     
         $query = MarketResearch::find();
+    
      
         if ($sectorUid) {
             $portfolio = Portfolio::find()->where(['target' => Portfolio::TARGET_SECTOR, 'uid' => $sectorUid])->one();

@@ -1,12 +1,5 @@
 <?php
-/**
- * Created by PhpStorm.
- * Project: masterpak
- * Company: Codendot <https://codendot.com>
- * User: Jawdat Sobh <jawdat@codendot.com>
- * Date: 2/27/2019
- * Time: 10:26 AM
- */
+
 
 use backend\controllers\NewsController;
 use backend\widgets\AutoCompleteInput;

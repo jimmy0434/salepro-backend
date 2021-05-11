@@ -48,11 +48,13 @@ class CompetitionController extends SController
 
     public function actionStatus()
     {
+        
         if (Yii::$app->request->isAjax && Yii::$app->request->isPost) {
             Yii::$app->response->format = 'json';
             $response = ['changed' => false];
-            $id = Yii::$app->request->post('id');
+         $id = Yii::$app->request->post('id');
             $status = Yii::$app->request->post('status');
+            
             $model = Competitor::findOne($id);
             if ($model !== null) {
                 $model->status = $status;

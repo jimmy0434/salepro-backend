@@ -1,13 +1,12 @@
 <?php
 
 namespace common\models;
-
-use Yii;
 use yii\helpers\ArrayHelper;
 use cnd\admin\models\activerecords\Log;
+use Yii;
 
 /**
- * This is the model class for table "{{%competitor}}".
+ * This is the model class for table "mpk_competitor".
  *
  * @property int $id
  * @property string $uid
@@ -16,8 +15,6 @@ use cnd\admin\models\activerecords\Log;
  * @property int $business_unit_id
  * @property string $company_profile
  * @property string $headquarter_location
- * @property string $manufacturing_locations
- * @property string $sales_offices_locations
  * @property string $website
  * @property resource $logo
  * @property string $market_presence
@@ -40,33 +37,45 @@ use cnd\admin\models\activerecords\Log;
  * @property string $mother_other_locations
  * @property string $mother_website
  * @property int $search_id
- * @property string $status
  * @property int $created_at
  * @property int $updated_at
- *
- * @property array $status_list
- * @property array $status_values
- * @property string $status_label
+ * @property string $logo_ext
+ * @property string $file_ext
+ * @property string $status
+ * @property string $manufacturing_locations
+ * @property string $sales_offices_locations
+ * @property string $merger_company_name
+ * @property string $merger_country
+ * @property string $acquisition_company_name
+ * @property string $acquisition_country
+ * @property string $hq_coordinates
  *
  * @property BusinessUnit $businessUnit
+ * @property Salesman $salesman
  * @property Search $search
- * @property CompetitorFlexible[] $competitorFlexible
- * @property CompetitorFlexibleCustomer[] $competitorFlexibleCustomer
- * @property CompetitorManager[] $competitorManager
- * @property CompetitorMasterbatch[] $competitorMasterbatch
- * @property CompetitorMasterbatchCustomer[] $competitorMasterbatchCustomer
+ * @property CompetitorBusinessunit[] $competitorBusinessunits
+ * @property CompetitorCertification[] $competitorCertifications
+ * @property CompetitorCompanyCommunication[] $competitorCompanyCommunications
+ * @property CompetitorFlexible[] $competitorFlexibles
+ * @property CompetitorFlexibleCustomer[] $competitorFlexibleCustomers
+ * @property CompetitorManager[] $competitorManagers
+ * @property CompetitorMarketPresence[] $competitorMarketPresences
+ * @property CompetitorMarketingStrategy[] $competitorMarketingStrategies
+ * @property CompetitorMasterbatch[] $competitorMasterbatches
+ * @property CompetitorMasterbatchCustomer[] $competitorMasterbatchCustomers
+ * @property CompetitorMotherOtherLocation[] $competitorMotherOtherLocations
  * @property CompetitorNews[] $competitorNews
- * @property CompetitorPackaging[] $competitorPackaging
- * @property CompetitorPackagingCustomer[] $competitorPackagingCustomer
- * @property CompetitorProductionLine[] $competitorProductionLine
- * @property CompetitorSocial[] $competitorSocial
- * @property CompetitorSupplier[] $competitorSupplier
+ * @property CompetitorOtherLocation[] $competitorOtherLocations
+ * @property CompetitorPackaging[] $competitorPackagings
+ * @property CompetitorPackagingCustomer[] $competitorPackagingCustomers
+ * @property CompetitorProductionLine[] $competitorProductionLines
+ * @property CompetitorSocial[] $competitorSocials
+ * @property CompetitorSupplier[] $competitorSuppliers
+ * @property CompetitorVga[] $competitorVgas
  * @property PortfolioCompetitor[] $portfolioCompetitors
- * @property Salesman[] $salesman
  */
 class Competitor extends \common\components\ActiveRecord
 {
-
     const STATUS_ENABLED = 'enabled';
     const STATUS_DISABLED = 'disabled';
 
@@ -77,7 +86,7 @@ class Competitor extends \common\components\ActiveRecord
      */
     public static function tableName()
     {
-        return '{{%competitor}}';
+        return 'mpk_competitor';
     }
 
     /**
@@ -88,7 +97,7 @@ class Competitor extends \common\components\ActiveRecord
         return array_merge(parent::rules(), [
             [['salesman_id', 'business_unit_id', 'search_id'], 'integer'],
             [['logo', 'file'], 'string'],
-            [['name', 'company_profile', 'headquarter_location', 'manufacturing_locations', 'manufacturing_locations', 'website', 'market_presence', 'established_year', 'annual_sales_revenue', 'employees_number', 'certification', 'certification_others', 'marketing_strategy', 'company_communication', 'quality', 'brand_equity', 'problem_solving_response', 'market_dominance' ,'timely_delivery','lead_time','customer_relationship', 'comments', 'mother_name', 'mother_company_profile', 'mother_headquarter_location', 'mother_other_locations', 'mother_website'], 'string', 'max' => 255],
+            [['name', 'company_profile', 'headquarter_location', 'manufacturing_locations', 'manufacturing_locations', 'website', 'market_presence', 'established_year', 'annual_sales_revenue', 'employees_number', 'certification', 'certification_others', 'marketing_strategy', 'company_communication', 'quality', 'brand_equity', 'problem_solving_response', 'market_dominance' , 'comments', 'mother_name', 'mother_company_profile', 'mother_headquarter_location', 'mother_other_locations', 'mother_website'], 'string', 'max' => 255],
             [['uid'], 'unique'],
             [['business_unit_id'], 'exist', 'skipOnError' => true, 'targetClass' => BusinessUnit::className(), 'targetAttribute' => ['business_unit_id' => 'id']],
         ]);
@@ -101,13 +110,12 @@ class Competitor extends \common\components\ActiveRecord
     {
         return [
             'id' => 'ID',
+            'uid' => 'Uid',
             'salesman_id' => 'Salesman ID',
             'name' => 'Name',
             'business_unit_id' => 'Business Unit ID',
             'company_profile' => 'Company Profile',
             'headquarter_location' => 'Headquarter Location',
-            'manufacturing_locations' => 'Manufacturing Locations',
-            'sales_offices_locations' => 'Sales Offices Locations',
             'website' => 'Website',
             'logo' => 'Logo',
             'market_presence' => 'Market Presence',
@@ -122,9 +130,6 @@ class Competitor extends \common\components\ActiveRecord
             'brand_equity' => 'Brand Equity',
             'problem_solving_response' => 'Problem Solving Response',
             'market_dominance' => 'Market Dominance',
-            'timely_delivery'=>'Timely Delivery',
-            'lead_time'=>'Lead Time',
-            'customer_relationship'=>'Customer Relationship',
             'comments' => 'Comments',
             'file' => 'File',
             'mother_name' => 'Mother Name',
@@ -135,10 +140,20 @@ class Competitor extends \common\components\ActiveRecord
             'search_id' => 'Search ID',
             'created_at' => 'Created At',
             'updated_at' => 'Updated At',
+            'logo_ext' => 'Logo Ext',
+            'file_ext' => 'File Ext',
+            'status' => 'Status',
+            'manufacturing_locations' => 'Manufacturing Locations',
+            'sales_offices_locations' => 'Sales Offices Locations',
+            'merger_company_name' => 'Merger Company Name',
+            'merger_country' => 'Merger Country',
+            'acquisition_company_name' => 'Acquisition Company Name',
+            'acquisition_country' => 'Acquisition Country',
+            'hq_coordinates' => 'Hq Coordinates',
         ];
     }
 
-    /**
+  /**
      * @return \yii\db\ActiveQuery
      */
     public function getBusinessUnit()
@@ -161,7 +176,13 @@ class Competitor extends \common\components\ActiveRecord
     {
         return $this->hasMany(CompetitorFlexible::className(), ['competitor_id' => 'id']);
     }
-
+   /**
+     * @return \yii\db\ActiveQuery
+     */
+    public function getCompetitorVga()
+    {
+        return $this->hasMany(CompetitorVga::className(), ['competitor_id' => 'id']);
+    }
     /**
      * @return \yii\db\ActiveQuery
      */
@@ -278,6 +299,8 @@ class Competitor extends \common\components\ActiveRecord
             $this->salesman_id = Yii::$app->user->identity->id;
         }
 
+        
+
         return parent::beforeSave($insert);
     }
 
@@ -301,6 +324,13 @@ class Competitor extends \common\components\ActiveRecord
         }
 
         $range = $this->competitorPackaging;
+        if (!empty($range) && is_array($range)) {
+            foreach ($range as $model) {
+                $text[] = $model->product_type;
+                $text[] = $model->sector;
+            }
+        }
+        $range = $this->competitorVga;
         if (!empty($range) && is_array($range)) {
             foreach ($range as $model) {
                 $text[] = $model->product_type;
@@ -376,7 +406,8 @@ class Competitor extends \common\components\ActiveRecord
         $list['competitorFlexible'] = $this->getCompetitorFlexible()->all();
         $list['competitorMasterbatch'] = $this->getCompetitorMasterbatch()->all();
         $list['competitorPackaging'] = $this->getCompetitorPackaging()->all();
-
+        $list['competitorVga'] = $this->getCompetitorVga()->all();
+      
         $sectors = [];
         $productTypes = [];
 
@@ -398,6 +429,12 @@ class Competitor extends \common\components\ActiveRecord
             foreach ($list['competitorPackaging'] as $model) {
                 $productTypes[] = $model->product_type;
                 $sectors[] = $model->sector; // && $model->sector->portfolio ? $model->sector->portfolio->uid : null;
+            }
+        }
+        if (!empty($list['competitorVga']) && is_array($list['competitorVga'])) {
+            foreach ($list['competitorVga'] as $model) {
+                $productTypes[] = $model->product_type;
+               // && $model->sector->portfolio ? $model->sector->portfolio->uid : null;
             }
         }
 
@@ -469,6 +506,7 @@ class Competitor extends \common\components\ActiveRecord
     public function updateCompetitorTablesFields()
     {
         //$this->assignTableToField(CompetitorOtherLocation::className(), 'other_locations');
+        $this->updateFieldsToTable(CompetitorBusinessunit::className(), 'business_unit_id');
         $this->updateFieldsToTable(CompetitorMotherOtherLocation::className(), 'mother_other_locations');
         $this->updateFieldsToTable(CompetitorMarketPresence::className(), 'market_presence');
         $this->updateFieldsToTable(CompetitorMarketingStrategy::className(), 'marketing_strategy');
@@ -534,3 +572,4 @@ class Competitor extends \common\components\ActiveRecord
         }
     }
 }
+

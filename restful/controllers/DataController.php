@@ -78,6 +78,8 @@ class DataController extends SController
         $query = DataList::find();
         $query->where(['parent_id' => null]);
         $query->orderBy(['name' => SORT_ASC]);
+      
+        
         $list = $query->all();
         $result = [];
         if (!empty($list) && is_array($list)) {
@@ -95,10 +97,12 @@ class DataController extends SController
                 $down = $model->down;
                 $v = [
                     'value' => $model->name,
+                   
                 ];
                 if (count($down) > 0) {
                     $v['childName'] = isset($relations[$model->type]) ? lcfirst(Inflector::id2camel($types[$relations[$model->type]], '_')) : null;
                     $v['childValues'] = array_values(ArrayHelper::map($down, 'name', 'name'));
+                   
                 }
                 $result[$key][] = $v;
             }

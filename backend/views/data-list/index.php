@@ -45,7 +45,22 @@ if ($context->type == DataList::TYPE_RAW_MATERIAL) {
         return null;
     };
 }
-
+if ($context->type == DataList::TYPE_MARKET_TRENDS_CATEGORY) {
+    $children[] = function ($row) use ($context) {
+        if (Yii::$app->permission->can('/data-list/index')) {
+            return Html::a('Marke Trends', Url::to(['index', 't' => DataList::TYPE_MARKET_TRENDS, 'u' => $row->id]), ['class' => 'btn btn-warning']);
+        }
+        return null;
+    };
+}
+if ($context->type == DataList::TYPE_SECTOR_OUTLOOK_SECTOR) {
+    $children[] = function ($row) use ($context) {
+        if (Yii::$app->permission->can('/data-list/index')) {
+            return Html::a('Industry', Url::to(['index', 't' => DataList::TYPE_SECTOR_OUTLOOK_INDUSTRY, 'u' => $row->id]), ['class' => 'btn btn-warning']);
+        }
+        return null;
+    };
+}
 $dv = new DataView([
     'dataLocator' => $dataLocator,
     'searchColumns' => DataView::SEARCH_COLUMNS_TWO,

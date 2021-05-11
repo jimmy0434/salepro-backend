@@ -196,7 +196,7 @@ class Salesman extends \common\components\ActiveRecord implements UserProfile
 
     public function getActiveSalesmanList()
     {
-        $items = ArrayHelper::map($this::find()->all(), 'id', 'userName');
+        $items = ArrayHelper::map($this::find()->ORDERBY('name')->all(), 'id', 'userName');
         return $items;
     }
 }
