@@ -48,7 +48,7 @@ class CompetitorController extends SController
         //$query->orderBy('name ASC'); // updated_at
         //$query->orderBy('updated_at DESC, created_at DESC, id DESC');
         $query->orderBy('id DESC');
-        $query->where('status=:status or salesman_id=:salesman', [':status' => Competitor::STATUS_ENABLED, ':salesman' => Yii::$app->user->identity->id]);
+        $query->where('(status=:status ) or salesman_id=:salesman', [':status' => Competitor::STATUS_ENABLED,  ':salesman' => Yii::$app->user->identity->id]);
         $list = $query->all();
         Log::trace("Download Competitors List");
         return ['profiles' => $list];

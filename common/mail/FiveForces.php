@@ -19,8 +19,12 @@ $mime = new Mime();
                 <table class="table" style="table-layout:fixed;">
                 <tbody>
                 <tr>
-                    <th>Product Name</th>
+                    <th>Building Block</th>
                     <td><?= $FiveForces->name ?? $na ?></td>
+                </tr>
+                <tr>
+                    <th>Product Line</th>
+                    <td><?= $FiveForces->product_line ?? $na ?></td>
                 </tr>
                 <tr>
                     <th>Business Unit</th>

@@ -28,7 +28,7 @@ assert($dataLocator instanceof DataLocator);
 assert($context instanceof CompetitionController);
 
 $this->title = 'Competitions';
-
+$merges = (new Competitor())->status_list;
 $statuses = (new Competitor())->status_list;
 $salesmanList = (new Salesman())->getActiveSalesmanList();
 
@@ -75,6 +75,24 @@ $dv = new DataView([
             },
             //'filterBy' => Attribute::FILTER_LIST,
             //'filterList' => $salesmanList,
+        ],
+        'merged'=>[
+            'label'=>'Merged',
+            'value'=>function($attribute, $data, $view) use ($merges){
+                assert($attribute instanceof Attribute);
+                assert($data instanceof Competitor);
+                assert($view instanceof DataViewLocator);
+                if(Yii::$app->permission->can('/competition/merged')){
+                    return Html::dropDownList('merged', $data->merged, $merges,
+                    ['class' => 'form-control merged-ddl',
+                     'id' => 'merged-'.$data->id,
+                     'data-id' => $data->id
+                    ]);
+                }
+                return $data->merged_label;
+            },
+            'filterBy' => Attribute::FILTER_LIST,
+            'filterList' => $merges,
         ],
         'status'=>[
             'label'=>'Status',
@@ -137,6 +155,12 @@ $dv->addView('grid', [
             'sortable' => true,
             'contentOptions' => [
                 'style' => 'width:300px;'
+            ],
+        ],
+        'merged' => [
+            'sortable' => true,
+            'contentOptions' => [
+                'style' => 'width:150px;'
             ],
         ],
         'status' => [
@@ -214,3 +238,31 @@ JS;
 }
 
 
+if(Yii::$app->permission->can('/competition/merged')){
+    $url = Url::toRoute('/competition/merged');
+    $script = <<< JS
+        $(document).on('change','.merged-ddl',function(){
+            var element = $(this);
+            var data = {
+                id : element.attr('data-id'),
+                merged : element.val()
+            };
+            $.ajax({
+                type : 'post',
+                url : '{$url}',
+                data : data,
+                dataType : 'json',
+                beforeSend : function(){
+                    element.prop('disabled',true);
+                },
+                success : function(response){
+                    element.prop('disabled',false);
+                },
+                error : function(){
+                    element.prop('disabled',false);
+                }
+            });
+        });
+JS;
+    $this->registerJs($script);
+}

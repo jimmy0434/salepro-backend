@@ -2,7 +2,6 @@
 
 namespace common\models;
 
-
 use Yii;
 use yii\helpers\ArrayHelper;
 use cnd\admin\models\activerecords\Log;
@@ -50,8 +49,9 @@ use cnd\admin\models\activerecords\Log;
  * @property string $retaliation
  * @property int $created_at
  * @property int $updated_at
+ * @property string $product_line
  */
-class FiveForces extends \common\components\ActiveRecord
+class FiveForces extends \yii\db\ActiveRecord
 {
     /**
      * {@inheritdoc}
@@ -68,7 +68,7 @@ class FiveForces extends \common\components\ActiveRecord
     {
         return [
             [['salesman_id', 'business_unit_id', 'created_at', 'updated_at'], 'integer'],
-            [['uid', 'name', 'number_of_suppliers', 'suppliers_location', 'avg_size_supplier', 'uniqueness_of_service', 'your_ability_to_Subsitute', 'switching_costs', 'number_of_buyers', 'concentration_of_buyers', 'buyers_size_of_orders', 'buyers_switching_costs', 'buyers_ability_to_integrate', 'buyers_price_sensitivity', 'buyers_cost_structure', 'number_of_competitors', 'diversity_of__competitors', 'product_differenciation_substitutes', 'economics_of_scale', 'customer_loyality', 'customer_switching_cost', 'industry_sector_growth', 'availability_of_subsitutes', 'subsitute_price_vs_industry_product', 'subsitute_product_quality_vs_indistry_product', 'threat_switching_costs', 'specialist_knowledge', 'product_differenciation', 'brand_name', 'initial_capital_investment', 'consumer_switching_costs', 'access_to_distribution_channels', 'technology_protections', 'governmental_and_legal_barries', 'retaliation'], 'string', 'max' => 255],
+            [['uid', 'name', 'number_of_suppliers', 'suppliers_location', 'avg_size_supplier', 'uniqueness_of_service', 'your_ability_to_Subsitute', 'switching_costs', 'number_of_buyers', 'concentration_of_buyers', 'buyers_size_of_orders', 'buyers_switching_costs', 'buyers_ability_to_integrate', 'buyers_price_sensitivity', 'buyers_cost_structure', 'number_of_competitors', 'diversity_of__competitors', 'product_differenciation_substitutes', 'economics_of_scale', 'customer_loyality', 'customer_switching_cost', 'industry_sector_growth', 'availability_of_subsitutes', 'subsitute_price_vs_industry_product', 'subsitute_product_quality_vs_indistry_product', 'threat_switching_costs', 'specialist_knowledge', 'product_differenciation', 'brand_name', 'initial_capital_investment', 'consumer_switching_costs', 'access_to_distribution_channels', 'technology_protections', 'governmental_and_legal_barries', 'retaliation', 'product_line'], 'string', 'max' => 255],
             [['uid'], 'unique'],
         ];
     }
@@ -119,6 +119,7 @@ class FiveForces extends \common\components\ActiveRecord
             'retaliation' => 'Retaliation',
             'created_at' => 'Created At',
             'updated_at' => 'Updated At',
+            'product_line' => 'Product Line',
         ];
     }
 
@@ -130,8 +131,8 @@ class FiveForces extends \common\components\ActiveRecord
     {
         return new FiveForcesQuery(get_called_class());
     }
-    
-        /**
+
+      /**
      * @return \yii\db\ActiveQuery
      */
     public function getSalesman()
@@ -174,6 +175,4 @@ class FiveForces extends \common\components\ActiveRecord
 
         return $list;
     }
-
 }
-

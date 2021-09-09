@@ -5,13 +5,19 @@ use backend\controllers\CompetitionController;
 use common\models\Competitor;
 use yii\helpers\Html;
 use yii\web\View;
+use backend\widgets\AutoCompleteInput;
+use cnd\form\ActiveForm;
+use common\models\Portfolio;
+
+
 
 $view = $this;
 $context = $this->context;
-
+$form = ActiveForm::begin(['id' => Yii::$app->controller->id . '-form']);
 assert($view instanceof View);
+assert($model instanceof Competitor);
 assert($context instanceof CompetitionController);
-
+$isNew = $model->isNewRecord;
 $this->title = $model->name . ' Profile';
 
 $na = "N/A";
@@ -49,24 +55,56 @@ $na = "N/A";
                     <?php
                 }
                 ?>
+                
+
+            <tr>
+<th>Merging</th>
+<td>
+<?php
+                    echo AutoCompleteInput::widget([
+                            'model' => $model,
+                            'form' => $form,
+                            'property' => 'businessUnitIds',
+                            'findUrl' => ['/portfolio/find-business-unit'],
+                           // 'addUrl' => ['/portfolio/add-business-unit'],
+                            'title' => 'Business Units',
+                           // 'data' => $model->item ? $model->item->businessUnit : [] ,
+                        ]);
+                        
+                       
+                       
+                        echo AutoCompleteInput::widget([
+                            'model' => $model,
+                            'form' => $form,
+                            'property' => 'salesManIds',
+                            'findUrl' => ['/portfolio/find-sales-man'],
+                           // 'addUrl' => ['/portfolio/add-sales-unit'],
+                            'title' => 'Competitor Creator',
+                           // 'data' => $model->item ? $model->item->salesMan : [],
+                        ]);
+                        
+                     
+                     
+                        ?>
+                         <?= Html::submitButton('Merge', ['class' => 'btn btn-primary btn-lg']) ?>
+                         <?php
+ActiveForm::end();
+?>
+</td>
+            </tr>
                 <tr>
                     <th>Name</th>
                     <td><?= $model->name ?></td>
                 </tr>
                 <tr>
-                    <th>Business Unit</th>
+                    <th>Business Units</th>
                     <td>
-                        <?php
-                        if ($model->businessUnit && $model->businessUnit->portfolio) {
-                            echo $model->businessUnit->portfolio->name;
-                        } else {
-                            echo $na;
-                        }
-                        ?>
+                    <?=  $model->business_unit_names ?? $na?>
+                   
                     </td>
                 </tr>
                 <tr>
-                    <th>Salesman</th>
+                    <th>Competitor Creator</th>
                     <td>
                         <?php
                         if ($model->salesman) {
@@ -75,6 +113,17 @@ $na = "N/A";
                             echo $na;
                         }
                         ?>
+
+<?php
+                            foreach ($model->competitorSalesMan as $m) {
+                                ?>
+                                <tr>
+                                    <td><?= $m->value?></td>
+                                </tr>
+                                <?php
+                            }
+                            ?>
+                        
                     </td>
                 </tr>
                 <tr>
@@ -860,8 +909,12 @@ if (!empty($model->competitorVga) && is_array($model->competitorVga)) {
                         <th>Country</th>
                         <td colspan="3"><?= $m->country ? $m->country : $na ?></td>
                     </tr>
-                        <th>Product Type</th>
+                        <th>Building Block</th>
                         <td colspan="3"><?= $m->product_type ?? $na ?></td>
+                        <tr>
+                        <th>Product Line</th>
+                        <td colspan="3"><?= $m->product_line ?? $na ?></td>
+                    </tr>
                     </tr>
                    
                     </tr>

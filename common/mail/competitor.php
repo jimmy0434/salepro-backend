@@ -73,11 +73,11 @@ $mime = new Mime();
                     </tr>
                     <tr>
                         <th>Manufacturing Locations</th>
-                        <td><?= $model->manufacturing_locations ?? $na ?></td>
+                        <td><?= $competitor->manufacturing_locations ?? $na ?></td>
                     </tr>
                     <tr>
                         <th>Sales Offices Locations</th>
-                        <td><?= $model->sales_offices_locations ?? $na ?></td>
+                        <td><?= $competitor->sales_offices_locations ?? $na ?></td>
                     </tr>
                     <tr>
                         <th>Website</th>
@@ -109,11 +109,11 @@ $mime = new Mime();
                     </tr>
                     <tr>
                         <th>Merger</th>
-                        <td><?= $model->merger_company_name ?? $na ?>, <?= $model->merger_country ?? '' ?></td>
+                        <td><?= $competitor->merger_company_name ?? $na ?>, <?= $competitor->merger_country ?? '' ?></td>
                     </tr>
                     <tr>
                         <th>Acquisition</th>
-                        <td><?= $model->acquisition_company_name ?? $na ?>, <?= $model->acquisition_country ?? '' ?></td>
+                        <td><?= $competitor->acquisition_company_name ?? $na ?>, <?= $competitor->acquisition_country ?? '' ?></td>
                     </tr>
                     <tr>
                         <th>Marketing Strategy</th>
@@ -844,8 +844,10 @@ if (!empty($competitor->competitorVga) && is_array($competitor->competitorVga)) 
                             <th>Country</th>
                             <td colspan="3"><?= $m->country ? $m->country : $na ?></td>
                         </tr>
-                            <th>Product Type</th>
+                            <th>Building Block</th>
                             <td colspan="3"><?= $m->product_type ?? $na ?></td>
+                            <th>Product Line</th>
+                            <td colspan="3"><?= $m->product_line ?? $na ?></td>
                         </tr>
                        
                         </tr>

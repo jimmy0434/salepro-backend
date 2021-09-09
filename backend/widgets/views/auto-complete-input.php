@@ -1,11 +1,5 @@
 <?php
 /**
- * Created by PhpStorm.
- * Project: masterpak
- * Company: Codendot <https://codendot.com>
- * User: Jawdat Sobh <jawdat@codendot.com>
- * Date: 1/27/2019
- * Time: 11:21 AM
  *
  * @var $this View
  * @var $context AutoCompleteInput

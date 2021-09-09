@@ -43,8 +43,54 @@ class CompetitionController extends SController
     public function actionView($id)
     {
         $model = Competitor::findOne($id);
-        return $this->render('view', ['model' => $model]);
+       
+        if (!$model) {
+            throw new \yii\web\HttpException(404, 'The requested Learning could not be found.');
+        }
+        $isNew = $model->isNewRecord;
+        if ($model->load(\Yii::$app->request->post()) && $model->validate()) {
+            if ($model->save()) {
+                \Yii::$app->session->setFlash('success', ucfirst($this->id) . ' saved successfully');
+//$model->sendNotification();
+            } else {
+                \Yii::$app->session->setFlash('error', ucfirst($this->id) . ' not saved');
+            }
+            if ($isNew) {
+                Log::trace("Create new Learning data #" . $model->id);
+                //return $this->redirect(['manage', 'id' => $model->id, 't' => $model->target]);
+            }
+            Log::trace("Update Learning data #" . $id);
+            return $this->redirect(['index']);
+        }
+        Log::trace("Open Learning data form");
+         
+        return $this->render('view', ['model' => $model, 'isNew' => $isNew]);
+       
     }
+
+    
+    public function actionMerged()
+    {
+        
+        if (Yii::$app->request->isAjax && Yii::$app->request->isPost) {
+            Yii::$app->response->format = 'json';
+            $response = ['changed' => false];
+         $id = Yii::$app->request->post('id');
+            $merged = Yii::$app->request->post('merged');
+            
+            $model = Competitor::findOne($id);
+            if ($model !== null) {
+                $model->merged = $merged;
+                $model->save();
+                $model->notifyAll();
+                $response['changed'] = true;
+                Log::trace("Change Competitor #" . $model->id . " merged, become " . $model->merged_label);
+            }
+            return $response;
+        }
+        return $this->redirect(['index']);
+    }
+
 
     public function actionStatus()
     {

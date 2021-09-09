@@ -191,4 +191,18 @@ class BusinessUnit extends \common\components\ActiveRecord
     {
         return $this->hasMany(Certification::className(), ['id' => 'certification_id'])->via('businessUnitCertifications');
     }
+    public function getActiveBusinessUnitList()
+    {
+        return ArrayHelper::map(static::find()->from(['bu' => static::tableName()])->joinWith([
+            'portfolio' => function ($query) {
+                $query->from(['portfolio' => Portfolio::tableName()]);
+            }
+        ])->orderBy(['portfolio.name' => SORT_ASC])->all(), 'id', function ($model) {
+            if ($model->portfolio) {
+                return $model->portfolio->name;
+            }
+            return null;
+        });
+       
+    }
 }

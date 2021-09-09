@@ -78,6 +78,7 @@ class DataList extends \common\components\ActiveRecord
     const TYPE_FIVE_FORCES_ACCESS_TO_DISTRIBUTION_CHANNELS =54;
     const TYPE_SECTOR_OUTLOOK_SECTOR =55;
     const TYPE_SECTOR_OUTLOOK_INDUSTRY =56;
+    const TYPE_PRODUCT_LINE =57;
    
 
 

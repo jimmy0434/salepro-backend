@@ -3,8 +3,7 @@
 use yii\helpers\Html;
 use common\mail\mime;
 
-/* @var $this yii\web\View */
-/* @var $competitor common\models\Competitor */
+
 
 $na = "N/A";
 $mime = new Mime();

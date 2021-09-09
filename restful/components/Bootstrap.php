@@ -78,7 +78,8 @@ class Bootstrap implements BootstrapInterface
         UrlRule::register('get', '/dashboard', '/data/dashboard-link');
         UrlRule::register('get', '/tradedata', '/data/tradedata-link');
         UrlRule::register('put', '/change-password', '/salesman/change-password');
-
+        UrlRule::register('get', '/learning/view1', '/learning/view1');
+        UrlRule::register('get', '/child/<id:.+>', '/learning/child');
         Yii::$app->setComponents(
             [
                 'request' => [

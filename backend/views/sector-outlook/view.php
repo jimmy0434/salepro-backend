@@ -80,6 +80,10 @@ $na = "N/A";
                         <td><?= $model->country ?? $na ?></td>
                     </tr>
                     <tr>
+                        <th>Outlook</th>
+                        <td><?= $model->outlook ?? $na ?></td>
+                    </tr>
+                    <tr>
                         <th>Source</th>
                         <td><?= $model->source ?? $na ?></td>
                     </tr>

@@ -48,7 +48,7 @@ class SteepAnalysis extends  \common\components\ActiveRecord
         return [
             [['salesman_id', 'created_at', 'updated_at', 'business_unit_id'], 'integer'],
             [['status'], 'string'],
-            [['uid', 'name', 'subsequent', 'impact', 'trend_status', 'risk_category', 'control_measure', 'category'], 'string', 'max' => 255],
+            [['uid', 'name', 'subsequent', 'impact', 'trend_status', 'risk_category', 'control_measure', 'category'], 'string'],
             [['uid'], 'unique'],
             [['business_unit_id'], 'exist', 'skipOnError' => true, 'targetClass' => BusinessUnit::className(), 'targetAttribute' => ['business_unit_id' => 'id']],
         ];

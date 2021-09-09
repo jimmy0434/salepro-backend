@@ -66,5 +66,7 @@ class CompetitorBusinessunit extends \yii\db\ActiveRecord
     public static function find()
     {
         return new CompetitorBusinessunitQuery(get_called_class());
+        
+        
     }
 }

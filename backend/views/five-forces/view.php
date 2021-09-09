@@ -27,8 +27,12 @@ $na = "N/A";
                 <tbody>
            
                 <tr>
-                    <th>Product Name</th>
+                    <th>Business Block</th>
                     <td><?= $model->name ?></td>
+                </tr>
+                <tr>
+                    <th>product Line</th>
+                    <td><?= $model->product_line ?></td>
                 </tr>
                 <tr>
                     <th>Business Unit</th>

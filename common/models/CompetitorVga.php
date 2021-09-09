@@ -20,6 +20,7 @@ use Yii;
  * @property string $payment_facilities
  * @property string $price
  * @property string $market_share_percentage
+ * @property string $product_line
  *
  * @property Competitor $competitor
  */
@@ -40,7 +41,7 @@ class CompetitorVga extends \yii\db\ActiveRecord
     {
         return [
             [['competitor_id'], 'integer'],
-            [['country', 'product_type', 'quality', 'brand_equity', 'problem_solving_response', 'timely_delivery', 'lead_time', 'customer_relationship', 'payment_facilities', 'price', 'market_share_percentage'], 'string', 'max' => 255],
+            [['country', 'product_type', 'quality', 'brand_equity', 'problem_solving_response', 'timely_delivery', 'lead_time', 'customer_relationship', 'payment_facilities', 'price', 'market_share_percentage', 'product_line'], 'string', 'max' => 255],
             [['competitor_id'], 'exist', 'skipOnError' => true, 'targetClass' => Competitor::className(), 'targetAttribute' => ['competitor_id' => 'id']],
         ];
     }
@@ -64,6 +65,7 @@ class CompetitorVga extends \yii\db\ActiveRecord
             'payment_facilities' => 'Payment Facilities',
             'price' => 'Price',
             'market_share_percentage' => 'Market Share Percentage',
+            'product_line' => 'Product Line',
         ];
     }
 

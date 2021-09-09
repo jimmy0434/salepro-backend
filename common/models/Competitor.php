@@ -4,6 +4,7 @@ namespace common\models;
 use yii\helpers\ArrayHelper;
 use cnd\admin\models\activerecords\Log;
 use Yii;
+use yii\helpers\Inflector;
 
 /**
  * This is the model class for table "mpk_competitor".
@@ -78,6 +79,10 @@ class Competitor extends \common\components\ActiveRecord
 {
     const STATUS_ENABLED = 'enabled';
     const STATUS_DISABLED = 'disabled';
+    const MERGED_ENABLED = 'enabled';
+    const MERGED_DISABLED = 'disabled';
+    public $businessUnitIds = [];
+    public $salesManIds = [];
 
     //public static $disableLogo = false;
 
@@ -97,9 +102,11 @@ class Competitor extends \common\components\ActiveRecord
         return array_merge(parent::rules(), [
             [['salesman_id', 'business_unit_id', 'search_id'], 'integer'],
             [['logo', 'file'], 'string'],
-            [['name', 'company_profile', 'headquarter_location', 'manufacturing_locations', 'manufacturing_locations', 'website', 'market_presence', 'established_year', 'annual_sales_revenue', 'employees_number', 'certification', 'certification_others', 'marketing_strategy', 'company_communication', 'quality', 'brand_equity', 'problem_solving_response', 'market_dominance' , 'comments', 'mother_name', 'mother_company_profile', 'mother_headquarter_location', 'mother_other_locations', 'mother_website'], 'string', 'max' => 255],
+            [['name','business_unit_names', 'company_profile', 'headquarter_location', 'manufacturing_locations', 'manufacturing_locations', 'website', 'market_presence', 'established_year', 'annual_sales_revenue', 'employees_number', 'certification', 'certification_others', 'marketing_strategy', 'company_communication', 'quality', 'brand_equity', 'problem_solving_response', 'market_dominance' , 'comments', 'mother_name', 'mother_company_profile', 'mother_headquarter_location', 'mother_other_locations', 'mother_website'], 'string'],
             [['uid'], 'unique'],
             [['business_unit_id'], 'exist', 'skipOnError' => true, 'targetClass' => BusinessUnit::className(), 'targetAttribute' => ['business_unit_id' => 'id']],
+            [['businessUnitIds'], 'safe'],
+            [['salesManIds'], 'safe'],
         ]);
     }
 
@@ -143,6 +150,7 @@ class Competitor extends \common\components\ActiveRecord
             'logo_ext' => 'Logo Ext',
             'file_ext' => 'File Ext',
             'status' => 'Status',
+            'merged' => 'Merged',
             'manufacturing_locations' => 'Manufacturing Locations',
             'sales_offices_locations' => 'Sales Offices Locations',
             'merger_company_name' => 'Merger Company Name',
@@ -198,6 +206,13 @@ class Competitor extends \common\components\ActiveRecord
     {
         return $this->hasMany(CompetitorManager::className(), ['competitor_id' => 'id']);
     }
+     /**
+     * @return \yii\db\ActiveQuery
+     */
+    public function getCompetitorSalesMan()
+    {
+        return $this->hasMany(CompetitorSalesMan::className(), ['competitor_id' => 'id']);
+    }
 
     /**
      * @return \yii\db\ActiveQuery
@@ -222,7 +237,13 @@ class Competitor extends \common\components\ActiveRecord
     {
         return $this->hasMany(CompetitorNews::className(), ['competitor_id' => 'id']);
     }
-
+/**
+     * @return \yii\db\ActiveQuery
+     */
+    public function getCompetitorBu()
+    {
+        return $this->hasMany(CompetitorBusinessUnit::className(), ['competitor_id' => 'id']);
+    }
     /**
      * @return \yii\db\ActiveQuery
      */
@@ -287,21 +308,53 @@ class Competitor extends \common\components\ActiveRecord
     {
         return new CompetitorQuery(get_called_class());
     }
+    protected function assignItems($items, $targetModel, $relationId, $byId, $byValue, $extraParams = [], $relatedModel = null)
+    {
+       
+        $oldIds = [];
+   
+        $old = $targetModel::find()->where([$byId => $byValue])->all();
+        if (!empty($old) && is_array($old)) {
+            foreach ($old as $m) {
+                $oldIds[] = $m->$relationId;
+                $m->delete();
+              
+            }
+        }
+       
+               if (!empty($items) && is_array($items)) {
+               
+            foreach ($items as $i => $itemId) {
+               
+                                $m = new $targetModel();
+                $m->$byId = $byValue;
+                $m->$relationId = $itemId;
+              
+            
+                
+                $m->save();
+             
+            }
+        }
+       
+    }
+   
 
     public function beforeSave($insert)
     {
         if ($this->isNewRecord || !$this->uid) {
             $this->uid = uniqid('competitor-', true);
         }
-
+       // $this->assignItems($this->businessUnitIds, '\common\models\CompetitorBusinessUnit', 'value', 'competitor_id', $this->id, [], '\common\models\BusinessUnit');
+      
         // comment this before run migration for search index update
         if (!Yii::$app->user->isGuest && !$this->salesman_id && Yii::$app->user->identity->type == User::TYPE_SALESMAN) {
             $this->salesman_id = Yii::$app->user->identity->id;
         }
-
+        $this->updateBupost(CompetitorBusinessunit::className(), 'business_unit_id');
+        $this->updateBu(CompetitorBusinessunit::className(), $this->businessUnitIds);
         
-
-        return parent::beforeSave($insert);
+     return parent::beforeSave($insert);
     }
 
     private function GetSearchText()
@@ -334,7 +387,7 @@ class Competitor extends \common\components\ActiveRecord
         if (!empty($range) && is_array($range)) {
             foreach ($range as $model) {
                 $text[] = $model->product_type;
-                $text[] = $model->sector;
+               // $text[] = $model->sector;
             }
         }
 
@@ -388,7 +441,13 @@ class Competitor extends \common\components\ActiveRecord
                 }
             }
         }
-        $this->updateCompetitorTablesFields();
+        
+       
+
+       $this->updateCompetitorTablesFields();
+
+
+      
         //$this->sendNotificationEmail($insert); // <- comment this before run migration for search index update
         parent::afterSave($insert, $changedAttributes); // TODO: Change the autogenerated stub
     }
@@ -397,7 +456,7 @@ class Competitor extends \common\components\ActiveRecord
     {
         $list = parent::toArray($fields, $expand, $recursive);
         unset($list['file'], $list['search_id'], $list['business_unit_id']);
-
+      //  $list['business_unit_id'] = $this->getCompetitorBu()->all();
         $list['competitorNews'] = $this->getCompetitorNews()->all();
         $list['competitorManager'] = $this->getCompetitorManager()->all();
         $list['competitorSupplier'] = $this->getCompetitorSupplier()->all();
@@ -503,20 +562,110 @@ class Competitor extends \common\components\ActiveRecord
         ], $users);
     }
 
-    public function updateCompetitorTablesFields()
+    
+public function updateBu($modelClass, $fieldName, $extraParams = [])
+{
+
+
+   
+    if(!empty($fieldName)){
+      
+       $value = implode(",",$fieldName);
+
+      
+        if ($value) {
+            $values = explode(',', $value);
+            $l = [];
+   
+            if (!empty($values) && is_array($values)) {
+                foreach ($values as $v) {
+                    $v = trim($v);
+                    if ($v != '') {
+                     
+                    
+                        $bu = ArrayHelper::map(
+                            BusinessUnit::find()
+                                ->select('mpk_portfolio.name')
+                                ->leftJoin('mpk_portfolio','`mpk_portfolio`.`id`= `mpk_business_unit`.`portfolio_id`')
+            
+                                ->where(['mpk_business_unit.id' => $v])
+                                ->asArray() // <- this
+                                ->all(), 
+                            'id', 
+                            'name'
+                        );
+                        $test = implode(",",$bu);
+                    
+                        $l[] = $test;
+ 
+        
+            }
+            sort($l);         
+            $test2 = implode(",",$l);
+          $this->business_unit_names= $test2;
+
+
+        }
+            
+        }
+     }
+    }
+}   
+
+public function updateCompetitorTablesFields()
     {
+       
         //$this->assignTableToField(CompetitorOtherLocation::className(), 'other_locations');
         $this->updateFieldsToTable(CompetitorBusinessunit::className(), 'business_unit_id');
+        $this->updateFieldsToTable(competitorSalesman::className(), 'salesman_id');
+       $this->updateFieldsToTables(CompetitorBusinessunit::className(), $this->businessUnitIds);
+       $this->updateSalesManToTables(competitorSalesman::className(), $this->salesManIds);
         $this->updateFieldsToTable(CompetitorMotherOtherLocation::className(), 'mother_other_locations');
         $this->updateFieldsToTable(CompetitorMarketPresence::className(), 'market_presence');
         $this->updateFieldsToTable(CompetitorMarketingStrategy::className(), 'marketing_strategy');
-        $this->updateFieldsToTable(CompetitorCertification::className(), 'certification', ['other' => 0]);
-        $this->updateFieldsToTable(CompetitorCertification::className(), 'certification_others', ['other' => 1]);
-        $this->updateFieldsToTable(CompetitorCompanyCommunication::className(), 'company_communication');
+      $this->updateFieldsToTable(CompetitorCertification::className(), 'certification', ['other' => 0]);
+     $this->updateFieldsToTable(CompetitorCertification::className(), 'certification_others', ['other' => 1]);
+     $this->updateFieldsToTable(CompetitorCompanyCommunication::className(), 'company_communication');
     }
 
+
+    private function updateBupost($modelClass, $fieldName, $extraParams = [])
+    {
+
+       
+       $value = $this->$fieldName;
+
+       
+        if ($value) {
+            $values = explode(',', $value);
+            $l = [];
+        
+            $bu = ArrayHelper::map(
+                BusinessUnit::find()
+                    ->select('mpk_portfolio.name')
+                    ->leftJoin('mpk_portfolio','`mpk_portfolio`.`id`= `mpk_business_unit`.`portfolio_id`')
+
+                    ->where(['mpk_business_unit.id' => $values])
+                    ->asArray() // <- this
+                    ->all(), 
+                'id', 
+                'name'
+            );
+            $test = implode(",",$bu);
+        
+            $l[] = $test;
+                    sort($l);         
+                $test2 = implode(",",$l);
+              $this->business_unit_names= $test2;
+        }
+        
+
+
+    }
     private function updateFieldsToTable($modelClass, $fieldName, $extraParams = [])
     {
+       
+     
         $conditions = $extraParams;
         $conditions['competitor_id'] = $this->id;
         $olds = $modelClass::find()->where($conditions)->all();
@@ -525,7 +674,9 @@ class Competitor extends \common\components\ActiveRecord
                 $old->delete();
             }
         }
-        $value = $this->$fieldName;
+       $value = $this->$fieldName;
+
+       
         if ($value) {
             $values = explode(',', $value);
             $l = [];
@@ -546,12 +697,108 @@ class Competitor extends \common\components\ActiveRecord
                         }
                         $m->save();
                         $this->$fieldName = implode(',',$l);
+
                     }
                 }
             }
         }
     }
+    private function updateSalesManToTables($modelClass, $fieldName, $extraParams = [])
+    {
+       
+     if(!empty($fieldName)){
+        $conditions = $extraParams;
+        $conditions['competitor_id'] = $this->id;
+        $olds = $modelClass::find()->where($conditions)->all();
+        if (!empty($olds) && is_array($olds)) {
+            foreach ($olds as $old) {
+                $old->delete();
+            }
+        }
+       $value = implode(",",$fieldName);
 
+       
+        if ($value) {
+            $values = explode(',', $value);
+            $l = [];
+          
+            if (!empty($values) && is_array($values)) {
+                foreach ($values as $v) {
+                    $v = trim($v);
+                    if ($v != '') {
+                        $m = new $modelClass();
+                        $m->competitor_id = $this->id;
+                        $m->value = $v;
+                        $l[] = $v;
+                        if (!empty($extraParams) && is_array($extraParams)) {
+                            foreach ($extraParams as $n => $vv) {
+                                if ($m->hasProperty($n)) {
+                                    $m->$n = $vv;
+                                }
+                            }
+                        }
+                        $m->save();
+                    
+                        //  $this->business_unit_names = implode(',',$l);
+                      
+                    }
+                  
+                }
+             
+            }
+            
+        }
+     }
+       
+    }
+    private function updateFieldsToTables($modelClass, $fieldName, $extraParams = [])
+    {
+       
+     if(!empty($fieldName)){
+        $conditions = $extraParams;
+        $conditions['competitor_id'] = $this->id;
+        $olds = $modelClass::find()->where($conditions)->all();
+        if (!empty($olds) && is_array($olds)) {
+            foreach ($olds as $old) {
+                $old->delete();
+            }
+        }
+       $value = implode(",",$fieldName);
+
+       
+        if ($value) {
+            $values = explode(',', $value);
+            $l = [];
+          
+            if (!empty($values) && is_array($values)) {
+                foreach ($values as $v) {
+                    $v = trim($v);
+                    if ($v != '') {
+                        $m = new $modelClass();
+                        $m->competitor_id = $this->id;
+                        $m->value = $v;
+                        $l[] = $v;
+                        if (!empty($extraParams) && is_array($extraParams)) {
+                            foreach ($extraParams as $n => $vv) {
+                                if ($m->hasProperty($n)) {
+                                    $m->$n = $vv;
+                                }
+                            }
+                        }
+                        $m->save();
+                    
+                           $this->business_unit_names = implode(',',$l);
+                      
+                    }
+                  
+                }
+             
+            }
+            
+        }
+     }
+       
+    }
     public function afterFind()
     {
         parent::afterFind();
@@ -570,6 +817,17 @@ class Competitor extends \common\components\ActiveRecord
         if($value != ''){
             $this->$fieldName = $value;
         }
+    }
+
+   
+    public function getItem()
+    {
+        $item = 'competitorBu';
+      
+      
+            return $this->$item;
+       
+       // return null;
     }
 }
 
