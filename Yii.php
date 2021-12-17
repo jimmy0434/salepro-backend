@@ -35,8 +35,8 @@ class Yii extends BaseYii
      */
     public static function powered()
     {
-        return static::t('app', 'Powered by {codendot}', [
-            'codendot' => Html::a(static::t('app', 'Codendot'),'https://www.codendot.com/',['rel'=>'external','target'=>'_blank']),
+        return static::t('app', 'Powered by {IS}', [
+            'IS' => Html::a(static::t('app', 'IS'),['rel'=>'external','target'=>'_blank']),
         ]);
     }
 }

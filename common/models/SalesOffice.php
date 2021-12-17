@@ -90,7 +90,7 @@ class SalesOffice extends \yii\db\ActiveRecord
         $list = parent::toArray($fields, $expand, $recursive);
         unset($list['file_id']);
         $list['file'] = $this->file;
-    
+      //  $list['items'] = $this->productDetailItems;
         return $list;
     }
 }

@@ -76,4 +76,5 @@ class PortfolioSalesOffice extends \common\components\ActiveRecord
     {
         return new PortfolioSalesOfficeQuery(get_called_class());
     }
+    
 }

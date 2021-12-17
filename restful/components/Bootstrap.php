@@ -31,6 +31,7 @@ class Bootstrap implements BootstrapInterface
         UrlRule::register('get', '/portfolios', '/portfolio/list');
         UrlRule::register('get', '/portfolios/<uid:.+>', '/portfolio/one');
         UrlRule::register('get', '/sectors/<uid:.+>/products', '/portfolio/sectors-products');
+        UrlRule::register('get', '/industries/<uid:.+>/products', '/portfolio/industriess-products');
         UrlRule::register('get', '/sectors/<sectorUid:.+>/market-research', '/market-research/list');
         UrlRule::register('get', '/brands/<uid:.+>/products', '/portfolio/brands-products');
         UrlRule::register('get', '/business-unit/<uid:.+>/products', '/portfolio/business-unit-products');

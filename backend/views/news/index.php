@@ -72,6 +72,15 @@ $dv = new DataView([
                 return $data->title;
             },
         ],
+        'details' => [
+            'label' => 'details',
+            'value' => function ($attribute, $data, $view) use ($dataLocator) {
+                assert($attribute instanceof Attribute);
+                assert($data instanceof News);
+                assert($view instanceof DataViewLocator);
+                return $data->details;
+            },
+        ],
         'updated_at' => [
             'label' => 'Last Modification',
             'value' => function ($attribute, $data, $view) {

@@ -15,6 +15,10 @@ use common\models\BusinessUnit;
 use common\models\Exhibition;
 use yii\helpers\Html;
 use yii\web\View;
+use yii\jui\DatePicker;
+use backend\widgets\FileSelector;
+use cnd\admin\models\activerecords\Setting;
+use cnd\filemanager\widgets\MediaInput;
 
 $view = $this;
 $context = $this->context;
@@ -22,6 +26,7 @@ $context = $this->context;
 assert($view instanceof View);
 assert($model instanceof Exhibition);
 assert($context instanceof ExhibitionController);
+
 
 $isNew = $model->isNewRecord;
 
@@ -34,17 +39,56 @@ $form = ActiveForm::begin(['id' => Yii::$app->controller->id . '-form']);
         <div class="col-md-6">
             <div class="panel panel-default">
                 <div class="panel-heading">Information</div>
+                
+                <div class="panel-heading"><?= 'Logo' ?></div>
                 <div class="panel-body">
+                <?=
+                    MediaInput::widget([
+                        'model' => $model,
+                        'attr' => 'image',
+                        'title' => false,
+                        'count' => 1,
+                    ])
+                    ?>
                     <?= $form->field($model, 'id')->hiddenInput()->label(false) ?>
                     <?= $form->field($model, 'name')->textInput() ?>
-                    <?= $form->field($model, 'year')->textInput() ?>
+                    <?= $form->field($model, 'organizer')->textInput() ?>
                     <?= $form->field($model, 'city')->textInput() ?>
                     <?= $form->field($model, 'venue')->textInput() ?>
                     <?= $form->field($model, 'edition')->textInput() ?>
                     <?= $form->field($model, 'frequency')->textInput() ?>
                     <?= $form->field($model, 'url')->textInput() ?>
+
+                    <?= $form->field($model, 'lasteditionmonth')->textInput() ?>
+
+
+                    <?= $form->field($model, 'lasteditionyear')->textInput() ?>
+                    <?= $form->field($model, 'upcomingeditionmonth')->textInput() ?>
+                  
+                    <?= $form->field($model, 'upcomingeditionyear')->textInput() ?>
+                    
+                    <?= $form->field($model, 'nbofvisitors')->textInput() ?>
+                    <?= $form->field($model, 'nbofexhebitors')->textInput() ?>
+                    <?= $form->field($model, 'nbofseminars')->textInput() ?> 
                 </div>
             </div>
+       
+                <div class="panel-heading">Attachment File</div>
+                <div class="panel-body">
+                    <?= FileSelector::widget([
+                        'model' => $model,
+                        'property' => 'file_id',
+                        'title' => false,
+                        'fileName' => uniqid('exhibition-file-', true),
+                        'ext' => Setting::get('market-research.attachment.extensions', 'xlsx,xls,pdf,pptx,ppt'),
+                       
+                        
+                    ]) ?>
+
+
+
+
+                </div>
         </div>
         <div class="col-md-6">
             <div class="panel panel-default">

@@ -27,7 +27,7 @@ class SteepanalysisController extends SController
         $query->orderBy('id DESC');
         
         //$query->where('status=:status or salesman_id=:salesman', [':status' => SteepAnalysis::STATUS_ENABLED, ':salesman' => Yii::$app->user->identity->id]);
-        $query->ANDWhere('salesman_id=:salesman', [':salesman' => Yii::$app->user->identity->id]);
+       // $query->ANDWhere('salesman_id=:salesman', [':salesman' => Yii::$app->user->identity->id]);
         
         $list = $query->all();
         Log::trace("Download SteepAnalysis List");

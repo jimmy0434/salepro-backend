@@ -53,4 +53,28 @@ class SectorOutlookController extends SController
         }
         return $this->redirect(['index']);
     }
+
+    public function actionManage($id = null)
+    {
+        $model = SectorOutlook::findOne($id);
+      
+        if ($model === null) {
+            throw new \yii\web\HttpException(404, 'The requested SectorOutlook could not be found.');
+        }
+   
+        if ($model->load(\Yii::$app->request->post()) && $model->validate()) {
+            if ($model->save()) {
+              //  $model->sendNotification();
+                \Yii::$app->session->setFlash('success', ucfirst($this->id) . ' saved successfully');
+            } else {
+                \Yii::$app->session->setFlash('error', ucfirst($this->id) . ' not saved');
+            }
+          
+            
+            return $this->redirect(['index']);
+        }
+        Log::trace("Open SectorOutlook form");
+        return $this->render('form', ['model' => $model]);
+    }
+
 }

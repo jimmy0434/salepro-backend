@@ -84,6 +84,12 @@ $dv = new DataView([
     'headerLinks' => [],
     'rowLinks' => [
         function ($row) {
+            if (Yii::$app->permission->can('/sector-outlook/manage')) {
+                return Html::a('Edit', Url::to(['manage', 'id' => $row->id]), ['class' => 'btn btn-info']);
+            }
+            return null;
+        },
+        function ($row) {
             if (Yii::$app->permission->can('/steep-analysis/view')) {
                 return Html::a('View', Url::to(['view', 'id' => $row->id]), ['class' => 'btn btn-primary']);
             }
