@@ -39,7 +39,7 @@ class News extends \common\components\ActiveRecord
     {
         return array_merge(parent::rules(), [
             [['title'], 'required'],
-            [['title', 'source', 'url','details'], 'string'],
+            [['title', 'source','source_person','news_type', 'url','details','sector' ,'date'], 'string'],
             [['tags', 'productsIds'], 'safe'],
             [['uid'], 'unique'],
            
@@ -60,6 +60,9 @@ class News extends \common\components\ActiveRecord
             'details'=>'Details',
             'search_id' => 'Search ID',
             'uid' => 'Uid',
+            'sector'=>'Sector',
+            'news_type'=>'Type',
+            'date'=>'Date',
         ];
     }
 
@@ -135,6 +138,7 @@ class News extends \common\components\ActiveRecord
     public function afterFind()
     {
         parent::afterFind();
+        $news_type = $this->news_type;
         if (is_string($this->image) && Yii::$app->helper->isJson($this->image)) {
             $this->imageFactory = \Yii::createObject([
                 'class' => 'cnd\filemanager\components\FileOutput',

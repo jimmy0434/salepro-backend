@@ -28,6 +28,8 @@ class BiSync extends Component
     public function run()
     {
         throw new Exception("method " . static::className() . "::run() should be implemented");
+
+        
     }
 
     public function execute()

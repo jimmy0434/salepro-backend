@@ -76,4 +76,9 @@ class Application extends \yii\web\Application
     {
         return $this->dataList(DataList::TYPE_REGION);
     }
+
+    public function newstype()
+    {
+        return $this->dataList(DataList::TYPE_NEWS_TYPE);
+    }
 }

@@ -11,7 +11,7 @@
 use common\models\User;
 use yii\helpers\Json;
 
-?>
+?>  
 
 <div class="panel panel-default">
     <div class="panel-heading">
@@ -46,7 +46,7 @@ use yii\helpers\Json;
                         <?php
                     }
                     ?>
-                </li>
+                </li> 
                 <?php
             }
         }

@@ -35,6 +35,19 @@ $na = "N/A";
                     <td><?= $model->category ?></td>
                 </tr>
                 <tr>
+                    <th>Building Block</th>
+                    <td><?= $model->building_block ?></td>
+                </tr>
+                <tr>
+                    <th>Product Line</th>
+                    <td><?= $model->product_line ?></td>
+                </tr>
+                <tr>
+                    <th>industry</th>
+                    <td><?= $model->industry ?></td>
+                </tr>
+
+                <tr>
                     <th>Business Unit</th>
                     <td>
                         <?php

@@ -44,10 +44,11 @@ class SectorOutlook extends \common\components\ActiveRecord
         return [
             [['salesman_id', 'created_at', 'updated_at', 'business_unit_id'], 'integer'],
             [['file'], 'string'],
-            [['uid', 'name', 'industry', 'country','outlook',  'source', 'growth_rate', 'file_ext'], 'string'],
+            [['uid', 'name', 'industry', 'country','outlook',  'source', 'growth_rate', 'file_ext','building_block','product_line','geographical_area'], 'string'],
             [['uid'], 'unique'],
             [['salesman_id'], 'exist', 'skipOnError' => true, 'targetClass' => Salesman::className(), 'targetAttribute' => ['salesman_id' => 'id']],
-            [['business_unit_id'], 'exist', 'skipOnError' => true, 'targetClass' => BusinessUnit::className(), 'targetAttribute' => ['business_unit_id' => 'id']],
+            [['business_unit_id'], 'exist', 'skipOnError' => true, 'targetClass' => BusinessUnit::className(), 'targetAttribute' => ['business_unit_id' => 'id']]
+
         ];
     }
 

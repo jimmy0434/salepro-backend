@@ -42,12 +42,15 @@ class SteepAnalysisController extends SController
             $id = Yii::$app->request->post('id');
             $status = Yii::$app->request->post('status');
             $model = SteepAnalysis::findOne($id);
+            
             if ($model !== null) {
                 $model->status = $status;
                 $model->save();
-                $model->notifyAll();
+              //  $model->notifyAll();
                 $response['changed'] = true;
                 Log::trace("Change Competitor #" . $model->id . " status, become " . $model->status_label);
+                
+                
             }
             return $response;
         }

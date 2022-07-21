@@ -42,6 +42,16 @@ $dv = new DataView([
             },
             'filterBy' => Attribute::FILTER_NUMBER,
         ],
+        'sector' => [
+            'label' => 'Sector',
+            'value' => function ($attribute, $data, $view) use ($dataLocator) {
+                assert($attribute instanceof Attribute);
+                assert($data instanceof Exhibition);
+                assert($view instanceof DataViewLocator);
+                return implode(',',$data->sectorsNames);
+            },
+            'filterBy' => Attribute::FILTER_NONE,
+        ],
         'name' => [
             'label' => 'Name',
             'value' => function ($attribute, $data, $view) use ($dataLocator) {
@@ -80,6 +90,7 @@ $dv = new DataView([
                 return $data->city;
             },
         ],
+        
         'venue' => [
             'label' => 'Venue',
             'value' => function ($attribute, $data, $view) use ($dataLocator) {
@@ -107,6 +118,86 @@ $dv = new DataView([
                 return $data->frequency;
             },
         ],
+        'organizer' => [
+            'label' => 'organizer',
+            'value' => function ($attribute, $data, $view) use ($dataLocator) {
+                assert($attribute instanceof Attribute);
+                assert($data instanceof Exhibition);
+                assert($view instanceof DataViewLocator);
+                return $data->organizer;
+            },
+        ],
+
+        'lasteditionmonth' => [
+            'label' => 'lasteditionmonth',
+            'value' => function ($attribute, $data, $view) use ($dataLocator) {
+                assert($attribute instanceof Attribute);
+                assert($data instanceof Exhibition);
+                assert($view instanceof DataViewLocator);
+                return $data->lasteditionmonth;
+            },
+        ],
+
+        'lasteditionyear' => [
+            'label' => 'lasteditionyear',
+            'value' => function ($attribute, $data, $view) use ($dataLocator) {
+                assert($attribute instanceof Attribute);
+                assert($data instanceof Exhibition);
+                assert($view instanceof DataViewLocator);
+                return $data->lasteditionyear;
+            },
+        ],
+
+        'upcomingeditionmonth' => [
+            'label' => 'upcomingeditionmonth',
+            'value' => function ($attribute, $data, $view) use ($dataLocator) {
+                assert($attribute instanceof Attribute);
+                assert($data instanceof Exhibition);
+                assert($view instanceof DataViewLocator);
+                return $data->upcomingeditionmonth;
+            },
+        ],
+
+        'upcomingeditionyear' => [
+            'label' => 'upcomingeditionyear',
+            'value' => function ($attribute, $data, $view) use ($dataLocator) {
+                assert($attribute instanceof Attribute);
+                assert($data instanceof Exhibition);
+                assert($view instanceof DataViewLocator);
+                return $data->upcomingeditionyear;
+            },
+        ],
+
+        'nbofvisitors' => [
+            'label' => 'nbofvisitors',
+            'value' => function ($attribute, $data, $view) use ($dataLocator) {
+                assert($attribute instanceof Attribute);
+                assert($data instanceof Exhibition);
+                assert($view instanceof DataViewLocator);
+                return $data->nbofvisitors;
+            },
+        ],
+
+        'nbofexhebitors' => [
+            'label' => 'nbofexhebitors',
+            'value' => function ($attribute, $data, $view) use ($dataLocator) {
+                assert($attribute instanceof Attribute);
+                assert($data instanceof Exhibition);
+                assert($view instanceof DataViewLocator);
+                return $data->nbofexhebitors;
+            },
+        ],
+
+        'nbofseminars' => [
+            'label' => 'nbofseminars',
+            'value' => function ($attribute, $data, $view) use ($dataLocator) {
+                assert($attribute instanceof Attribute);
+                assert($data instanceof Exhibition);
+                assert($view instanceof DataViewLocator);
+                return $data->nbofseminars;
+            },
+        ],
+        
         'year' => [
             'label' => 'Year',
             'value' => function ($attribute, $data, $view) use ($dataLocator) {
@@ -154,6 +245,9 @@ $dv->addView('grid', [
                 'style' => 'text-align:center;white-space: nowrap;width:1%;'
             ],
         ],
+        'sector' => [
+            'sortable' => true,
+        ],
         'name' => [
             'sortable' => true,
         ],
@@ -166,6 +260,7 @@ $dv->addView('grid', [
         'city' => [
             'sortable' => true,
         ],
+       
         'venue' => [
             'sortable' => true,
         ],
@@ -173,6 +268,9 @@ $dv->addView('grid', [
             'sortable' => true,
         ],
         'frequency' => [
+            'sortable' => true,
+        ],
+        'organizer' => [
             'sortable' => true,
         ],
         'year' => [

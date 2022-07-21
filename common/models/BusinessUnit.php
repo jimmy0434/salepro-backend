@@ -131,7 +131,15 @@ class BusinessUnit extends \common\components\ActiveRecord
     {
         return $this->hasOne(Portfolio::className(), ['id' => 'portfolio_id']);
     }
+    public function getIndustries()
+    {
+        return $this->hasMany(Industries::className(), ['id' => 'industries_id'])->via('industriesBusinessUnits');
+    }
 
+    public function getindustriesBusinessUnits()
+    {
+        return $this->hasMany(IndustriesBusinessUnit::className(), ['business_unit_id' => 'id']);
+    }
     /**
      * {@inheritdoc}
      * @return BusinessUnitQuery the active query used by this AR class.

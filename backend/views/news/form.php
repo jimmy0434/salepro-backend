@@ -4,6 +4,7 @@
 use backend\controllers\NewsController;
 use backend\widgets\AutoCompleteInput;
 use backend\widgets\FileSelector;
+use common\models\Sector;
 use cnd\admin\models\activerecords\Setting;
 use cnd\filemanager\widgets\MediaInput;
 use cnd\form\ActiveForm;
@@ -43,6 +44,8 @@ $form = ActiveForm::begin(['id' => Yii::$app->controller->id . '-form']);
                     ?>
                     
                     <?= $form->field($model, 'title')->textInput() ?>
+                   
+                   
                     <?= $form->field($model, 'details')->widget(CKEditor::className(),[
                         'editorOptions' => [
                             'preset' => 'full',
@@ -51,15 +54,18 @@ $form = ActiveForm::begin(['id' => Yii::$app->controller->id . '-form']);
                         ],
                     ]);
                     ?>
-   
-   <?= DatePicker::widget([
+  <?= DatePicker::widget([
     'model' => $model,
     'attribute' => 'date',
+    'dateFormat' => 'MMM-yyyy',
+]) ?>          
     
-    'dateFormat' => 'MMM-yyyy'
-]) ?>
+   
+   <?= $form->field($model, 'sector')->dropDownList(Sector::listData()) ?>
+   <?= $form->field($model, 'news_type')->dropDownList(Yii::$app->newstype()) ?>
+ 
 
-                  
+       
                 </div>
             </div>
         </div>

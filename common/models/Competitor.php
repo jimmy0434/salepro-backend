@@ -102,7 +102,7 @@ class Competitor extends \common\components\ActiveRecord
         return array_merge(parent::rules(), [
             [['salesman_id', 'business_unit_id', 'search_id'], 'integer'],
             [['logo', 'file'], 'string'],
-            [['name','business_unit_names', 'company_profile', 'headquarter_location', 'manufacturing_locations', 'manufacturing_locations', 'website', 'market_presence', 'established_year', 'annual_sales_revenue', 'employees_number', 'certification', 'certification_others', 'marketing_strategy', 'company_communication', 'quality', 'brand_equity', 'problem_solving_response', 'market_dominance' , 'comments', 'mother_name', 'mother_company_profile', 'mother_headquarter_location', 'mother_other_locations', 'mother_website'], 'string'],
+            [['name','business_unit_names', 'company_profile', 'headquarter_location', 'sector', 'manufacturing_locations', 'manufacturing_locations', 'website', 'market_presence', 'established_year', 'annual_sales_revenue', 'employees_number', 'certification', 'certification_others', 'marketing_strategy', 'company_communication', 'quality', 'brand_equity', 'problem_solving_response', 'market_dominance' , 'comments', 'mother_name', 'mother_company_profile', 'mother_headquarter_location', 'mother_other_locations', 'mother_website'], 'string'],
             [['uid'], 'unique'],
             [['business_unit_id'], 'exist', 'skipOnError' => true, 'targetClass' => BusinessUnit::className(), 'targetAttribute' => ['business_unit_id' => 'id']],
             [['businessUnitIds'], 'safe'],

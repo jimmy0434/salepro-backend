@@ -9,6 +9,7 @@ use yii\helpers\ArrayHelper;
 use yii\helpers\Inflector;
 use yii\helpers\Json;
 
+
 /**
  * This is the model class for table "{{%portfolio}}".
  *
@@ -67,12 +68,14 @@ class Portfolio extends \common\components\ActiveRecord
     const TARGET_SECTOR = 5;
     const TARGET_PRODUCT = 6;
     const TARGET_BUNDLING_AND_PACKING = 7;
+    const TARGET_INDUSTRIES = 8;
 
     const STATUS_ENABLED = 'enabled';
     const STATUS_DISABLED = 'disabled';
 
     public $tags = [];
     public $brandsIds = [];
+    public $industriesIds = [];
     public $sectorsIds = [];
     public $productsIds = [];
     public $businessUnitIds = [];
@@ -101,7 +104,7 @@ class Portfolio extends \common\components\ActiveRecord
             [['name', 'description'], 'string'],
             [['uid'], 'unique'],
             [['position'], 'number', 'min' => 0, 'integerOnly' => true],
-            [['tags', 'brandsIds', 'sectorsIds', 'productsIds', 'businessUnitIds', 'newsLinks', 'links', 'officesIds', 'certificationsIds'], 'safe'],
+            [['tags', 'brandsIds','industriesIds', 'sectorsIds', 'productsIds', 'businessUnitIds', 'newsLinks', 'links', 'officesIds', 'certificationsIds'], 'safe'],
         ]);
     }
 
@@ -191,12 +194,19 @@ class Portfolio extends \common\components\ActiveRecord
         return $this->hasOne(Product::className(), ['portfolio_id' => 'id']);
     }
 
-    /**
+ /**
      * @return \yii\db\ActiveQuery
      */
     public function getSector()
     {
         return $this->hasOne(Sector::className(), ['portfolio_id' => 'id']);
+    }
+    /**
+     * @return \yii\db\ActiveQuery
+     */
+    public function getIndustries()
+    {
+        return $this->hasOne(Industries::className(), ['portfolio_id' => 'id']);
     }
 
     public function getBrochure()
@@ -318,6 +328,7 @@ class Portfolio extends \common\components\ActiveRecord
                 Brand::relateToPortfolio($this->id);
                 $item = $this->item;
                 if ($item) {
+                    $this->assignItems($this->industriesIds, '\common\models\IndustriesBrand', 'industries_id', 'brand_id', $item->id, [], '\common\models\Industries');
                     $this->assignItems($this->sectorsIds, '\common\models\SectorBrand', 'sector_id', 'brand_id', $item->id, [], '\common\models\Sector');
                     $this->assignItems($this->productsIds, '\common\models\ProductBrand', 'product_id', 'brand_id', $item->id, [], '\common\models\Product');
                     $this->assignItems($this->businessUnitIds, '\common\models\BrandBusinessUnit', 'business_unit_id', 'brand_id', $item->id, [], '\common\models\BusinessUnit');
@@ -325,6 +336,8 @@ class Portfolio extends \common\components\ActiveRecord
                     $this->sendNotificationToModels($item->sectors);
                     $this->sendNotificationToModels($item->products);
                     $this->sendNotificationToModels($item->businessUnits);
+                    $this->sendNotificationToModels($item->industries);
+
                 }
                 break;
             case static::TARGET_SECTOR:
@@ -332,20 +345,43 @@ class Portfolio extends \common\components\ActiveRecord
                 $item = $this->item;
                 if ($item) {
                     $this->assignItems($this->brandsIds, '\common\models\SectorBrand', 'brand_id', 'sector_id', $item->id, [], '\common\models\Brand');
+                    $this->assignItems($this->industriesIds, '\common\models\IndustriesSector', 'industries_id', 'sector_id', $item->id, [], '\common\models\Industries');
                     $this->assignItems($this->productsIds, '\common\models\ProductSector', 'product_id', 'sector_id', $item->id, [], '\common\models\Product');
                     $this->assignItems($this->businessUnitIds, '\common\models\SectorBusinessUnit', 'business_unit_id', 'sector_id', $item->id, [], '\common\models\BusinessUnit');
 
                     $this->sendNotificationToModels($item->brands);
                     $this->sendNotificationToModels($item->products);
                     $this->sendNotificationToModels($item->businessUnits);
+                    $this->sendNotificationToModels($item->industries);
+
+
                 }
                 break;
+                case static::TARGET_INDUSTRIES:
+                    Industries::relateToPortfolio($this->id);
+                    $item = $this->item;
+                    if ($item) {
+                   
+        
+                $this->assignItems($this->productsIds, '\common\models\ProductIndustries', 'product_id', 'industries_id', $item->id, [], '\common\models\Product');
+                  $this->assignItems($this->sectorsIds, '\common\models\IndustriesSector', 'sector_id', 'industries_id', $item->id, [], '\common\models\Sector');
+                  $this->assignItems($this->businessUnitIds, '\common\models\IndustriesBusinessUnit', 'business_unit_id', 'industries_id', $item->id, [], '\common\models\BusinessUnit');
+                  $this->assignItems($this->brandsIds, '\common\models\IndustriesBrand', 'brand_id', 'industries_id', $item->id, [], '\common\models\Brand');
+                       
+                  $this->sendNotificationToModels($item->brands);
+                  $this->sendNotificationToModels($item->sectors);
+                  $this->sendNotificationToModels($item->businessUnits);
+                 
+
+                    }
+                    break;
             case static::TARGET_PRODUCT:
             case static::TARGET_BUNDLING_AND_PACKING:
                 Product::relateToPortfolio($this->id);
                 $item = $this->item;
                 if ($item) {
                     $this->assignItems($this->brandsIds, '\common\models\ProductBrand', 'brand_id', 'product_id', $item->id, [], '\common\models\Brand');
+                    $this->assignItems($this->industriesIds, '\common\models\ProductIndustries', 'industries_id', 'product_id', $item->id, [], '\common\models\Industries');
                     $this->assignItems($this->sectorsIds, '\common\models\ProductSector', 'sector_id', 'product_id', $item->id, [], '\common\models\Sector');
                     $this->assignItems($this->businessUnitIds, '\common\models\ProductBusinessUnit', 'business_unit_id', 'product_id', $item->id, [], '\common\models\BusinessUnit');
                     $this->assignItems($this->certificationsIds, '\common\models\ProductCertification', 'certification_id', 'product_id', $item->id);
@@ -353,6 +389,9 @@ class Portfolio extends \common\components\ActiveRecord
                     $this->sendNotificationToModels($item->brands);
                     $this->sendNotificationToModels($item->sectors);
                     $this->sendNotificationToModels($item->businessUnits);
+
+                    $this->sendNotificationToModels($item->industries);
+
                 }
                 break;
             case static::TARGET_BUSINESS_UNIT:
@@ -574,19 +613,28 @@ class Portfolio extends \common\components\ActiveRecord
                 $data['sectors'] = $this->manyToManyPortfolio($this->corporate->sectors);
                 break;
             case static::TARGET_SECTOR:
-                $data['businessUnits'] = $this->manyToManyPortfolio($this->sector->businessUnits);
+               $data['businessUnits'] = $this->manyToManyPortfolio($this->sector->businessUnits);
                 $data['brands'] = $this->manyToManyPortfolio($this->sector->brands);
                 $data['products'] = $this->manyToManyPortfolio($this->sector->products);
+                $data['industries'] = $this->manyToManyPortfolio($this->sector->industries);
                 break;
+                case static::TARGET_INDUSTRIES:
+                    $data['businessUnits'] = $this->manyToManyPortfolio($this->industries->businessUnits);
+                    $data['brands'] = $this->manyToManyPortfolio($this->industries->brands);
+                    $data['products'] = $this->manyToManyPortfolio($this->industries->products);
+                    $data['sectors'] = $this->manyToManyPortfolio($this->industries->sectors);
+                    break;
             case static::TARGET_BRAND:
                 $data['businessUnits'] = $this->manyToManyPortfolio($this->brand->businessUnits);
                 $data['sectors'] = $this->manyToManyPortfolio($this->brand->sectors);
                 $data['products'] = $this->manyToManyPortfolio($this->brand->products);
+                $data['industries'] = $this->manyToManyPortfolio($this->brand->industries);
                 break;
             case static::TARGET_PRODUCT:
             case static::TARGET_BUNDLING_AND_PACKING:
                 $data['sectors'] = $this->manyToManyPortfolio($this->product->sectors);
                 $data['brands'] = $this->manyToManyPortfolio($this->product->brands);
+                $data['industries'] = $this->manyToManyPortfolio($this->product->industries);
                 $data['certifications'] = $this->product ? $this->product->certifications : null;
                 $data['details'] = $this->product ? $this->product->details : null;
                 break;
@@ -595,6 +643,7 @@ class Portfolio extends \common\components\ActiveRecord
                 $data['brands'] = $this->manyToManyPortfolio($this->businessUnit->brands);
                 $data['sectors'] = $this->manyToManyPortfolio($this->businessUnit->sectors);
                 $data['products'] = $this->manyToManyPortfolio($this->businessUnit->products);
+               $data['industries'] = $this->manyToManyPortfolio($this->businessUnit->industries);
                 break;
         }
         return $data;
@@ -620,7 +669,6 @@ class Portfolio extends \common\components\ActiveRecord
         }
         return null;
     }
-
     protected function assignItems($items, $targetModel, $relationId, $byId, $byValue, $extraParams = [], $relatedModel = null)
     {
         $oldIds = [];

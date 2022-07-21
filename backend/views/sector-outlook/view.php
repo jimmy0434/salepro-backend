@@ -61,6 +61,18 @@ $na = "N/A";
                     </td>
                 </tr>
                 <tr>
+                <th>Building Block</th>
+                        <td><?= $model->building_block ?? $na ?></td>
+                    </tr>
+                    <tr>
+                    <th>Product Line</th>
+                        <td><?= $model->product_line ?? $na ?></td>
+                    </tr>
+                    <tr>
+                    <th>Geographical Area</th>
+                        <td><?= $model->geographical_area ?? $na ?></td>
+                    </tr>
+                <tr>
                     <th>Salesman</th>
                     <td>
                         <?php

@@ -79,7 +79,9 @@ class DataList extends \common\components\ActiveRecord
     const TYPE_SECTOR_OUTLOOK_SECTOR =55;
     const TYPE_SECTOR_OUTLOOK_INDUSTRY =56;
     const TYPE_PRODUCT_LINE =57;
-   
+    const TYPE_GEOGRAPHICAL_AREA =58;
+    const TYPE_NEWS_TYPE =59;
+ 
 
 
     public static function listRelations()

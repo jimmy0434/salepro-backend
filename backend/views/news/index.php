@@ -81,6 +81,33 @@ $dv = new DataView([
                 return $data->details;
             },
         ],
+        'sector' => [
+            'label' => 'sector',
+            'value' => function ($attribute, $data, $view) use ($dataLocator) {
+                assert($attribute instanceof Attribute);
+                assert($data instanceof News);
+                assert($view instanceof DataViewLocator);
+                return $data->sector;
+            },
+        ],
+        'news_type' => [
+            'label' => 'type',
+            'value' => function ($attribute, $data, $view) use ($dataLocator) {
+                assert($attribute instanceof Attribute);
+                assert($data instanceof News);
+                assert($view instanceof DataViewLocator);
+                return $data->news_type;
+            },
+        ],
+        'date' => [
+            'label' => 'date',
+            'value' => function ($attribute, $data, $view) use ($dataLocator) {
+                assert($attribute instanceof Attribute);
+                assert($data instanceof News);
+                assert($view instanceof DataViewLocator);
+                return $data->date;
+            },
+        ],
         'updated_at' => [
             'label' => 'Last Modification',
             'value' => function ($attribute, $data, $view) {
@@ -128,6 +155,16 @@ $dv->addView('grid', [
         'title' => [
             'sortable' => true,
         ],
+        'sector' => [
+            'sortable' => true,
+        ],
+        'news_type' => [
+            'sortable' => true,
+        ],
+        'date' => [
+            'sortable' => true,
+        ],
+
         'updated_at' => [
             'sortable' => true,
             'contentOptions' => [

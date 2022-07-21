@@ -258,6 +258,13 @@ class Exhibition extends \common\components\ActiveRecord
     public function afterFind()
     {
         parent::afterFind();
+        $sectors = $this->sectors;
+        if (!empty($sectors) && is_array($sectors)) {
+            foreach ($sectors as $model) {
+                $this->sectorsNames[] =$model->portfolio->name;
+            }
+        }
+
         $countries = $this->exhibitionCountries;
         if (!empty($countries) && is_array($countries)) {
             foreach ($countries as $model) {

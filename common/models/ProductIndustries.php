@@ -5,20 +5,25 @@ namespace common\models;
 use Yii;
 
 /**
- * This is the model class for table "product_industries".
+ * This is the model class for table "mpk_product_industries".
  *
  * @property int $id
  * @property int $product_id
  * @property int $industries_id
+ * @property int $created_at
+ * @property int $updated_at
+ *
+ * @property Product $product
+ * @property Industries $industries
  */
-class ProductIndustries extends \yii\db\ActiveRecord
+class ProductIndustries extends \common\components\ActiveRecord
 {
     /**
      * {@inheritdoc}
      */
     public static function tableName()
     {
-        return 'product_industries';
+        return 'mpk_product_industries';
     }
 
     /**
@@ -27,7 +32,9 @@ class ProductIndustries extends \yii\db\ActiveRecord
     public function rules()
     {
         return [
-            [['product_id', 'industries_id'], 'integer'],
+            [['product_id', 'industries_id', 'created_at', 'updated_at'], 'integer'],
+            [['product_id'], 'exist', 'skipOnError' => true, 'targetClass' => Product::className(), 'targetAttribute' => ['product_id' => 'id']],
+            [['industries_id'], 'exist', 'skipOnError' => true, 'targetClass' => Industries::className(), 'targetAttribute' => ['industries_id' => 'id']],
         ];
     }
 
@@ -40,15 +47,9 @@ class ProductIndustries extends \yii\db\ActiveRecord
             'id' => 'ID',
             'product_id' => 'Product ID',
             'industries_id' => 'Industries ID',
+            'created_at' => 'Created At',
+            'updated_at' => 'Updated At',
         ];
-    }
-
-    /**
-     * @return \yii\db\ActiveQuery
-     */
-    public function getIndustries()
-    {
-        return $this->hasOne(Industries::className(), ['id' => 'industries_id']);
     }
 
     /**
@@ -57,6 +58,14 @@ class ProductIndustries extends \yii\db\ActiveRecord
     public function getProduct()
     {
         return $this->hasOne(Product::className(), ['id' => 'product_id']);
+    }
+
+    /**
+     * @return \yii\db\ActiveQuery
+     */
+    public function getIndustries()
+    {
+        return $this->hasOne(Industries::className(), ['id' => 'industries_id']);
     }
 
     /**

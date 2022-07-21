@@ -14,7 +14,6 @@ use cnd\admin\models\activerecords\Log;
 use cnd\grid\DataLocator;
 use common\models\BusinessUnit;
 use common\models\Portfolio;
-use common\models\Salesman;
 use common\models\PortfolioQuery;
 use common\models\User;
 use Yii;
@@ -91,6 +90,7 @@ class PortfolioController extends SController
         Log::trace("Open portfolio data form");
         return $this->render('form', ['model' => $model, 'isNew' => $isNew]);
     }
+    
 
     public function actionDelete($id)
     {
@@ -124,7 +124,6 @@ class PortfolioController extends SController
 
         if (!empty($list) && is_array($list)) {
             foreach ($list as $model) {
-               
                 $item = lcfirst(Inflector::id2camel($model->target_label, '_'));
                 if ($model->hasProperty($item)) {
                     $response[] = [
@@ -132,54 +131,9 @@ class PortfolioController extends SController
                         'text' => $model->name,
                     ];
                 }
-                
             }
         }
         return ['items' => $response, 'total_count' => $total];
-    }
-
-    protected function findSalesman( $q, $page = 1)
-    {
-        Yii::$app->response->format = 'json';
-        $response = [];
-        $total = Salesman::find()->count();
-
-        $query = Salesman::find();
-        $query->andWhere('name like "%' . $q . '%"');
-        $query->limit(30);
-        $query->offset(($page - 1) * 30);
-        $list = $query->all();
-
-        if (!empty($list) && is_array($list)) {
-            foreach ($list as $model) {
-               
-                $item = "salesMan";
-              //  if ($model->hasProperty($item)) {
-                    $response[] = [
-                        'id' => $model->id,
-                        'text' => $model->name,
-                    ];
-             //  }
-                
-            }
-        }
-        return ['items' => $response, 'total_count' => $total];
-    }
-    protected function addSalesman()
-    {
-        Yii::$app->response->format = 'json';
-        $name = Yii::$app->request->post('name');
-        $model = new Salesman();
-        $model->name = $name;
-      
-        if ($model->save()) {
-            $item ="Salesman";
-            if ($model->hasProperty($item)) {
-                return ['id' => $model->$item->id];
-            }
-
-        }
-        return null;
     }
 
     protected function addItem($target)
@@ -194,7 +148,6 @@ class PortfolioController extends SController
             if ($model->hasProperty($item)) {
                 return ['id' => $model->$item->id];
             }
-
         }
         return null;
     }
@@ -202,6 +155,10 @@ class PortfolioController extends SController
     public function actionFindSectors($q, $page = 1)
     {
         return $this->findList(Portfolio::TARGET_SECTOR, $q, $page);
+    }
+    public function actionFindIndustries($q, $page = 1)
+    {
+        return $this->findList(Portfolio::TARGET_INDUSTRIES, $q, $page);
     }
 
     public function actionFindBrands($q, $page = 1)
@@ -219,15 +176,15 @@ class PortfolioController extends SController
         return $this->findList(Portfolio::TARGET_BUSINESS_UNIT, $q, $page);
     }
 
-    public function actionFindSalesMan($q, $page = 1)
-    {
-        return $this->findSalesman($q, $page);
-    }
-
     public function actionAddSector()
     {
         return $this->addItem(Portfolio::TARGET_SECTOR);
     }
+    public function actionAddIndustries()
+    {
+        return $this->addItem(Portfolio::TARGET_INDUSTRIES);
+    }
+
 
     public function actionAddBrand()
     {

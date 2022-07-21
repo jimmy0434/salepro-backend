@@ -5,7 +5,7 @@ namespace common\models;
 use Yii;
 
 /**
- * This is the model class for table "{{%product}}".
+ * This is the model class for table "mpk_product".
  *
  * @property int $id
  * @property string $uid
@@ -13,22 +13,23 @@ use Yii;
  * @property int $created_at
  * @property int $updated_at
  *
- * @property ExhibitionItemProduct[] $exhibitionItemProducts
- * @property MarketResearch[] $marketResearches
+ * @property MarketResearchProduct[] $marketResearchProducts
  * @property Portfolio $portfolio
  * @property ProductBrand[] $productBrands
+ * @property ProductBusinessUnit[] $productBusinessUnits
+ * @property ProductCertification[] $productCertifications
+ * @property ProductDetail[] $productDetails
+ * @property ProductIndustries[] $productIndustries
  * @property ProductSector[] $productSectors
- * @property ProductDetail[] $details
  */
 class Product extends \common\components\ActiveRecord
 {
-
     /**
      * {@inheritdoc}
      */
     public static function tableName()
     {
-        return '{{%product}}';
+        return 'mpk_product';
     }
 
     /**
@@ -42,6 +43,9 @@ class Product extends \common\components\ActiveRecord
             [['uid'], 'unique'],
             [['portfolio_id'], 'exist', 'skipOnError' => true, 'targetClass' => Portfolio::className(), 'targetAttribute' => ['portfolio_id' => 'id']],
         ]);
+
+
+       
     }
 
     /**
@@ -58,6 +62,7 @@ class Product extends \common\components\ActiveRecord
         ];
     }
 
+    
     /**
      * @return \yii\db\ActiveQuery
      */
@@ -158,4 +163,22 @@ class Product extends \common\components\ActiveRecord
     {
         return $this->hasMany(Certification::className(), ['id' => 'certification_id'])->via('productCertifications');
     }
+    
+    public function getProductIndustries()
+    {
+        return $this->hasMany(ProductIndustries::className(), ['product_id' => 'id']);
+    }
+
+
+   
+
+  
+
+   
+    public function getIndustries()
+    {
+        return $this->hasMany(Industries::className(), ['id' => 'industries_id'])->via('productIndustries');
+    }
 }
+
+

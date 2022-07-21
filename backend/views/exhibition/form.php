@@ -94,7 +94,7 @@ $form = ActiveForm::begin(['id' => Yii::$app->controller->id . '-form']);
             <div class="panel panel-default">
                 <div class="panel-heading">Relations</div>
                 <div class="panel-body">
-                    <?= $form->field($model, 'business_unit_id')->dropDownList(BusinessUnit::listData()) ?>
+                <!--  <?= $form->field($model, 'business_unit_id')->dropDownList(BusinessUnit::listData()) ?> -->
                     <?= AutoCompleteInput::widget([
                         'model' => $model,
                         'form' => $form,
@@ -106,6 +106,9 @@ $form = ActiveForm::begin(['id' => Yii::$app->controller->id . '-form']);
                     ]) ?>
                     <?= $form->field($model, 'countriesNames')->dropDownListAdvanced(Yii::$app->countries(), ['multiple' => true], '{plugins: [\'remove_button\']}') ?>
                     <?= $form->field($model, 'regionsNames')->dropDownListAdvanced(Yii::$app->regions(), ['multiple' => true], '{plugins: [\'remove_button\']}') ?>
+
+
+                    
                 </div>
             </div>
         </div>

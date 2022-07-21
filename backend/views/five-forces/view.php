@@ -35,6 +35,10 @@ $na = "N/A";
                     <td><?= $model->product_line ?></td>
                 </tr>
                 <tr>
+                    <th>Geographical Area</th>
+                    <td><?= $model->geographical_area?></td>
+                </tr>
+                <tr>
                     <th>Business Unit</th>
                     <td>
                         <?php

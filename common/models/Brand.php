@@ -102,7 +102,15 @@ class Brand extends \common\components\ActiveRecord
     {
         return $this->hasMany(Sector::className(), ['id' => 'sector_id'])->via('sectorBrands');
     }
+    public function getIndustries()
+    {
+        return $this->hasMany(Industries::className(), ['id' => 'industries_id'])->via('industriesBrands');
+    }
 
+    public function getIndustriesBrands()
+    {
+        return $this->hasMany(IndustriesBrand::className(), ['brand_id' => 'id']);
+    }
     /**
      * {@inheritdoc}
      * @return BrandQuery the active query used by this AR class.

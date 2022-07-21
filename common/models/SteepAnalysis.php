@@ -48,11 +48,13 @@ class SteepAnalysis extends  \common\components\ActiveRecord
         return [
             [['salesman_id', 'created_at', 'updated_at', 'business_unit_id'], 'integer'],
             [['status'], 'string'],
-            [['uid', 'name', 'subsequent', 'impact', 'trend_status', 'risk_category', 'control_measure', 'category'], 'string'],
+            [['uid', 'name', 'subsequent', 'impact', 'trend_status', 'risk_category', 'control_measure', 'category','building_block','product_line','georgraphical_area','sector','industry'], 'string'],
             [['uid'], 'unique'],
             [['business_unit_id'], 'exist', 'skipOnError' => true, 'targetClass' => BusinessUnit::className(), 'targetAttribute' => ['business_unit_id' => 'id']],
         ];
     }
+
+
 
     /**
      * {@inheritdoc}
@@ -105,6 +107,39 @@ class SteepAnalysis extends  \common\components\ActiveRecord
     {
         if ($this->isNewRecord || !$this->uid) {
             $this->uid = uniqid('steep_analysis-', true);
+                 if($this->category=='Social')
+        {
+  
+
+$list =DataList::updateRecord($this->name, '35','1');
+
+
+
+        }
+        else if($this->category=='Technological')
+        {
+
+$list =DataList::updateRecord($this->name, '35','2');
+
+        }
+        else if($this->category=='Economical')
+        {
+
+$list =DataList::updateRecord($this->name, '35','3');
+
+        }
+        else  if($this->category=='Ecological')
+        {
+
+$list =DataList::updateRecord($this->name, '35','4');
+
+        }
+        else  if($this->category=='Political')
+        {
+
+$list =DataList::updateRecord($this->name, '35','5');
+
+        }
         }
 
         // comment this before run migration for search index update

@@ -47,7 +47,8 @@ class PortfolioController extends SController
         $businessUnit = $this->list(Portfolio::TARGET_BUSINESS_UNIT);
         $brands = $this->list(Portfolio::TARGET_BRAND);
         $sectors = $this->list(Portfolio::TARGET_SECTOR);
-
+        
+        $industries = $this->list(Portfolio::TARGET_INDUSTRIES);
         Log::trace('Download Portfolio Items Data');
 
         return [
@@ -56,6 +57,7 @@ class PortfolioController extends SController
             'businessUnit' => $businessUnit,
             'brands' => $brands,
             'sectors' => $sectors,
+            'industries' => $industries,
         ];
     }
 
@@ -183,6 +185,13 @@ class PortfolioController extends SController
     {
         Log::trace("Download Products of sector");
         return $this->products($uid, '\common\models\ProductSector', 'productSectors', '\common\models\Sector', 'sector');
+    }
+
+
+    public function actionIndustriesProducts($uid)
+    {
+        Log::trace("Download Products of industries");
+        return $this->products($uid, '\common\models\ProductIndustries', 'productIndustries', '\common\models\Industries', 'industries');
     }
 
     /**
