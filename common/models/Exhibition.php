@@ -74,6 +74,8 @@ class Exhibition extends \common\components\ActiveRecord
             'name' => 'Name',
             'year' => 'Year',
             'file_id' => 'Attachment File',
+            'file_id_2' => 'Attachment File 2',
+            'file_id_3' => 'Attachment File 3',
             'business_unit_id' => 'Manufacturing Plants',
             'created_at' => 'Created At',
             'updated_at' => 'Updated At',
@@ -89,9 +91,6 @@ class Exhibition extends \common\components\ActiveRecord
             'nbofseminars' => 'Number Of Seminars & Networking Activities',
             'image'=>'Logo',
             'organizer'=>'Organizer'
-
-
-
         ];
     }
 
@@ -117,6 +116,22 @@ class Exhibition extends \common\components\ActiveRecord
     public function getFile()
     {
         return $this->hasOne(File::className(), ['id' => 'file_id']);
+    }
+
+    /**
+     * @return \yii\db\ActiveQuery
+     */
+    public function getFile2()
+    {
+        return $this->hasOne(File::className(), ['id' => 'file_id_2']);
+    }
+
+    /**
+     * @return \yii\db\ActiveQuery
+     */
+    public function getFile3()
+    {
+        return $this->hasOne(File::className(), ['id' => 'file_id_3']);
     }
 
     public function getProducts()
@@ -293,10 +308,12 @@ class Exhibition extends \common\components\ActiveRecord
     public function toArray(array $fields = [], array $expand = [], $recursive = true)
     {
         $list = parent::toArray($fields, $expand, $recursive);
-        unset($list['file_id']);
+        unset($list['file_id'], $list['file_id_2'], $list['file_id_3']);
         $list['countries'] = $this->countriesNames;
         $list['regions'] = $this->regionsNames;
         $list['file'] = $this->file;
+        $list['file2'] = $this->file2;
+        $list['file3'] = $this->file3;
         $list['sectors'] = array_filter(array_values(ArrayHelper::map($this->sectors, 'id', function ($model) {
             return $model->portfolio ? $model->portfolio->uid : null;
         })));
@@ -304,8 +321,6 @@ class Exhibition extends \common\components\ActiveRecord
         unset($list['business_unit_id']);
         $list['image'] = $this->imageFactory->url;    
         return $list;
-
-
     }
 
     public function sendNotification()

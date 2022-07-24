@@ -103,23 +103,20 @@ $form = ActiveForm::begin(['id' => Yii::$app->controller->id . '-form']);
                         'fileName' => uniqid('portfolio-brochure-', true),
                         'ext' => Setting::get('portfolio.brochure.extensions', 'pdf'),
                     ]) ?>
-
-                    
-                      <?= FileSelector::widget([
+                    <?= FileSelector::widget([
                         'model' => $model,
                         'property' => 'brochure_idd',
                         'title' => 'Brochure 2',
                         'fileName' => uniqid('portfolio-brochure-', true),
                         'ext' => Setting::get('portfolio.brochure.extensions', 'pdf'),
                     ]) ?>
-                      <?= FileSelector::widget([
+                    <?= FileSelector::widget([
                         'model' => $model,
                         'property' => 'brochure_iddd',
                         'title' => 'Brochure 3',
                         'fileName' => uniqid('portfolio-brochure-', true),
                         'ext' => Setting::get('portfolio.brochure.extensions', 'pdf'),
                     ]) ?>
-
                     <?= FileSelector::widget([
                         'model' => $model,
                         'property' => 'presentation_id',
@@ -127,23 +124,20 @@ $form = ActiveForm::begin(['id' => Yii::$app->controller->id . '-form']);
                         'fileName' => uniqid('portfolio-presentation-', true),
                         'ext' => Setting::get('portfolio.presentation.extensions', 'pptx,ppt'),
                     ]) ?>
-                        <?= FileSelector::widget([
+                    <?= FileSelector::widget([
                         'model' => $model,
                         'property' => 'presentation_idd',
                         'title' => 'Presentation 2',
                         'fileName' => uniqid('portfolio-presentation-', true),
                         'ext' => Setting::get('portfolio.presentation.extensions', 'pptx,ppt'),
                     ]) ?>
-
-
-                      <?= FileSelector::widget([
+                    <?= FileSelector::widget([
                         'model' => $model,
                         'property' => 'presentation_iddd',
                         'title' => 'Presentation 3',
                         'fileName' => uniqid('portfolio-presentation-', true),
                         'ext' => Setting::get('portfolio.presentation.extensions', 'pptx,ppt'),
                     ]) ?>
-
                     <?= FileSelector::widget([
                         'model' => $model,
                         'property' => 'video_id',
@@ -151,21 +145,20 @@ $form = ActiveForm::begin(['id' => Yii::$app->controller->id . '-form']);
                         'fileName' => uniqid('portfolio-video-', true),
                         'ext' => Setting::get('portfolio.video.extensions', 'mp4'),
                     ]) ?>
-                      <?= FileSelector::widget([
+                    <?= FileSelector::widget([
                         'model' => $model,
                         'property' => 'video_idd',
                         'title' => 'Video 2',
                         'fileName' => uniqid('portfolio-video-', true),
                         'ext' => Setting::get('portfolio.video.extensions', 'mp4'),
                     ]) ?>
-                        <?= FileSelector::widget([
+                    <?= FileSelector::widget([
                         'model' => $model,
                         'property' => 'video_iddd',
                         'title' => 'Video 3',
                         'fileName' => uniqid('portfolio-video-', true),
                         'ext' => Setting::get('portfolio.video.extensions', 'mp4'),
                     ]) ?>
-
                     <?= FileSelector::widget([
                         'model' => $model,
                         'property' => 'info_graphic_id',
@@ -173,15 +166,14 @@ $form = ActiveForm::begin(['id' => Yii::$app->controller->id . '-form']);
                         'fileName' => uniqid('portfolio-infoGraphics-', true),
                         'ext' => Setting::get('portfolio.infoGraphics.extensions', 'png,jpg,pdf,ppt,pptx'),
                     ]) ?>
-
-<?= FileSelector::widget([
+                    <?= FileSelector::widget([
                         'model' => $model,
                         'property' => 'info_graphic_idd',
                         'title' => 'InfoGraphics 2',
                         'fileName' => uniqid('portfolio-infoGraphics-', true),
                         'ext' => Setting::get('portfolio.infoGraphics.extensions', 'png,jpg,pdf,ppt,pptx'),
                     ]) ?>
-                         <?= FileSelector::widget([
+                    <?= FileSelector::widget([
                         'model' => $model,
                         'property' => 'info_graphic_iddd',
                         'title' => 'InfoGraphics 3',

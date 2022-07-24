@@ -38,8 +38,7 @@ $form = ActiveForm::begin(['id' => Yii::$app->controller->id . '-form']);
     <div class="row">
         <div class="col-md-6">
             <div class="panel panel-default">
-                <div class="panel-heading">Information</div>
-                
+                <div class="panel-heading">Information</div>         
                 <div class="panel-heading"><?= 'Logo' ?></div>
                 <div class="panel-body">
                 <?=
@@ -58,39 +57,43 @@ $form = ActiveForm::begin(['id' => Yii::$app->controller->id . '-form']);
                     <?= $form->field($model, 'edition')->textInput() ?>
                     <?= $form->field($model, 'frequency')->textInput() ?>
                     <?= $form->field($model, 'url')->textInput() ?>
-
                     <?= $form->field($model, 'lasteditionmonth')->textInput() ?>
-
-
                     <?= $form->field($model, 'lasteditionyear')->textInput() ?>
                     <?= $form->field($model, 'upcomingeditionmonth')->textInput() ?>
-                  
                     <?= $form->field($model, 'upcomingeditionyear')->textInput() ?>
-                    
                     <?= $form->field($model, 'nbofvisitors')->textInput() ?>
                     <?= $form->field($model, 'nbofexhebitors')->textInput() ?>
                     <?= $form->field($model, 'nbofseminars')->textInput() ?> 
                 </div>
             </div>
-       
-                <div class="panel-heading">Attachment File</div>
+        </div>
+        <div class="col-md-6">
+        <div class="panel panel-default">
+                <div class="panel-heading">Files</div>
                 <div class="panel-body">
                     <?= FileSelector::widget([
                         'model' => $model,
                         'property' => 'file_id',
-                        'title' => false,
+                        'title' => 'File 1',
                         'fileName' => uniqid('exhibition-file-', true),
                         'ext' => Setting::get('market-research.attachment.extensions', 'xlsx,xls,pdf,pptx,ppt'),
-                       
-                        
                     ]) ?>
-
-
-
-
+                    <?= FileSelector::widget([
+                        'model' => $model,
+                        'property' => 'file_id_2',
+                        'title' => 'File 2',
+                        'fileName' => uniqid('exhibition-file-', true),
+                        'ext' => Setting::get('market-research.attachment.extensions', 'xlsx,xls,pdf,pptx,ppt'),
+                    ]) ?>
+                    <?= FileSelector::widget([
+                        'model' => $model,
+                        'property' => 'file_id_3',
+                        'title' => 'File 3',
+                        'fileName' => uniqid('exhibition-file-', true),
+                        'ext' => Setting::get('market-research.attachment.extensions', 'xlsx,xls,pdf,pptx,ppt'),
+                    ]) ?>
                 </div>
-        </div>
-        <div class="col-md-6">
+            </div>
             <div class="panel panel-default">
                 <div class="panel-heading">Relations</div>
                 <div class="panel-body">
@@ -106,9 +109,6 @@ $form = ActiveForm::begin(['id' => Yii::$app->controller->id . '-form']);
                     ]) ?>
                     <?= $form->field($model, 'countriesNames')->dropDownListAdvanced(Yii::$app->countries(), ['multiple' => true], '{plugins: [\'remove_button\']}') ?>
                     <?= $form->field($model, 'regionsNames')->dropDownListAdvanced(Yii::$app->regions(), ['multiple' => true], '{plugins: [\'remove_button\']}') ?>
-
-
-                    
                 </div>
             </div>
         </div>
