@@ -76,9 +76,22 @@ class Application extends \yii\web\Application
     {
         return $this->dataList(DataList::TYPE_REGION);
     }
+    public function tags()
+    {
+        return $this->dataList(DataList::TYPE_NEWS_TAG);
+    }
 
     public function newstype()
     {
         return $this->dataList(DataList::TYPE_NEWS_TYPE);
     }
+    public function newssteep()
+    {
+        return $this->dataList(DataList::TYPE_NEWS_MARKET_TREND);
+    }
+    public function newssector()
+    {
+        return $this->dataList(DataList::TYPE_NEWS_SECTOR);
+    }
 }
+

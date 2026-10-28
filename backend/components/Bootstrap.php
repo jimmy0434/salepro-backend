@@ -41,6 +41,7 @@ class Bootstrap implements BootstrapInterface
         $marketIntel = $navigator->section('Market Intel', 'fa fa-server', 8);
         $marketIntel->item('Market Research', ['/market-research/index']);
         $marketIntel->item('Competition', ['/competition/index']);
+        $marketIntel->item('Country Profile', ['/country-profile/index']);
         //$navigator->item('Competitors', ['/competitor/index'], 'fa fa-id-card-o', 8);
         //$navigator->item('Forms', ['/form/index'], 'fa fa-server', 9);
         //$navigator->item('Form Approval', ['/form-approval/index'], 'fa fa-check', 10);
@@ -58,11 +59,14 @@ class Bootstrap implements BootstrapInterface
         $MarketTrends->item('Market Trends', ['/steep/index']);
         $MarketTrends->item('Steep Analysis', ['/steep-analysis/index']);
         $navigator->item('Sector Outlook', ['/sector-outlook/index'], '', 15);
+        $navigator->item('Pact Galery', ['/pactgalery/index'], '', 16);
        
-        $navigator->item('Data List', ['/data-list/index'], 'fa fa-table', 16);
-        $navigator->item('Statistic Numbers', ['/statistic-number/index'], 'fa fa-bar-chart', 17);
-        $navigator->item('Marketing Directory', ['/marketing-directory/index'], 'fa fa-sitemap', 18);
-        $navigator->item('Custom Notification', ['/custom-notification/index'], 'fa fa-bell', 19);
+        $navigator->item('Data List', ['/data-list/index'], 'fa fa-table', 17);
+        $navigator->item('Statistic Numbers', ['/statistic-number/index'], 'fa fa-bar-chart', 18);
+        $navigator->item('Marketing Directory', ['/directory/index'], 'fa fa-sitemap', 19);
+     
+        $navigator->item('Custom Notification', ['/custom-notification/index'], 'fa fa-bell', 20);
+       
 
         $developer = MenuManager::block('Developer');
         $developerSection = $developer->section('Documentation');

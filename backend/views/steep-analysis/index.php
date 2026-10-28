@@ -57,7 +57,7 @@ $dv = new DataView([
                 assert($attribute instanceof Attribute);
                 assert($data instanceof SteepAnalysis);
                 assert($view instanceof DataViewLocator);
-                if(Yii::$app->permission->can('/competition/salesman')) {
+                if(Yii::$app->permission->can('/steep-analysis/salesman')) {
                     return Html::dropDownList('salesman', $data->salesman_id, $salesmanList,
                         ['class' => 'form-control salesman-ddl',
                           'id' => 'status-'.$data->id,
@@ -66,8 +66,8 @@ $dv = new DataView([
                 }
                 return $data->salesman_id;
             },
-            //'filterBy' => Attribute::FILTER_LIST,
-            //'filterList' => $salesmanList,
+            'filterBy' => Attribute::FILTER_LIST,
+            'filterList' => $salesmanList,
         ],
         'status'=>[
             'label'=>'Status',
@@ -126,6 +126,7 @@ $dv->addView('grid', [
         'name' => [
             'sortable' => true,
         ],
+        
         'salesman_id' => [
             'sortable' => true,
             'contentOptions' => [
@@ -148,8 +149,8 @@ $dv->addView('grid', [
 ]);
 echo $dv->render();
 
-if(Yii::$app->permission->can('/Steep-Analysis/salesman')){
-    $url = Url::toRoute('/Steep-Analysis/salesman');
+if(Yii::$app->permission->can('/steep-analysis/salesman')){
+    $url = Url::toRoute('/steep-analysis/salesman');
     $script = <<< JS
         $(document).on('change','.salesman-ddl',function(){
             var element = $(this);

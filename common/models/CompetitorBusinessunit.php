@@ -15,7 +15,7 @@ use Yii;
  *
  * @property Competitor $competitor
  */
-class CompetitorBusinessunit extends \yii\db\ActiveRecord
+class CompetitorBusinessunit extends \common\components\ActiveRecord
 {
     /**
      * {@inheritdoc}
@@ -31,7 +31,7 @@ class CompetitorBusinessunit extends \yii\db\ActiveRecord
     public function rules()
     {
         return [
-            [['competitor_id', 'created_at', 'updated_at'], 'integer'],
+            //[['competitor_id', 'created_at', 'updated_at'], 'integer'],
             [['value'], 'string', 'max' => 255],
             [['competitor_id'], 'exist', 'skipOnError' => true, 'targetClass' => Competitor::className(), 'targetAttribute' => ['competitor_id' => 'id']],
         ];

@@ -27,6 +27,7 @@ class Bootstrap implements BootstrapInterface
         $baseUrl = str_replace('/restful/web', '/api', (new Request)->getBaseUrl());
 
         UrlRule::register('get', '/ping', '/public/ping');
+        UrlRule::register('get', '/email', '/public/SendTestEmai');
         UrlRule::register('get', '/swagger/docs', '/swagger/docs');
         UrlRule::register('get', '/portfolios', '/portfolio/list');
         UrlRule::register('get', '/portfolios/<uid:.+>', '/portfolio/one');
@@ -48,6 +49,7 @@ class Bootstrap implements BootstrapInterface
         UrlRule::register('get', '/forms/<id:\d+>/crud', '/form/crud');
         UrlRule::register('post,put', '/forms/<id:\d+>', '/form/save');
         UrlRule::register('get', '/market-research', '/market-research/list');
+        UrlRule::register('get', '/country-profile', '/country-profile/list');
         UrlRule::register('get', '/steep-socials', '/steep/socials');
         UrlRule::register('get', '/steep-technologicals', '/steep/technologicals');
         UrlRule::register('get', '/steep-economicals', '/steep/economicals');
@@ -56,6 +58,12 @@ class Bootstrap implements BootstrapInterface
         UrlRule::register('get', '/steepanalysis', '/steepanalysis/list');
         UrlRule::register('post', '/steepanalysis', '/steepanalysis/manage');
         UrlRule::register('put', '/steepanalysis/<uid:.+>', '/steepanalysis/manage');
+        UrlRule::register('get', '/tarf1', '/tarf1/list');
+        UrlRule::register('post', '/tarf1', '/tarf1/manage');
+        UrlRule::register('put', '/tarf1/<uid:.+>', '/tarf1/manage');
+        UrlRule::register('get', '/rdr', '/rdr/list');
+        UrlRule::register('post', '/rdr', '/rdr/manage');
+        UrlRule::register('put', '/rdr/<uid:.+>', '/rdr/manage');
         UrlRule::register('get', '/sectoroutlook', '/sectoroutlook/list');
         UrlRule::register('post', '/sectoroutlook', '/sectoroutlook/manage');
         UrlRule::register('put', '/sectoroutlook/<uid:.+>', '/sectoroutlook/manage');
@@ -64,10 +72,12 @@ class Bootstrap implements BootstrapInterface
         UrlRule::register('post', '/fiveforces', '/fiveforces/manage');
         UrlRule::register('put', '/fiveforces/<uid:.+>', '/fiveforces/manage');
         UrlRule::register('get', '/exhibitions', '/exhibition/list');
+        UrlRule::register('get', '/pactgalery', '/pactgalery/list');
         UrlRule::register('get', '/sustainability', '/sustainability/list');
         UrlRule::register('get', '/statistic-numbers', '/data/statistic-numbers');
         UrlRule::register('get', '/data-list', '/data/data-list');
         UrlRule::register('get', '/marketing-directory', '/data/marketing-directory');
+        UrlRule::register('get', '/directory', '/directory/list');
         UrlRule::register('get', '/competitions', '/competitor/list');
         UrlRule::register('post', '/competitions', '/competitor/manage');
         UrlRule::register('put', '/competitions/<uid:.+>', '/competitor/manage');

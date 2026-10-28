@@ -36,7 +36,7 @@ class SalesOffice extends \yii\db\ActiveRecord
     {
         return [
             [['content'], 'string'],
-            [['created_at', 'updated_at'], 'required'],
+           // [['created_at', 'updated_at'], 'required'],
             [['created_at', 'updated_at', 'position', 'file_id'], 'integer'],
             [['name', 'region'], 'string', 'max' => 255],
             [['file_id'], 'exist', 'skipOnError' => true, 'targetClass' => File::className(), 'targetAttribute' => ['file_id' => 'id']],

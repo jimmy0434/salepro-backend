@@ -184,7 +184,59 @@ return [
                 },
                 'steep-update' => function ($name, $data) {
                     return Html::tag('div', Html::a($data['message'], [
+                        '/steep/index',
+                        '_page' => 1,
+                        '_pageSize' => 10,
+                        '_filter' => [
+                            'id' => [
+                                'condition' => '=',
+                                'value' => $data['id'],
+                            ],
+                        ],
+                    ]), ['class' => 'text-muted', 'data' => ['id' => $data['id']]]);
+                },
+                'sector-outlook-update' => function ($name, $data) {
+                    return Html::tag('div', Html::a($data['message'], [
+                        '/sector-outlook/index',
+                        '_page' => 1,
+                        '_pageSize' => 10,
+                        '_filter' => [
+                            'id' => [
+                                'condition' => '=',
+                                'value' => $data['id'],
+                            ],
+                        ],
+                    ]), ['class' => 'text-muted', 'data' => ['id' => $data['id']]]);
+                },
+                'directory-update' => function ($name, $data) {
+                    return Html::tag('div', Html::a($data['message'], [
                         '/news/index',
+                        '_page' => 1,
+                        '_pageSize' => 10,
+                        '_filter' => [
+                            'id' => [
+                                'condition' => '=',
+                                'value' => $data['id'],
+                            ],
+                        ],
+                    ]), ['class' => 'text-muted', 'data' => ['id' => $data['id']]]);
+                },
+                'five-forces-update' => function ($name, $data) {
+                    return Html::tag('div', Html::a($data['message'], [
+                        '/five-forces/index',
+                        '_page' => 1,
+                        '_pageSize' => 10,
+                        '_filter' => [
+                            'id' => [
+                                'condition' => '=',
+                                'value' => $data['id'],
+                            ],
+                        ],
+                    ]), ['class' => 'text-muted', 'data' => ['id' => $data['id']]]);
+                },
+                'steep-analysis-update' => function ($name, $data) {
+                    return Html::tag('div', Html::a($data['message'], [
+                        '/steep-analysis/index',
                         '_page' => 1,
                         '_pageSize' => 10,
                         '_filter' => [
@@ -198,6 +250,19 @@ return [
                 'exhibition-update' => function ($name, $data) {
                     return Html::tag('div', Html::a($data['message'], [
                         '/exhibition/index',
+                        '_page' => 1,
+                        '_pageSize' => 10,
+                        '_filter' => [
+                            'id' => [
+                                'condition' => '=',
+                                'value' => $data['id'],
+                            ],
+                        ],
+                    ]), ['class' => 'text-muted', 'data' => ['id' => $data['id']]]);
+                },
+                'pact-update' => function ($name, $data) {
+                    return Html::tag('div', Html::a($data['message'], [
+                        '/pactgalery/index',
                         '_page' => 1,
                         '_pageSize' => 10,
                         '_filter' => [

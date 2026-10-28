@@ -8,6 +8,11 @@
 
 namespace restful\controllers;
 
+use cnd\core\api\SController;
+use cnd\admin\models\activerecords\Log;
+use Yii;
+use yii\helpers\Inflector;
+
 use cnd\core\api\Controller;
 
 class PublicController extends Controller
@@ -24,6 +29,23 @@ class PublicController extends Controller
      */
     public function actionPing()
     {
-        return [];
+    
+        return[''];
+    }
+
+    public function actionSendTestEmail()
+    {
+        $result = Yii::$app->mailer->compose()
+            ->setTo('sed.trainee@indevcogroup.com')
+            ->setFrom('sed.trainee@indevcogroup.com')
+            ->setSubject('Test Email')
+            ->setTextBody('This is a test email.')
+            ->send();
+
+        if ($result) {
+            echo 'Email sent successfully.';
+        } else {
+            echo 'Failed to send email.';
+        }
     }
 }

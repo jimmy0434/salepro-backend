@@ -28,6 +28,27 @@ class SectorOutlookController extends SController
         return $this->render('index', ['dataLocator' => $dataLocator]);
 
     }
+    public function actionSalesman()
+    {
+        if (Yii::$app->request->isAjax && Yii::$app->request->isPost) {
+            Yii::$app->response->format = 'json';
+            $response = ['changed' => false];
+            $id = Yii::$app->request->post('id');
+            $status = Yii::$app->request->post('status');
+            $model = SectorOutlook::findOne($id);
+            if ($model !== null) {
+                $model->notifyOne($model->salesman_id); // old owner
+                $model->salesman_id = $status;
+                $model->save();
+                $model->notifyOne($model->salesman_id);  // new owner
+                $response['changed'] = true;
+                Log::trace("Change steep analysis #" . $model->id . " salesman to " . $status);
+            }
+
+            return $response;
+        }
+        return $this->redirect(['index']);
+    }
     public function actionView($id)
     {
         $model = SectorOutlook::findOne($id);

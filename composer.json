@@ -39,7 +39,8 @@
     "npm-asset/vue-constants": "*",
     "npm-asset/localforage": "*",
     "yii2mod/yii2-swagger": "*",
-    "mihaildev/yii2-ckeditor": "^1.0"
+    "mihaildev/yii2-ckeditor": "^1.0",
+    "mpdf/mpdf": "8.2.4"
   },
   "require-dev": {
     "yiisoft/yii2-debug": "~2.0.0",
@@ -53,11 +54,11 @@
     "fxp-asset": {
       "enabled": true
     },
-    "bitbucket-oauth": {
-
-    },
     "github-oauth": {
       "github.com": "1543cc3fccbada7c658fb9c81ee732d9d54a182e"
+    },
+    "allow-plugins": {
+      "yiisoft/yii2-composer": true
     }
   },
   "scripts": {

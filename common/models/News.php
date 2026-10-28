@@ -20,7 +20,11 @@ use yii\helpers\Json;
 class News extends \common\components\ActiveRecord
 {
     public $tags = [];
+    public $sectors = [];
     public $productsIds = [];
+    public $sectorsNames = [];
+    public $tagsNames = [];
+
 
     public $imageFactory;
 
@@ -39,9 +43,10 @@ class News extends \common\components\ActiveRecord
     {
         return array_merge(parent::rules(), [
             [['title'], 'required'],
-            [['title', 'source','source_person','news_type', 'url','details','sector' ,'date'], 'string'],
-            [['tags', 'productsIds'], 'safe'],
+            [['title', 'source','source_person','news_type', 'url','details','sector' ,'date','news_steep'], 'string'],
+            [['tags', 'sectors','productsIds'], 'safe'],
             [['uid'], 'unique'],
+            [['sectorsNames','tagsNames'], 'safe'],
            
         ]);
     }
@@ -63,6 +68,9 @@ class News extends \common\components\ActiveRecord
             'sector'=>'Sector',
             'news_type'=>'Type',
             'date'=>'Date',
+            'news_steep' =>'News Market Trend'
+
+          
         ];
     }
 
@@ -83,13 +91,58 @@ class News extends \common\components\ActiveRecord
         return $this->hasOne(Search::className(), ['id' => 'search_id']);
     }
 
+ /**
+     * @return \yii\db\ActiveQuery
+     */
+    public function getNewsSectors()
+    {
+        return $this->hasMany(NewsSector::className(), ['news_id' => 'id']);
+    }
+
+  
+  /**
+     * @return \yii\db\ActiveQuery
+     */
+    public function getNewsTags()
+    {
+        return $this->hasMany(NewsTag::className(), ['news_id' => 'id']);
+    }
 
 
+    protected function assignItems($items, $targetModel, $relationId, $byId, $byValue, $extraParams = [])
+    {
+        $old = $targetModel::find()->where([$byId => $byValue])->all();
+        if (!empty($old) && is_array($old)) {
+            foreach ($old as $m) {
+                $m->delete();
+            }
+        }
+        if (!empty($items) && is_array($items)) {
+            foreach ($items as $i => $itemId) {
+                $m = new $targetModel();
+                $m->$byId = $byValue;
+                $m->$relationId = $itemId;
+                if (!empty($extraParams) && is_array($extraParams)) {
+                    foreach ($extraParams as $paramName => $values) {
+                        if ($m->hasProperty($paramName) && isset($values[$i])) {
+                            $m->$paramName = $values[$i];
+                        }
+                    }
+                }
+                $m->save();
+            }
+        }
+    }
+
+    
     public function toArray(array $fields = [], array $expand = [], $recursive = true)
     {
         $formatter = \Yii::$app->formatter;
         $list = parent::toArray($fields, $expand, $recursive);
-       
+    
+        
+        $list['tags'] = $this->tagsNames;
+        $list['sectors'] = $this->sectorsNames;
         $list['image'] = $this->imageFactory->url;   
       //  $list['date'] = Yii::$app->formatter->asDate($this->created_at, 'php:Y-m-d');
       $list['created_at'] = strtotime($list['date']); 
@@ -123,6 +176,11 @@ class News extends \common\components\ActiveRecord
     }
     public function afterSave($insert, $changedAttributes)
     {
+$this->assignItems($this->sectorsNames, '\common\models\NewsSector', 'sector', 'news_id', $this->id);
+
+$this->assignItems($this->tagsNames, '\common\models\NewsTag', 'tag', 'news_id', $this->id);
+//$this->assignItems($this->sectorsIds, '\common\models\NewsSector', 'sector_id', 'news_id', $this->id, [], '\common\models\Sector');
+        
        $search = Search::updateRecord('', $this->uid, $this->title, $this->details);
         if (!$this->search_id) {
             try {
@@ -138,6 +196,20 @@ class News extends \common\components\ActiveRecord
     public function afterFind()
     {
         parent::afterFind();
+        $sectors = $this->newsSectors;
+        if (!empty($sectors) && is_array($sectors)) {
+            foreach ($sectors as $model) {
+                $this->sectorsNames[] =$model->sector;
+            }
+        }
+   
+        
+        $tags = $this->newsTags;
+        if (!empty($tags) && is_array($tags)) {
+            foreach ($tags as $model) {
+                $this->tagsNames[] = $model->tag;
+            }
+        }
         $news_type = $this->news_type;
         if (is_string($this->image) && Yii::$app->helper->isJson($this->image)) {
             $this->imageFactory = \Yii::createObject([

@@ -273,9 +273,7 @@ $dv->addView('grid', [
         'organizer' => [
             'sortable' => true,
         ],
-        'year' => [
-            'sortable' => true,
-        ],
+    
         'updated_at' => [
             'sortable' => true,
             'contentOptions' => [

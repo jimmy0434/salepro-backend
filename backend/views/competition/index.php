@@ -73,8 +73,8 @@ $dv = new DataView([
                 }
                 return $data->salesman_id;
             },
-            //'filterBy' => Attribute::FILTER_LIST,
-            //'filterList' => $salesmanList,
+            'filterBy' => Attribute::FILTER_LIST,
+            'filterList' => $salesmanList,
         ],
         'merged'=>[
             'label'=>'Merged',

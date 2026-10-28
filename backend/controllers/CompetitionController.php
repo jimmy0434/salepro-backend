@@ -123,10 +123,10 @@ class CompetitionController extends SController
             $status = Yii::$app->request->post('status');
             $model = Competitor::findOne($id);
             if ($model !== null) {
-                $model->notifyOne($model->salesman_id); // old owner
+               // $model->notifyOne($model->salesman_id); // old owner
                 $model->salesman_id = $status;
                 $model->save();
-                $model->notifyOne($model->salesman_id);  // new owner
+              //  $model->notifyOne($model->salesman_id);  // new owner
                 $response['changed'] = true;
                 Log::trace("Change Competitor #" . $model->id . " salesman to " . $status);
             }

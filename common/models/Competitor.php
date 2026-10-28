@@ -59,6 +59,8 @@ use yii\helpers\Inflector;
  * @property CompetitorCompanyCommunication[] $competitorCompanyCommunications
  * @property CompetitorFlexible[] $competitorFlexibles
  * @property CompetitorFlexibleCustomer[] $competitorFlexibleCustomers
+ * @property CompetitorCorrugated[] $competitorCorrugateds
+ * @property CompetitorCorrugatedCustomer[] $competitorCorrugatedCustomers
  * @property CompetitorManager[] $competitorManagers
  * @property CompetitorMarketPresence[] $competitorMarketPresences
  * @property CompetitorMarketingStrategy[] $competitorMarketingStrategies
@@ -83,7 +85,7 @@ class Competitor extends \common\components\ActiveRecord
     const MERGED_DISABLED = 'disabled';
     public $businessUnitIds = [];
     public $salesManIds = [];
-
+    public $isedit ='false';
     //public static $disableLogo = false;
 
     /**
@@ -100,9 +102,9 @@ class Competitor extends \common\components\ActiveRecord
     public function rules()
     {
         return array_merge(parent::rules(), [
-            [['salesman_id', 'business_unit_id', 'search_id'], 'integer'],
+          [['salesman_id', 'search_id'], 'integer'],
             [['logo', 'file'], 'string'],
-            [['name','business_unit_names', 'company_profile', 'headquarter_location', 'sector', 'manufacturing_locations', 'manufacturing_locations', 'website', 'market_presence', 'established_year', 'annual_sales_revenue', 'employees_number', 'certification', 'certification_others', 'marketing_strategy', 'company_communication', 'quality', 'brand_equity', 'problem_solving_response', 'market_dominance' , 'comments', 'mother_name', 'mother_company_profile', 'mother_headquarter_location', 'mother_other_locations', 'mother_website'], 'string'],
+            [['name','business_unit_names', 'company_profile', 'headquarter_location', 'sector', 'manufacturing_locations', 'manufacturing_locations', 'website', 'market_presence', 'established_year', 'annual_sales_revenue', 'employees_number', 'certification', 'certification_others', 'marketing_strategy', 'company_communication', 'quality', 'brand_equity', 'problem_solving_response', 'market_dominance' , 'mother_name', 'mother_company_profile', 'mother_headquarter_location', 'mother_other_locations', 'mother_website'], 'string'],
             [['uid'], 'unique'],
             [['business_unit_id'], 'exist', 'skipOnError' => true, 'targetClass' => BusinessUnit::className(), 'targetAttribute' => ['business_unit_id' => 'id']],
             [['businessUnitIds'], 'safe'],
@@ -185,6 +187,15 @@ class Competitor extends \common\components\ActiveRecord
         return $this->hasMany(CompetitorFlexible::className(), ['competitor_id' => 'id']);
     }
    /**
+    
+
+     * @return \yii\db\ActiveQuery
+     */
+    public function getCompetitorCorrugated()
+    {
+        return $this->hasMany(CompetitorCorrugated::className(), ['competitor_id' => 'id']);
+    }
+   /**
      * @return \yii\db\ActiveQuery
      */
     public function getCompetitorVga()
@@ -198,7 +209,15 @@ class Competitor extends \common\components\ActiveRecord
     {
         return $this->hasMany(CompetitorFlexibleCustomer::className(), ['competitor_id' => 'id']);
     }
+ /**
+     * @return \yii\db\ActiveQuery
+     */
+    public function getCompetitorCorrugatedCustomer()
+    {
+        return $this->hasMany(CompetitorCorrugatedCustomer::className(), ['competitor_id' => 'id']);
+    }
 
+    
     /**
      * @return \yii\db\ActiveQuery
      */
@@ -339,27 +358,49 @@ class Competitor extends \common\components\ActiveRecord
        
     }
    
-
     public function beforeSave($insert)
     {
         if ($this->isNewRecord || !$this->uid) {
             $this->uid = uniqid('competitor-', true);
         }
-       // $this->assignItems($this->businessUnitIds, '\common\models\CompetitorBusinessUnit', 'value', 'competitor_id', $this->id, [], '\common\models\BusinessUnit');
-      
-        // comment this before run migration for search index update
+    
+   
+        // Set salesman_id if user is logged in and is a salesman
         if (!Yii::$app->user->isGuest && !$this->salesman_id && Yii::$app->user->identity->type == User::TYPE_SALESMAN) {
             $this->salesman_id = Yii::$app->user->identity->id;
         }
+if($this->isedit=='false')
+{
+    if ($this->businessUnitIds==null||$this->businessUnitIds=="") {
+       
         $this->updateBupost(CompetitorBusinessunit::className(), 'business_unit_id');
-        $this->updateBu(CompetitorBusinessunit::className(), $this->businessUnitIds);
         
-     return parent::beforeSave($insert);
+       
+    } else {
+        
+        $this->updateFieldsToTables(CompetitorBusinessunit::className(), $this->businessUnitIds);
+       $this->updateBu(CompetitorBusinessunit::className(), $this->businessUnitIds);
+     
     }
+}
+
+
+       
+    
+        return parent::beforeSave($insert);
+    }
+    
 
     private function GetSearchText()
     {
         $text = [];
+        $range = $this->competitorCorrugated;
+        if (!empty($range) && is_array($range)) {
+            foreach ($range as $model) {
+                $text[] = $model->product_type;
+                $text[] = $model->sector;
+            }
+        }
         $range = $this->competitorFlexible;
         if (!empty($range) && is_array($range)) {
             foreach ($range as $model) {
@@ -441,7 +482,16 @@ class Competitor extends \common\components\ActiveRecord
                 }
             }
         }
-        
+
+        if ($this->status == static::STATUS_DISABLED) { 
+        $search = Search::find()->where(['id' =>$this->search_id])->all();
+      
+           
+            foreach ($search as $search) {
+                $search->delete();
+            }
+        }
+
        
 
        $this->updateCompetitorTablesFields();
@@ -463,6 +513,7 @@ class Competitor extends \common\components\ActiveRecord
         $list['competitorSocial'] = $this->getCompetitorSocial()->all();
         $list['competitorProductionLine'] = $this->getCompetitorProductionLine()->all();
         $list['competitorFlexible'] = $this->getCompetitorFlexible()->all();
+        $list['competitorCorrugated'] = $this->getCompetitorCorrugated()->all();
         $list['competitorMasterbatch'] = $this->getCompetitorMasterbatch()->all();
         $list['competitorPackaging'] = $this->getCompetitorPackaging()->all();
         $list['competitorVga'] = $this->getCompetitorVga()->all();
@@ -474,6 +525,13 @@ class Competitor extends \common\components\ActiveRecord
             foreach ($list['competitorFlexible'] as $model) {
                 $productTypes[] = $model->product_type;
                 $sectors[] = $model->sector;// && $model->sector->portfolio ? $model->sector->portfolio->uid : null;
+            }
+        }
+        
+        if (!empty($list['competitorCorrugated']) && is_array($list['competitorCorrugated'])) {
+            foreach ($list['competitorCorrugated'] as $model) {
+             $productTypes[] = $model->product_type;
+             $sectors[] = $model->sector;// && $model->sector->portfolio ? $model->sector->portfolio->uid : null;
             }
         }
 
@@ -616,9 +674,14 @@ public function updateCompetitorTablesFields()
     {
        
         //$this->assignTableToField(CompetitorOtherLocation::className(), 'other_locations');
-        $this->updateFieldsToTable(CompetitorBusinessunit::className(), 'business_unit_id');
-        $this->updateFieldsToTable(competitorSalesman::className(), 'salesman_id');
-       $this->updateFieldsToTables(CompetitorBusinessunit::className(), $this->businessUnitIds);
+      //  $this->updateFieldsToTable(CompetitorBusinessunit::className(), 'business_unit_id');
+      if (($this->businessUnitIds === null || $this->businessUnitIds === "") && $this->isedit === 'false') {
+  
+        $this->updateFieldsToTables(CompetitorBusinessunit::className(), [$this->business_unit_id]);
+      }
+
+      $this->updateFieldsToTable(competitorSalesman::className(), 'salesman_id');
+       //$this->updateFieldsToTables(CompetitorBusinessunit::className(), $this->businessUnitIds);
        $this->updateSalesManToTables(competitorSalesman::className(), $this->salesManIds);
         $this->updateFieldsToTable(CompetitorMotherOtherLocation::className(), 'mother_other_locations');
         $this->updateFieldsToTable(CompetitorMarketPresence::className(), 'market_presence');
@@ -802,7 +865,7 @@ public function updateCompetitorTablesFields()
     public function afterFind()
     {
         parent::afterFind();
-        //$this->assignTableToField(CompetitorOtherLocation::className(), 'other_locations');
+    $this->assignTableToField(CompetitorBusinessunit::className(), 'business_unit_id');
         $this->assignTableToField(CompetitorMotherOtherLocation::className(), 'mother_other_locations');
         $this->assignTableToField(CompetitorMarketPresence::className(), 'market_presence');
         $this->assignTableToField(CompetitorMarketingStrategy::className(), 'marketing_strategy');

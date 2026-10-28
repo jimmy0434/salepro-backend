@@ -82,13 +82,14 @@ $dv = new DataView([
             },
         ],
         'sector' => [
-            'label' => 'sector',
+            'label' => 'Sector',
             'value' => function ($attribute, $data, $view) use ($dataLocator) {
                 assert($attribute instanceof Attribute);
                 assert($data instanceof News);
                 assert($view instanceof DataViewLocator);
-                return $data->sector;
+                return implode(',',$data->sectorsNames);
             },
+            'filterBy' => Attribute::FILTER_NONE,
         ],
         'news_type' => [
             'label' => 'type',
@@ -99,6 +100,16 @@ $dv = new DataView([
                 return $data->news_type;
             },
         ],
+        
+        'news_steep' => [
+            'label' => 'Market Trends',
+            'value' => function ($attribute, $data, $view) use ($dataLocator) {
+                assert($attribute instanceof Attribute);
+                assert($data instanceof News);
+                assert($view instanceof DataViewLocator);
+                return $data->news_steep;
+            },
+        ],
         'date' => [
             'label' => 'date',
             'value' => function ($attribute, $data, $view) use ($dataLocator) {
@@ -107,6 +118,35 @@ $dv = new DataView([
                 assert($view instanceof DataViewLocator);
                 return $data->date;
             },
+        ],
+        'source_person' => [
+            'label' => 'Source Name',
+            'value' => function ($attribute, $data, $view) use ($dataLocator) {
+                assert($attribute instanceof Attribute);
+                assert($data instanceof News);
+                assert($view instanceof DataViewLocator);
+                return $data->source_person;
+            },
+        ],
+        'Tags' => [
+            'label' => 'Tags',
+            'value' => function ($attribute, $data, $view) use ($dataLocator) {
+                assert($attribute instanceof Attribute);
+                assert($data instanceof News);
+                assert($view instanceof DataViewLocator);
+                return implode(',',$data->tagsNames);
+            },
+            'filterBy' => Attribute::FILTER_NONE,
+        ],
+        'created_at' => [
+            'label' => 'Created at',
+            'value' => function ($attribute, $data, $view) {
+                assert($attribute instanceof Attribute);
+                assert($data instanceof News);
+                assert($view instanceof DataViewLocator);
+                return date('l, d F, Y H:i',$data->created_at);
+            },
+            'filterBy' => Attribute::FILTER_NONE,
         ],
         'updated_at' => [
             'label' => 'Last Modification',
@@ -164,7 +204,12 @@ $dv->addView('grid', [
         'date' => [
             'sortable' => true,
         ],
-
+        'created_at' => [
+            'sortable' => true,
+            'contentOptions' => [
+                'style' => 'text-align:center;white-space: nowrap;width:1%;'
+            ],
+        ],
         'updated_at' => [
             'sortable' => true,
             'contentOptions' => [

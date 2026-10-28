@@ -33,7 +33,27 @@ class FiveForcesController extends SController
         $model = FiveForces::findOne($id);
         return $this->render('view', ['model' => $model]);
     }
+    public function actionSalesman()
+    {
+        if (Yii::$app->request->isAjax && Yii::$app->request->isPost) {
+            Yii::$app->response->format = 'json';
+            $response = ['changed' => false];
+            $id = Yii::$app->request->post('id');
+            $status = Yii::$app->request->post('status');
+            $model = FiveForces::findOne($id);
+            if ($model !== null) {
+              $model->notifyOne($model->salesman_id); // old owner
+                $model->salesman_id = $status;
+                $model->save();
+                $model->notifyOne($model->salesman_id);  // new owner
+                $response['changed'] = true;
+                Log::trace("Change Five Forces #" . $model->id . " salesman to " . $status);
+            }
 
+            return $response;
+        }
+        return $this->redirect(['index']);
+    }
 
     public function actionDelete($id)
     {
@@ -42,7 +62,7 @@ class FiveForcesController extends SController
             if ($model->delete()) {
                 Log::trace("FiveForces deleted #" . $id);
                 Yii::$app->session->setFlash('success', ucfirst($this->id) . ' deleted successfully');
-               // $model->notifyAll();
+                $model->notifyAll();
             } else {
                 Log::trace("FiveForces not deleted #" . $id);
                 Yii::$app->session->setFlash('error', ucfirst($this->id) . ' not deleted');

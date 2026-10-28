@@ -3,6 +3,8 @@
 namespace common\models;
 
 use Yii;
+use yii\helpers\ArrayHelper;
+use cnd\admin\models\activerecords\Log;
 
 /**
  * This is the model class for table "mpk_sector_outlook".
@@ -114,6 +116,26 @@ class SectorOutlook extends \common\components\ActiveRecord
         
 
         return parent::beforeSave($insert);
+    }
+    public function notifyAll()
+    {
+        $users = array_values(ArrayHelper::map(User::find()->where(['status' => User::STATUS_ACTIVE, 'type' => User::TYPE_SALESMAN])->all(), 'id', 'id'));
+
+        Yii::$app->notification->send('sector-outlook-update', [
+            'message' => 'sector outlook Update',
+            'id' => $this->id,
+            'uid' => $this->uid,
+        ], $users);
+    }
+    public function notifyOne($userId)
+    {
+        $users = array_values(ArrayHelper::map(User::find()->where(['status' => User::STATUS_ACTIVE, 'type' => User::TYPE_SALESMAN])->andWhere(['=', 'id', $userId])->all(), 'id', 'id'));
+
+        Yii::$app->notification->send('sector-outlook-update', [
+            'message' => 'sector outlook Update',
+            'id' => $this->id,
+            'uid' => $this->uid,
+        ], $users);
     }
     public function toArray(array $fields = [], array $expand = [], $recursive = true)
     {

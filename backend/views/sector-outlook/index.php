@@ -35,29 +35,57 @@ $dv = new DataView([
             'label' => 'ID',
             'value' => function ($attribute, $data, $view) use ($dataLocator) {
                 assert($attribute instanceof Attribute);
-                assert($data instanceof SteepAnalysis);
+                assert($data instanceof Sectoroutlook);
                 assert($view instanceof DataViewLocator);
                 return str_pad($data->id, 8, '0', STR_PAD_LEFT);
             },
             'filterBy' => Attribute::FILTER_NUMBER,
         ],
         'name' => [
-            'label' => 'Name',
+            'label' => 'Sector',
             'value' => function ($attribute, $data, $view) use ($dataLocator) {
                 assert($attribute instanceof Attribute);
-                assert($data instanceof SteepAnalysis);
+                assert($data instanceof Sectoroutlook);
                 assert($view instanceof DataViewLocator);
                 return $data->name;
             },
         ],
+        'country' => [
+            'label' => 'country',
+            'value' => function ($attribute, $data, $view) use ($dataLocator) {
+                assert($attribute instanceof Attribute);
+                assert($data instanceof Sectoroutlook);
+                assert($view instanceof DataViewLocator);
+                return $data->country;
+            },
+        ],
+        'industry' => [
+            'label' => 'industry',
+            'value' => function ($attribute, $data, $view) use ($dataLocator) {
+                assert($attribute instanceof Attribute);
+                assert($data instanceof Sectoroutlook);
+                assert($view instanceof DataViewLocator);
+                return $data->industry;
+            },
+        ],
+        'outlook' => [
+            'label' => 'outlook',
+            'value' => function ($attribute, $data, $view) use ($dataLocator) {
+                assert($attribute instanceof Attribute);
+                assert($data instanceof Sectoroutlook);
+                assert($view instanceof DataViewLocator);
+                return $data->outlook;
+            },
+        ],
+       
 
         'salesman_id'=>[
             'label'=>'Salesman',
             'value'=>function($attribute, $data, $view) use ($salesmanList) {
                 assert($attribute instanceof Attribute);
-                assert($data instanceof SteepAnalysis);
+                assert($data instanceof Sectoroutlook);
                 assert($view instanceof DataViewLocator);
-                if(Yii::$app->permission->can('/competition/salesman')) {
+                if(Yii::$app->permission->can('/sector-outlook/salesman')) {
                     return Html::dropDownList('salesman', $data->salesman_id, $salesmanList,
                         ['class' => 'form-control salesman-ddl',
                           'id' => 'status-'.$data->id,
@@ -74,7 +102,7 @@ $dv = new DataView([
             'label' => 'Last Modification',
             'value' => function ($attribute, $data, $view) {
                 assert($attribute instanceof Attribute);
-                assert($data instanceof SteepAnalysis);
+                assert($data instanceof Sectoroutlook);
                 assert($view instanceof DataViewLocator);
                 return date('l, d F, Y H:i',$data->updated_at);
             },
@@ -90,13 +118,13 @@ $dv = new DataView([
             return null;
         },
         function ($row) {
-            if (Yii::$app->permission->can('/steep-analysis/view')) {
+            if (Yii::$app->permission->can('/sector-outlook/view')) {
                 return Html::a('View', Url::to(['view', 'id' => $row->id]), ['class' => 'btn btn-primary']);
             }
             return null;
         },
         function ($row) use ($context) {
-            if (Yii::$app->permission->can('/steep-analysis/delete')) {
+            if (Yii::$app->permission->can('/sector-outlook/delete')) {
                 return Html::a('Delete', Url::to(['delete', 'id' => $row->id]), ['class' => 'btn btn-danger', 'data-confirm' => 'Are You Sure?']);
             }
             return null;
@@ -115,6 +143,16 @@ $dv->addView('grid', [
         'name' => [
             'sortable' => true,
         ],
+        'country' => [
+            'sortable' => true,
+        ],
+        'industry' => [
+            'sortable' => true,
+        ],
+        'outlook' => [
+            'sortable' => true,
+        ],
+       
         'salesman_id' => [
             'sortable' => true,
             'contentOptions' => [
@@ -132,8 +170,8 @@ $dv->addView('grid', [
 ]);
 echo $dv->render();
 
-if(Yii::$app->permission->can('/Steep-Analysis/salesman')){
-    $url = Url::toRoute('/Steep-Analysis/salesman');
+if(Yii::$app->permission->can('/sector-outlook/salesman')){
+    $url = Url::toRoute('/sector-outlook/salesman');
     $script = <<< JS
         $(document).on('change','.salesman-ddl',function(){
             var element = $(this);

@@ -891,6 +891,155 @@ if (!empty($model->competitorMasterbatch) && is_array($model->competitorMasterba
     </div>
     <?php
 }
+if (!empty($model->competitorCorrugated) && is_array($model->competitorCorrugated)) {
+    ?>
+    <div class="panel panel-default">
+        <div class="panel-heading">
+            Corrugated & Duplexe Products
+        </div>
+        <?php
+        foreach ($model->competitorCorrugated as $m) {
+            ?>
+            <div class="row">
+                <div class="col-md-6">
+                    <table class="table table-striped table-hover table-condensed" style="table-layout:fixed;">
+                        <tbody>
+                        <tr>
+                            <th>Product Type</th>
+                            <td colspan="3"><?= $m->product_type ?? $na ?></td>
+                        </tr>
+                        <tr>
+                            <th>Sector</th>
+                            <td colspan="3"><?= $m->sector ?? $na ?></td>
+                        </tr>
+                        <tr>
+                            <th>Quantity Sold/Year</th>
+                            <td><?= $m->quantity_sold ?? $na ?></td>
+                            <th>Unit</th>
+                            <td><?= $m->quantity_unit ?? $na ?></td>
+                        </tr>
+                        <tr>
+                            <th>Material</th>
+                            <td colspan="3"><?= $m->material ?? $na ?></td>
+                        </tr>
+                        <tr>
+                            <th>Flute Type</th>
+                            <td colspan="3"><?= $m->flute_type ?? $na ?></td>
+                        </tr>
+                        <tr>
+                            <th>Thickness</th>
+                            <td colspan="3"><?= $m->thickness ?? $na ?></td>
+                        </tr>
+                        <tr>
+                            <th>Strength Test</th>
+                            <td colspan="3"><?= $m->strength_test ?? $na ?></td>
+                        </tr>
+                        <tr>
+                            <th>Dimensions</th>
+                            <td colspan="3"><?= $m->dimensions ?? $na ?></td>
+                        </tr>
+                        <tr>
+                            <th>Weight</th>
+                            <td colspan="3"><?= $m->weight ?? $na ?></td>
+                        </tr>
+                        <tr>
+                            <th>Printing</th>
+                            <td colspan="3"><?= $m->printing ?? $na ?></td>
+                        </tr>
+                        <tr>
+                            <th>Coating</th>
+                            <td colspan="3"><?= $m->coating ?? $na ?></td>
+                        </tr>
+                        <tr>
+                            <th>Surface Finish</th>
+                            <td colspan="3"><?= $m->surface_finish ?? $na ?></td>
+                        </tr>
+                        <tr>
+                            <th>Color</th>
+                            <td colspan="3"><?= $m->color ?? $na ?></td>
+                        </tr>
+                        <tr>
+                            <th>Volume</th>
+                            <td colspan="3"><?= $m->volume ?? $na ?></td>
+                        </tr>
+                        <tr>
+                            <th>Terms of Business</th>
+                            <td colspan="3"><?= $m->business_terms ?? $na ?></td>
+                        </tr>
+                        </tbody>
+                    </table>
+                </div>
+                <div class="col-md-6">
+                    <table class="table table-striped table-hover table-condensed" style="table-layout:fixed;">
+                        <tbody>
+                        <tr>
+                            <th>Incoterms</th>
+                            <td colspan="3"><?= $m->incoterms ?? $na ?></td>
+                        </tr>
+                        <tr>
+                            <th>Payment Facilities</th>
+                            <td colspan="3"><?= $m->payment ?? $na ?></td>
+                        </tr>
+                        <tr>
+                            <th>Price DDP</th>
+                            <td><?= $m->price ?? $na ?></td>
+                            <th>Currency</th>
+                            <td><?= $m->currency ?? $na ?></td>
+                        </tr>
+                        <tr>
+                            <th>Market Share %</th>
+                            <td colspan="3"><?= $m->market_share_percentage ?? $na ?></td>
+                        </tr>
+                        <?php
+                        if (!empty($m->competitorCorrugatedCustomer) && is_array($model->competitorCorrugatedCustomer)) {
+                            ?>
+                            <tr>
+                                <td colspan="4">
+                                    <div class="panel panel-default">
+                                        <div class="panel-heading">
+                                            Customers
+                                        </div>
+                                        <table class="table">
+                                            <thead>
+                                            <tr>
+                                                <th>Name</th>
+                                                <th>Country</th>
+                                                <th>Share in Percentage</th>
+                                            </tr>
+                                            </thead>
+                                            <tbody>
+                                            <?php
+                                            foreach ($model->competitorCorrugatedCustomer as $c) {
+                                                ?>
+                                                <tr>
+                                                    <td><?= $c->name ?? $na ?></td>
+                                                    <td><?= $c->country ?? $na ?></td>
+                                                    <td><?= $c->share_percentage ?? $na ?></td>
+                                                </tr>
+                                                <?php
+                                            }
+                                            ?>
+                                            </tbody>
+                                        </table>
+                                    </div>
+
+                                </td>
+                            </tr>
+                            <?php
+                        }
+                        ?>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            <hr>
+            <?php
+        }
+        ?>
+    </div>
+    <?php
+}
+
 if (!empty($model->competitorVga) && is_array($model->competitorVga)) {
     ?>
     <div class="panel panel-default">

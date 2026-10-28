@@ -48,7 +48,12 @@ class CompetitorController extends SController
         //$query->orderBy('name ASC'); // updated_at
         //$query->orderBy('updated_at DESC, created_at DESC, id DESC');
         $query->orderBy('id DESC');
-        $query->where('(status=:status ) or salesman_id=:salesman', [':status' => Competitor::STATUS_ENABLED,  ':salesman' => Yii::$app->user->identity->id]);
+      //  $query->andWhere([
+           // 'or',
+           // ['status' => Competitor::STATUS_ENABLED],
+           // ['salesman_id' => Yii::$app->user->identity->id]
+       // ])
+       $query->andWhere(['status' => Competitor::STATUS_ENABLED]);
         $list = $query->all();
         Log::trace("Download Competitors List");
         return ['profiles' => $list];
@@ -154,7 +159,11 @@ class CompetitorController extends SController
     public function actionManage()
     {
         $competitor = null;
+        $isedit = 'false';
+        
+
         if (Yii::$app->request->isPut) {
+            $isedit = 'true';
             $uid = Yii::$app->request->get('uid');
             $competitor = Competitor::find()->where(['uid' => $uid, 'salesman_id' => Yii::$app->user->identity->id])->one();
         }
@@ -170,7 +179,7 @@ class CompetitorController extends SController
         }
 
         $isNew = $competitor->isNewRecord;
-
+        $competitor->isedit = $isedit;
         $data = Yii::$app->request->post('data');
         if (!empty($data) && is_array($data)) {
             $relations = [];
@@ -220,8 +229,9 @@ class CompetitorController extends SController
 
             $modelSalesman = Salesman::findOne(Yii::$app->user->identity->id);
             if($sendToAdmin){
-                $email->setTo(Yii::$app->params['adminEmail']);
-                Log::trace("Send notification e-mail", Yii::$app->params['adminEmail'] );
+                $email->setTo(Yii::$app->params['adminEmail2']);
+                Log::trace("Send notification e-mail", Yii::$app->params['adminEmail2'] );
+               
             }
             else {
                 $email->setTo($modelSalesman->user->email);

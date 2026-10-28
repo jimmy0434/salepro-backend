@@ -61,10 +61,15 @@ $form = ActiveForm::begin(['id' => Yii::$app->controller->id . '-form']);
 ]) ?>          
     
    
-   <?= $form->field($model, 'sector')->dropDownList(Sector::listData()) ?>
+
    <?= $form->field($model, 'news_type')->dropDownList(Yii::$app->newstype()) ?>
  
 
+                      <?= $form->field($model, 'sectorsNames')->dropDownListAdvanced(Yii::$app->newssector(), ['multiple' => true], '{plugins: [\'remove_button\']}') ?>
+
+                      <?= $form->field($model, 'tagsNames')->dropDownListAdvanced(Yii::$app->tags(), ['multiple' => true], '{plugins: [\'remove_button\']}') ?>
+
+                      <?= $form->field($model, 'news_steep')->dropDownList(Yii::$app->newssteep()) ?>
        
                 </div>
             </div>

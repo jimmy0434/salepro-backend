@@ -56,7 +56,7 @@ $dv = new DataView([
                 assert($attribute instanceof Attribute);
                 assert($data instanceof FiveForces);
                 assert($view instanceof DataViewLocator);
-                if(Yii::$app->permission->can('/competition/salesman')) {
+                if(Yii::$app->permission->can('/five-forces/salesman')) {
                     return Html::dropDownList('salesman', $data->salesman_id, $salesmanList,
                         ['class' => 'form-control salesman-ddl',
                           'id' => 'status-'.$data->id,

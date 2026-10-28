@@ -81,7 +81,23 @@ class DataList extends \common\components\ActiveRecord
     const TYPE_PRODUCT_LINE =57;
     const TYPE_GEOGRAPHICAL_AREA =58;
     const TYPE_NEWS_TYPE =59;
- 
+    const TYPE_NEWS_TAG =60;
+    const TYPE_NEWS_MARKET_TREND =61;
+    const TYPE_NEWS_SECTOR =62;
+    const TYPE_PACT_FORM_BU =63;
+    const TYPE_TARF_TYPE=64;
+    const TYPE_TARF_SAMPLE_TYPE=65;
+    const TYPE_RDR_TYPE=66;
+
+    const TYPE_SALES_VOLUMES = 67;
+    const TYPE_PRODUCT_TYPE_CORRUGATED = 68;
+    const TYPE_CORRUGATED_MATERIAL = 69;
+    const TYPE_CORRUGATED_FLUTE_TYPES = 70;
+    const TYPE_CORRUGATED_DIMENSIONS = 71;
+    const TYPE_CORRUGATED_STRENGTH = 73;
+    const TYPE_CORRUGATED_PRINTING = 74;
+    const TYPE_CORRUGATED_COATINGS = 75;
+    const TYPE_CORRUGATED_SURFACE_FINISH = 76;
 
 
     public static function listRelations()

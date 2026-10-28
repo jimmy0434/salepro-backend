@@ -51,7 +51,7 @@ use cnd\admin\models\activerecords\Log;
  * @property int $updated_at
  * @property string $product_line
  */
-class FiveForces extends \yii\db\ActiveRecord
+class FiveForces extends \common\components\ActiveRecord
 {
     /**
      * {@inheritdoc}
@@ -174,5 +174,27 @@ class FiveForces extends \yii\db\ActiveRecord
         }
 
         return $list;
+    }
+
+
+    public function notifyAll()
+    {
+        $users = array_values(ArrayHelper::map(User::find()->where(['status' => User::STATUS_ACTIVE, 'type' => User::TYPE_SALESMAN])->all(), 'id', 'id'));
+
+        Yii::$app->notification->send('five-forces-update', [
+            'message' => 'five forces Update',
+            'id' => $this->id,
+            'uid' => $this->uid,
+        ], $users);
+    }
+    public function notifyOne($userId)
+    {
+        $users = array_values(ArrayHelper::map(User::find()->where(['status' => User::STATUS_ACTIVE, 'type' => User::TYPE_SALESMAN])->andWhere(['=', 'id', $userId])->all(), 'id', 'id'));
+
+        Yii::$app->notification->send('five-forces-update', [
+            'message' => 'five forces Update',
+            'id' => $this->id,
+            'uid' => $this->uid,
+        ], $users);
     }
 }
